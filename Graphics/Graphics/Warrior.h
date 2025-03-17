@@ -13,6 +13,6 @@ public:
 	int GetBullets() { return bullets; }
 	void SetGrenades(int g) { grenades = g; }
 	int GetGrenades() { return grenades; }
-
+// test
 };
 
