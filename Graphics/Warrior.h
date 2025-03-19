@@ -9,7 +9,7 @@ private:
 	int bullets, grenades;
 	bool aggressive;
 public:
-	Warrior(Position startPos, int id);
+	Warrior(Position startPos, TeamID teamID);
 	void SetBullets(int b) { bullets = b; }
 	int GetBullets() { return bullets; }
 	void SetGrenades(int g) { grenades = g; }

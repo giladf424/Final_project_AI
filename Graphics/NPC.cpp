@@ -1,9 +1,9 @@
 #include "NPC.h"
 
-NPC::NPC(Position startPos, int id)
+NPC::NPC(Position startPos, TeamID teamID)
 {
 	hp = MAX_HP;
-	teamID = id;
+	id = teamID;
 	isMoving = false;
 	pos = startPos;
 	pCurrentState = nullptr;

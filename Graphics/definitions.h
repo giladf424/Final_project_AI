@@ -1,5 +1,10 @@
 #pragma once
 #include <iostream>
+#include <vector>
+#include <array>
+#include <unordered_map>
+using namespace std;
+
 const int MSZ = 100;
 
 const int WALL = 0;
@@ -21,3 +26,21 @@ typedef struct
 {
 	int row, col;
 }Position;
+
+typedef struct
+{
+	int team, place;
+}TeamID;
+
+//const unordered_map<string, array<double, 3>> team_colors = {
+//    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},
+//    {"SPurple", {219 / (double)255, 62 / (double)255, 177 / (double)255}},
+//    {"FOrange", {252 / (double)255, 76 / (double)255, 2 / (double)255}},
+//    {"SOrange", {255 / (double)255, 153 / (double)255, 19 / (double)255}}
+//};
+const unordered_map<string, array<double, 3>> team_colors = {
+    {"FRed", {139 / (double)255, 0 / (double)255, 0 / (double)255}}, // Dark Red
+    {"SRed", {255 / (double)255, 99 / (double)255, 71 / (double)255}}, // Light Red
+    {"FYellow", {204 / (double)255, 204 / (double)255, 0 / (double)255}}, // Dark Yellow
+    {"SYellow", {255 / (double)255, 255 / (double)255, 102 / (double)255}} // Light Yellow
+};

@@ -1,6 +1,6 @@
 #include "Warrior.h"
 
-Warrior::Warrior(Position startPos, int id) : NPC(startPos, id)
+Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 {
 	bullets = MAX_BULLETS_WARRIOR;
 	grenades = MAX_GRENADES_WARRIOR;
