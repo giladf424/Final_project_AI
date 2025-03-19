@@ -8,12 +8,13 @@ class NPC
 {
 protected:
 	int hp;
+	int teamID;
 	bool isAlive = true;
 	bool isMoving;
 	Position pos;
 	State* pCurrentState;
 public:
-	NPC(Position startPos);
+	NPC(Position startPos, int id);
 	void SetState(State* pState) { pCurrentState = pState; }
 	State* GetState() { return pCurrentState; }
 	void SetPosition(Position p) { pos = p; }
@@ -24,5 +25,6 @@ public:
 	int GetHp() { return hp; }
 	void SetIsAlive(bool value) { isAlive = value; }
 	bool GetIsAlive() { return isAlive; }
+	int GetTeamID() { return teamID; }
 };
 

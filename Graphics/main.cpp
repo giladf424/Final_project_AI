@@ -192,6 +192,45 @@ void BuildPathBetweenTheRooms()
 		}
 }
 
+Position RandomRoomPlacement()
+{
+	// Randomly select a room
+	int roomIndex = rand() % NUM_ROOMS;
+	Room* room = rooms[roomIndex];
+
+	// Randomly select a position within the room
+	int row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
+	int col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
+	Position p = { row, col };
+
+	return p;
+}
+
+void placeResources()
+{
+	int placed = 0;
+	while (placed < AMMUNITION_PACK_AMOUNT)
+	{
+		Position p = RandomRoomPlacement();
+		if (maze[p.row][p.col] == SPACE || maze[p.row][p.col] == WALL)
+		{
+			maze[p.row][p.col] = AMMUNITION_PACK;
+			placed++;
+		}
+	}
+
+	placed = 0;
+	while (placed < MEDICINE_PACK_AMOUNT)
+	{
+		Position p = RandomRoomPlacement();
+		if (maze[p.row][p.col] == SPACE || maze[p.row][p.col] == WALL)
+		{
+			maze[p.row][p.col] = MEDICINE_PACK;
+			placed++;
+		}
+	}
+}
+
 void SetupDungeon()
 {
 	int i,j;
@@ -216,6 +255,7 @@ void SetupDungeon()
 
 	for (i = 0;i < 700;i++)
 		maze[rand() % MSZ][rand() % MSZ] = WALL;
+	placeResources();
 	BuildPathBetweenTheRooms();
 }
 
@@ -246,6 +286,12 @@ void ShowDungeon()
 				break;
 			case WALL:
 				glColor3d(0.3, 0.3, 0.4); // dark gray
+				break;
+			case AMMUNITION_PACK:
+				glColor3d(0, 0, 1); // Blue for ammunition
+				break;
+			case MEDICINE_PACK:
+				glColor3d(0, 1, 0); // Green for medicine
 				break;
 			}
 			// show cell

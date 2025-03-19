@@ -6,7 +6,7 @@ class Squire : public NPC
 private:
 	int bulletsPack, grenadesPack, healthPack;
 public:
-	Squire(Position startPos);
+	Squire(Position startPos, int id);
 	void SetBulletsPack(int b) { bulletsPack = b; }
 	int GetBulletsPack() { return bulletsPack; }
 	void SetGrenadesPack(int g) { grenadesPack = g; }
