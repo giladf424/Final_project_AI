@@ -69,6 +69,10 @@
     <ClCompile Include="FleeState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+	<ClCompile Include="Team.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h">
@@ -125,6 +129,9 @@
     <ClInclude Include="FleeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+	<ClInclude Include="Team.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Graphics.rc">
