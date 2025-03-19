@@ -45,6 +45,9 @@
     <ClCompile Include="Squire.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    
+    
+    
     <ClCompile Include="CombatState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
