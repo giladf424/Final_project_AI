@@ -120,11 +120,18 @@
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="CombatState.cpp" />
     <ClCompile Include="CompareCells.cpp" />
+    <ClCompile Include="DeliverResourcesState.cpp" />
+    <ClCompile Include="FleeState.cpp" />
     <ClCompile Include="Grenade.cpp" />
+    <ClCompile Include="IdleState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="PatrolState.cpp" />
+    <ClCompile Include="RequestResourcesState.cpp" />
     <ClCompile Include="Room.cpp" />
+    <ClCompile Include="SeekResourcesState.cpp" />
     <ClCompile Include="Squire.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Warrior.cpp" />
@@ -132,12 +139,19 @@
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="CombatState.h" />
     <ClInclude Include="CompareCells.h" />
     <ClInclude Include="definitions.h" />
+    <ClInclude Include="DeliverResourcesState.h" />
+    <ClInclude Include="FleeState.h" />
     <ClInclude Include="Grenade.h" />
+    <ClInclude Include="IdleState.h" />
     <ClInclude Include="NPC.h" />
+    <ClInclude Include="PatrolState.h" />
+    <ClInclude Include="RequestResourcesState.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="SeekResourcesState.h" />
     <ClInclude Include="Squire.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Warrior.h" />
