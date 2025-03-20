@@ -122,6 +122,7 @@
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="CombatState.cpp" />
     <ClCompile Include="CompareCells.cpp" />
+    <ClCompile Include="definitions.cpp" />
     <ClCompile Include="DeliverResourcesState.cpp" />
     <ClCompile Include="FleeState.cpp" />
     <ClCompile Include="Grenade.cpp" />
@@ -134,7 +135,7 @@
     <ClCompile Include="SeekResourcesState.cpp" />
     <ClCompile Include="Squire.cpp" />
     <ClCompile Include="State.cpp" />
-	<ClCompile Include="Team.cpp" />
+    <ClCompile Include="Team.cpp" />
     <ClCompile Include="Warrior.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +156,7 @@
     <ClInclude Include="SeekResourcesState.h" />
     <ClInclude Include="Squire.h" />
     <ClInclude Include="State.h" />
-	<ClInclude Include="Team.h" />
+    <ClInclude Include="Team.h" />
     <ClInclude Include="Warrior.h" />
   </ItemGroup>
   <ItemGroup>

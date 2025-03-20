@@ -13,6 +13,7 @@ public:
 	int GetGrenadesPack() { return grenadesPack; }
 	void SetHealthPack(int h) { healthPack = h; }
 	int GetHealthPack() { return healthPack; }
+	const char* getType() override { return "Squire"; }
 
 };
 

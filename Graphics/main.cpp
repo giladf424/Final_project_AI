@@ -10,6 +10,8 @@
 #include "CompareCells.h"
 #include "Bullet.h"
 #include "Grenade.h"
+#include "definitions.h"
+#include "Team.h"
 
 using namespace std;
 
@@ -231,6 +233,41 @@ void placeResources()
 	}
 }
 
+void initTeams()
+{
+	vector<array<double, 3>> colors1 = { team_colors.at("FRed"), team_colors.at("SRed") };
+	vector<array<double, 3>> colors2 = { team_colors.at("FYellow"), team_colors.at("SYellow") };
+	vector<vector<array<double, 3>>> colors = { colors1, colors2 };
+
+	int r;
+	for (int i = 0; i < TEAM_RANK; i++)
+	{
+		Team* t = new Team(colors.at(i));
+		int roomIndex = rand() % NUM_ROOMS;
+
+		if(i == 0)
+			r = roomIndex;
+
+		while (i > 0 && roomIndex == r)
+			roomIndex = rand() % NUM_ROOMS;
+
+		Room* room = rooms[roomIndex];
+		
+		for (int j = 0; j < TEAM_SIZE; j++) {
+			int row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
+			int col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
+			Position p = { row , col };
+			t->addTeammate(p, true);
+		}
+		t->addTeammate(Position{
+			room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight()),
+			room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth())
+			},
+			false);
+		Team::Teams.push_back(t);
+	}
+}
+
 void SetupDungeon()
 {
 	int i,j;
@@ -255,6 +292,16 @@ void SetupDungeon()
 
 	for (i = 0;i < 700;i++)
 		maze[rand() % MSZ][rand() % MSZ] = WALL;
+
+	initTeams();
+	for (Team* t : Team::Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			Position p = n->GetPosition();
+			maze[p.row][p.col] = NPC_;
+		}
+	}
 	placeResources();
 	BuildPathBetweenTheRooms();
 }
@@ -292,6 +339,19 @@ void ShowDungeon()
 				break;
 			case MEDICINE_PACK:
 				glColor3d(0, 1, 0); // Green for medicine
+				break;
+			case NPC_:
+				for (Team* t : Team::Teams) {
+					for (NPC* n : t->GetTeammates()) {
+						if (n->GetPosition().row == i && n->GetPosition().col == j) {
+							if (!strcmp(n->getType(), "Warrior"))
+								glColor3d(t->getWarriorColor()[0], t->getWarriorColor()[1], t->getWarriorColor()[2]);
+							else
+								glColor3d(t->getSquireColor()[0], t->getSquireColor()[1], t->getSquireColor()[2]);
+						}
+
+					}
+				}
 				break;
 			}
 			// show cell

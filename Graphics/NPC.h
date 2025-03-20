@@ -26,5 +26,7 @@ public:
 	void SetIsAlive(bool value) { isAlive = value; }
 	bool GetIsAlive() { return isAlive; }
 	TeamID GetTeamID() { return id; }
+
+	virtual const char* getType() = 0;
 };
 

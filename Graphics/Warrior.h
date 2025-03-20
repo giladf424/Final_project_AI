@@ -15,6 +15,8 @@ public:
 	void SetGrenades(int g) { grenades = g; }
 	int GetGrenades() { return grenades; }
 	bool GetAggressive() { return aggressive; }
+
+	const char* getType() override { return "Warrior"; }
 };
 
 // test
