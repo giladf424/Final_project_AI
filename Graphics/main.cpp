@@ -57,7 +57,13 @@ void AddNeighbor(int r, int c, Cell* pCurrent,
 
 
 	if (maze[r][c] == WALL) cost = WALL_COST;
-	else cost = SPACE_COST;
+	else if (maze[r][c] == SPACE) cost = SPACE_COST;
+	else
+	{
+		Cell* temp = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(), 0, pCurrent);
+		black.push_back(*temp);
+		return;
+	}
 	newg = pCurrent->getG() + cost;
 	Cell* pNeighbor = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(),
 		newg, pCurrent);
@@ -139,7 +145,7 @@ void BuildPath(int index1, int index2)
 	while (!pq.empty()) 	
 	{
 		pCurrent = pq.top();
-		if (pCurrent->getH() < 0.001) // this is a targt cell
+		if (pCurrent->getH() <= 1) // this is a targt cell
 		{
 			RestorePath(pCurrent);
 			return;
@@ -249,12 +255,22 @@ void initTeams()
 			roomIndex = rand() % NUM_ROOMS;
 
 		Room* room = rooms[roomIndex];
-		
+		Position temp = {-1,-1};
 		for (int j = 0; j < TEAM_SIZE; j++) {
 			int row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
 			int col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
 			Position p = { row , col };
+			if (t->GetTeammates().size() > 0)
+			{
+				while (p.row == temp.row && p.col == temp.col)
+				{
+					row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
+					col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
+					p = { row , col };
+				}
+			}
 			t->addTeammate(p, true);
+			temp = p;
 		}
 		t->addTeammate(Position{
 			room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight()),
