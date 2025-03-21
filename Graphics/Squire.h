@@ -15,5 +15,8 @@ public:
 	int GetHealthPack() { return healthPack; }
 	const char* getType() override { return "Squire"; }
 
+	// Movement
+	void move(int maze[MSZ][MSZ]) override;
+
 };
 

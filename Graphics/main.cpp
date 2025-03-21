@@ -20,9 +20,6 @@ const int HEIGHT = 700;
 
 const int NUM_ROOMS = 12;
 
-const double WALL_COST = 5;
-const double SPACE_COST = 1;
-
 Room* rooms[NUM_ROOMS];
 
 bool bulletFired = false;

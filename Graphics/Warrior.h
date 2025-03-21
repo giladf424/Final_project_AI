@@ -2,6 +2,9 @@
 #include "definitions.h"
 #include "State.h"
 #include "NPC.h"
+#include "Cell.h"
+#include <queue>
+#include "CompareCells.h"
 
 class Warrior : public NPC
 {
@@ -17,6 +20,13 @@ public:
 	bool GetAggressive() { return aggressive; }
 
 	const char* getType() override { return "Warrior"; }
+
+	// A* Pathfinding
+	std::vector<Cell*> RunAStar(int targetRow, int targetCol, int maze[MSZ][MSZ]);
+	void AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, vector <Cell>& grays, vector <Cell>& black, int maze[MSZ][MSZ]);
+
+	// Movement
+	void move(int maze[MSZ][MSZ]) override;
 };
 
 // test

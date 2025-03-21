@@ -7,6 +7,9 @@ using namespace std;
 
 const int MSZ = 100;
 
+const double WALL_COST = 5;
+const double SPACE_COST = 1;
+
 const int WALL = 0;
 const int SPACE = 1;
 const int MEDICINE_PACK = 2;

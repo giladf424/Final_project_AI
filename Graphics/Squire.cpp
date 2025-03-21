@@ -6,3 +6,7 @@ Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	grenadesPack = MAX_GRENADES_SQUIRE;
 	healthPack = MAX_HP_SQUIRE;
 }
+
+void Squire::move(int maze[MSZ][MSZ])
+{
+}
