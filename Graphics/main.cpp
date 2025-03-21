@@ -1,4 +1,5 @@
 
+#define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
@@ -60,13 +61,13 @@ void AddNeighbor(int r, int c, Cell* pCurrent,
 	else if (maze[r][c] == SPACE) cost = SPACE_COST;
 	else
 	{
-		Cell* temp = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(), 0, pCurrent);
+		Cell* temp = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(), 0, pCurrent, nullptr);
 		black.push_back(*temp);
 		return;
 	}
 	newg = pCurrent->getG() + cost;
 	Cell* pNeighbor = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(),
-		newg, pCurrent);
+		newg, pCurrent, nullptr);
 	// check what to do with the neighbor Cell
 	// 1. if the neighbor is black: do nothing
 	// 2. if the neighbor is white: add it to PQ and to grays
@@ -133,7 +134,7 @@ void BuildPath(int index1, int index2)
 	tr = rooms[index2]->getCenterY();
 	tc = rooms[index2]->getCenterX();
 	Cell* pCurrent;
-	Cell* start = new Cell(r,c ,tr ,tc , 0, nullptr);
+	Cell* start = new Cell(r, c, tr, tc, 0, nullptr, nullptr);
 	priority_queue<Cell*, vector<Cell*>, CompareCells> pq;
 	vector <Cell> grays;
 	vector <Cell> black;
@@ -443,6 +444,7 @@ void mouse(int button, int state, int x, int y)
 }
 void main(int argc, char* argv[]) 
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	glutInit(&argc, argv);
 	// definitions for visual memory (Frame buffer) and double buffer
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);

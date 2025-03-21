@@ -1,4 +1,5 @@
 #pragma once
+#include "definitions.h"
 class Cell
 {
 private:
@@ -6,14 +7,13 @@ private:
 	int target_row, target_col;
 	Cell* parent;
 	double f, g, h;
-//	double 
 public:
 	Cell();
-	Cell(int r, int c,int tr,int tc, double newg,Cell* p);
+	Cell(int r, int c,int tr,int tc, double newg,Cell* p, double sec_map[MSZ][MSZ]);
 	int getRow() { return row; }
 	int getCol() { return col; }
 	Cell* getParent() { return parent; }
-	void ComputeH();
+	void ComputeH(double sec_map[MSZ][MSZ]);
 
 	double getF() { return f; }
 	double getH() { return h; }
@@ -24,4 +24,3 @@ public:
 	bool operator == (const Cell& other) { return row == other.row && col == other.col; }
 
 };
-

@@ -13,7 +13,7 @@ std::vector<Cell*> Warrior::RunAStar(int targetRow, int targetCol, int maze[MSZ]
     vector<Cell> grays;
     vector<Cell> black;
 
-    Cell* start = new Cell(pos.row, pos.col, targetRow, targetCol, 0, nullptr);
+    Cell* start = new Cell(pos.row, pos.col, targetRow, targetCol, 0, nullptr, nullptr);
     pq.push(start);
     grays.push_back(*start);
 
@@ -58,7 +58,7 @@ void Warrior::AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, ve
     else cost = SPACE_COST;
 
     newg = pCurrent->getG() + cost;
-    Cell* pNeighbor = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(), newg, pCurrent);
+    Cell* pNeighbor = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(), newg, pCurrent, nullptr);
 
     itGray = find(grays.begin(), grays.end(), *pNeighbor);
     itBlack = find(black.begin(), black.end(), *pNeighbor);

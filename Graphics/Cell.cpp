@@ -13,7 +13,7 @@ Cell::Cell()
 	f = 0;
 }
 // gets row, col, target row, target col, parent g and parent itself
-Cell::Cell(int r, int c, int tr, int tc, double newg, Cell* p)
+Cell::Cell(int r, int c, int tr, int tc, double newg, Cell* p, double sec_map[MSZ][MSZ])
 {
 	row = r;
 	col = c;
@@ -21,12 +21,20 @@ Cell::Cell(int r, int c, int tr, int tc, double newg, Cell* p)
 	target_row = tr;
 	target_col = tc;
 	g = newg;
-	ComputeH();
+	//DuplicateSecurityMap(sec_map, security_map);
+	ComputeH(sec_map);
 	f = h + g;
 }
 
 // h is computed basing on Manhattan distance
-void Cell::ComputeH()
+void Cell::ComputeH(double sec_map[MSZ][MSZ])
 {
-	h = abs(row - target_row) + abs(col - target_col);
+	if (sec_map == nullptr)
+		h = abs(row - target_row) + abs(col - target_col);
+	else
+	{
+		double distance = sqrt(pow(row - target_row, 2) + pow(col - target_col, 2));
+		double security = sec_map[row][col];
+		h = distance + security * SECURITY_COEFFICIENT;
+	}
 }
