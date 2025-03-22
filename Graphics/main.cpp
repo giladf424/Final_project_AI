@@ -22,6 +22,7 @@ const int HEIGHT = 700;
 const int NUM_ROOMS = 12;
 
 Room* rooms[NUM_ROOMS];
+RoomScope roomScopes[NUM_ROOMS];
 
 bool bulletFired = false;
 bool grenadeThrown = false;
@@ -32,7 +33,9 @@ Grenade* pg = nullptr;
 
 
 int maze[MSZ][MSZ] = { 0 }; // WALLs
+int dupMaze[MSZ][MSZ] = { 0 };
 double security_map[MSZ][MSZ] = {0}; // 
+double dupSecurityMap[MSZ][MSZ] = { 0 };
 
 
 void RestorePath(Cell* pc)
@@ -199,6 +202,14 @@ void BuildPathBetweenTheRooms()
 		}
 }
 
+Position randomPositionInRoom(Room* room)
+{
+	int row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
+	int col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
+	Position p = { row, col };
+	return p;
+}
+
 Position RandomRoomPlacement()
 {
 	// Randomly select a room
@@ -206,11 +217,7 @@ Position RandomRoomPlacement()
 	Room* room = rooms[roomIndex];
 
 	// Randomly select a position within the room
-	int row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
-	int col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
-	Position p = { row, col };
-
-	return p;
+	return randomPositionInRoom(room);
 }
 
 void placeResources()
@@ -257,28 +264,21 @@ void initTeams()
 			roomIndex = rand() % NUM_ROOMS;
 
 		Room* room = rooms[roomIndex];
-		Position temp = {-1,-1};
+		Position p[TEAM_SIZE];
 		for (int j = 0; j < TEAM_SIZE; j++) {
-			int row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
-			int col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
-			Position p = { row , col };
-			if (t->GetTeammates().size() > 0)
+			p[j] = randomPositionInRoom(room);
+			if (j > 0)
 			{
-				while (p.row == temp.row && p.col == temp.col)
-				{
-					row = room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight());
-					col = room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth());
-					p = { row , col };
-				}
+				while (p[j].row == p[j - 1].row && p[j].col == p[j - 1].col)
+					p[j] = randomPositionInRoom(room);
 			}
-			t->addTeammate(p, true);
-			temp = p;
+			t->addTeammate(p[j], true);
 		}
-		t->addTeammate(Position{
-			room->getCenterY() - room->getHeight() / 2 + (rand() % room->getHeight()),
-			room->getCenterX() - room->getWidth() / 2 + (rand() % room->getWidth())
-			},
-			false);
+		Position pos = randomPositionInRoom(room);
+		while ((pos.row == p[0].row && pos.col == p[0].col) || (pos.row == p[1].row && pos.col == p[1].col))
+			pos = randomPositionInRoom(room);
+
+		t->addTeammate(pos, false);
 		Team::Teams.push_back(t);
 	}
 }
@@ -303,6 +303,7 @@ void SetupDungeon()
 		} while (hasOverlap); // check the validity of the room
 			
 		rooms[i] = new Room(cx, cy, w, h,maze);
+		roomScopes[i] = { cy - h / 2, cy + h / 2, cx - w / 2, cx + w / 2 };
 	}
 
 	for (i = 0;i < 700;i++)
@@ -391,6 +392,53 @@ void GenerateSecurityMap()
 		g->SimulateExplosion(maze, security_map);
 	}
 
+}
+
+vector<Position> GetEnemiesPositionsInRoom(int roomIndex, Team* team)
+{
+	vector<Position> enemiesPos;
+	RoomScope rs = roomScopes[roomIndex];
+	for (Team* t : Team::Teams)
+	{
+		if (t->GetTeamID().team != team->GetTeamID().team)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				Position p = n->GetPosition();
+				if (p.row >= rs.startRow && p.row <= rs.endRow && p.col >= rs.startCol && p.col <= rs.endCol)
+					enemiesPos.push_back(p);
+			}
+		}
+	}
+	return enemiesPos;
+}
+
+void GenerateSecurityMapForSpecificNPC(NPC* n, vector<Position> enemiesPos)
+{
+	DuplicateSecurityMap(security_map, dupSecurityMap);
+
+	int numSimulations = 20;
+	if (enemiesPos.size() > 0)
+	{
+		for (Position p : enemiesPos)
+		{
+			for (int i = 0; i < numSimulations; i++)
+			{
+				Grenade* g = new Grenade(p.row, p.col);
+				g->SimulateExplosion(maze, dupSecurityMap);
+				delete g;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < numSimulations; i++)
+		{
+			Grenade* g = new Grenade(n->GetPosition().row, n->GetPosition().col);
+			g->SimulateExplosion(maze, dupSecurityMap);
+			delete g;
+		}
+	}
 }
 
 

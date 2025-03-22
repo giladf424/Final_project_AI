@@ -31,6 +31,8 @@ const int TEAM_SIZE = 2;
 
 extern int maze[MSZ][MSZ];
 extern int dupMaze[MSZ][MSZ];
+extern double security_map[MSZ][MSZ];
+extern double dupSecurityMap[MSZ][MSZ];
 
 typedef struct
 {
@@ -41,6 +43,13 @@ typedef struct
 {
 	int team, place;
 }TeamID;
+
+typedef struct
+{
+    int startRow, endRow;
+    int startCol, endCol;
+}RoomScope;
+
 
 //const unordered_map<string, array<double, 3>> team_colors = {
 //    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},
