@@ -28,6 +28,6 @@ public:
 	TeamID GetTeamID() { return id; }
 
 	virtual const char* getType() = 0;
-	virtual void move(int maze[MSZ][MSZ]) = 0; // Add this line
+	void move(Position p); // Add this line
 };
 

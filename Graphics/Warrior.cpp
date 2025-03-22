@@ -5,6 +5,7 @@ Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	bullets = MAX_BULLETS_WARRIOR;
 	grenades = MAX_GRENADES_WARRIOR;
 	aggressive = (rand() % 2 == 0);
+	pCurrentState = new PatrolState();
 }
 
 std::vector<Cell*> Warrior::RunAStar(int targetRow, int targetCol, int maze[MSZ][MSZ])
@@ -89,7 +90,12 @@ void Warrior::AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, ve
     }
 }
 
-void Warrior::move(int maze[MSZ][MSZ])
+void Warrior::moveToEnemy(Position enemyPos)
 {
-
+	vector<Cell*> path = RunAStar(enemyPos.row, enemyPos.col, maze);
+	if (path.size() > 1) {
+		Position nextPos = { path[1]->getRow(), path[1]->getCol() };
+		SetPosition(nextPos);
+	}
 }
+

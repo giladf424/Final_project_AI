@@ -9,6 +9,11 @@ void PatrolState::OnEnter(NPC* p)
 	// Initialize patrol behavior
 	Warrior* w = (Warrior*)p;
     w->SetIsMoving(true);
+	Position target = Team::findNearestEnemy(w);
+	if (target.row != -1 && target.col != -1)
+		w->moveToEnemy(target);
+
+
     std::cout << "Entering PatrolState\n";
 }
 

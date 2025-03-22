@@ -1,6 +1,6 @@
 #pragma once
 #include "definitions.h"
-#include "State.h"
+#include "PatrolState.h"
 #include "NPC.h"
 #include "Cell.h"
 #include <queue>
@@ -25,8 +25,8 @@ public:
 	std::vector<Cell*> RunAStar(int targetRow, int targetCol, int maze[MSZ][MSZ]);
 	void AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, vector <Cell>& grays, vector <Cell>& black, int maze[MSZ][MSZ]);
 
-	// Movement
-	void move(int maze[MSZ][MSZ]) override;
+	// Movement to enemy
+	void moveToEnemy(Position enemyPos);
 };
 
 // test

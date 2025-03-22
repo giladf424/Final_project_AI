@@ -24,5 +24,8 @@ public:
 	void addTeammate(Position start_pos, bool isWarrior);
 	array<double, 3> getWarriorColor() { return teamColor.at(0); };
 	array<double, 3> getSquireColor() { return teamColor.at(1); };
+
+	// Find nearest enemy
+	static Position findNearestEnemy(NPC* n);
 };
 

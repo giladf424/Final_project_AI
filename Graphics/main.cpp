@@ -25,6 +25,7 @@ Room* rooms[NUM_ROOMS];
 
 bool bulletFired = false;
 bool grenadeThrown = false;
+bool startGame = false;
 Bullet* pb=nullptr;
 Grenade* pg = nullptr;
 
@@ -412,6 +413,18 @@ void idle()
 		pb->move(maze);
 	if (grenadeThrown)
 		pg->expand(maze);
+	if (startGame)
+	{
+		// move all NPCs
+		for (Team* t : Team::Teams)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				n->GetState()->OnEnter(n);
+				n->move(maze);
+			}
+		}
+	}
 	glutPostRedisplay(); // indirect call to display
 }
 
@@ -429,6 +442,9 @@ void menu(int choice)
 		break;
 	case 3: // security map
 		GenerateSecurityMap();
+		break;
+	case 4: // start game
+		startGame = true;
 		break;
 	}
 }
@@ -464,6 +480,7 @@ void main(int argc, char* argv[])
 	glutAddMenuEntry("Fire bullet", 1);
 	glutAddMenuEntry("Throw Grenade", 2);
 	glutAddMenuEntry("Generate Security Map", 3);
+	glutAddMenuEntry("Start the game!", 4);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 

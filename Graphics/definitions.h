@@ -29,6 +29,9 @@ const int AMMUNITION_PACK_AMOUNT = 2;
 const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
 
+extern int maze[MSZ][MSZ];
+extern int dupMaze[MSZ][MSZ];
+
 typedef struct
 {
 	int row, col;

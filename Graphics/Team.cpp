@@ -28,3 +28,23 @@ void Team::addTeammate(Position start_pos, bool isWarrior)
 	else
 		teammates.push_back(new Squire(start_pos, generateTeamIDForTeammate()));
 }
+
+Position Team::findNearestEnemy(NPC* n)
+{
+	int minDistance = INT_MAX;
+	Position enemyPos = { -1, -1 }; // Default value if no enemy is found
+	for (Team* t : Teams) {
+		if (t->GetTeamID().team != n->GetTeamID().team) {
+			for (NPC* enemy : t->GetTeammates()) {
+				if (enemy->GetIsAlive()) {
+					int distance = abs(enemy->GetPosition().row - n->GetPosition().row) + abs(enemy->GetPosition().col - n->GetPosition().col); // Manhattan distance
+					if (distance < minDistance) {
+						minDistance = distance;
+						enemyPos = enemy->GetPosition();
+					}
+				}
+			}
+		}
+	}
+	return enemyPos;
+}

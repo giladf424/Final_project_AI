@@ -1,5 +1,6 @@
 #pragma once
 #include "NPC.h"
+#include "IdleState.h"
 
 class Squire : public NPC
 {
@@ -16,7 +17,7 @@ public:
 	const char* getType() override { return "Squire"; }
 
 	// Movement
-	void move(int maze[MSZ][MSZ]) override;
+	//void move(int maze[MSZ][MSZ]) override;
 
 };
 
