@@ -8,6 +8,9 @@ void IdleState::OnEnter(NPC* p)
     // Initialize idle behavior
     Squire* s = (Squire*)p;
     s->SetIsMoving(true);
+	Position pos = Team::findNearestTeammate(p);
+	if (pos.row != -1 && pos.col != -1)
+		//s->MoveToTeamMate(pos);
     std::cout << "Entering IdleState\n";
 }
 

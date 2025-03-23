@@ -49,6 +49,25 @@ Position Team::findNearestEnemy(NPC* n)
 	return enemyPos;
 }
 
+Position Team::findNearestTeammate(NPC* n)
+{
+	int minDistance = INT_MAX;
+	Position teammatePos = { -1, -1 }; // Default value if no teammate is found
+	for (NPC* teammate : Teams.at(n->GetTeamID().team)->GetTeammates())
+	{
+		if (teammate->GetIsAlive() && teammate->GetPosition().row != n->GetPosition().row && teammate->GetPosition().col != n->GetPosition().col)
+		{
+			int distance = abs(teammate->GetPosition().row - n->GetPosition().row) + abs(teammate->GetPosition().col - n->GetPosition().col); // Manhattan distance
+			if (distance < minDistance)
+			{
+				minDistance = distance;
+				teammatePos = teammate->GetPosition();
+			}
+		}
+	}
+	return teammatePos;
+}
+
 vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors)
 {
 	vector<Position> enemiesPos;

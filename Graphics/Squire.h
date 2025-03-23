@@ -1,6 +1,10 @@
 #pragma once
 #include "NPC.h"
 #include "IdleState.h"
+#include <queue>
+#include "CompareCells.h"
+#include "Cell.h"
+#include "definitions.h"
 
 class Squire : public NPC
 {
@@ -17,6 +21,7 @@ public:
 	const char* getType() override { return "Squire"; }
 
 	// Movement
+	void MoveToTeamMate(Position teammatePos);
 	//void move(int maze[MSZ][MSZ]) override;
 
 };

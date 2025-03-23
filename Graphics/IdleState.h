@@ -1,5 +1,7 @@
 #pragma once
 #include "State.h"
+#include "Team.h"
+
 class IdleState :
 	public State
 {

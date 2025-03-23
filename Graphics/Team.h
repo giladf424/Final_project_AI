@@ -25,8 +25,10 @@ public:
 	array<double, 3> getWarriorColor() { return teamColor.at(0); };
 	array<double, 3> getSquireColor() { return teamColor.at(1); };
 
-	// Find nearest enemy
-	static Position findNearestEnemy(NPC* n);
+	// Find nearest logic
+	static Position findNearestEnemy(NPC* n); 
+	static Position findNearestEnemyInRoom(NPC* n, int roomIndex);
+	static Position findNearestTeammate(NPC* n);
 	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
 };
 
