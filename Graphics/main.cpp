@@ -33,9 +33,9 @@ Grenade* pg = nullptr;
 
 
 int maze[MSZ][MSZ] = { 0 }; // WALLs
-int dupMaze[MSZ][MSZ] = { 0 };
-double security_map[MSZ][MSZ] = {0}; // 
-double dupSecurityMap[MSZ][MSZ] = { 0 };
+int dupMaze[MSZ][MSZ] = { 0 }; // copy of maze
+double security_map[MSZ][MSZ] = { 0 }; // security map
+double dupSecurityMap[MSZ][MSZ] = { 0 }; // copy of security_map
 
 
 void RestorePath(Cell* pc)
@@ -469,7 +469,6 @@ void idle()
 			for (NPC* n : t->GetTeammates())
 			{
 				n->GetState()->OnEnter(n);
-				n->move(maze);
 			}
 		}
 	}

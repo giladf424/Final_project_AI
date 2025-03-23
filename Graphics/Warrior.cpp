@@ -92,10 +92,25 @@ void Warrior::AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, ve
 
 void Warrior::moveToEnemy(Position enemyPos)
 {
-	vector<Cell*> path = RunAStar(enemyPos.row, enemyPos.col, maze);
-	if (path.size() > 1) {
-		Position nextPos = { path[1]->getRow(), path[1]->getCol() };
-		SetPosition(nextPos);
-	}
+    bool isEnemyInRange = false;
+    if (isMoving)
+    {
+        DuplicateMaze(maze, dupMaze);
+        vector<Cell*> path = RunAStar(enemyPos.row, enemyPos.col, dupMaze);
+        if (path.size() > 1) {
+            Position nextPos = { path[1]->getRow(), path[1]->getCol() };
+            move(nextPos);
+            isEnemyInRange = abs(enemyPos.row - pos.row) + abs(enemyPos.col - pos.col) <= 5;
+        }
+		if (isEnemyInRange)
+			pCurrentState->Transition(this);
+    }
+	
+}
+
+void Warrior::shootEnemy(Position enemyPos)
+{
+
+
 }
 

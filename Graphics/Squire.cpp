@@ -8,6 +8,3 @@ Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	pCurrentState = new IdleState();
 }
 
-void Squire::move(int maze[MSZ][MSZ])
-{
-}

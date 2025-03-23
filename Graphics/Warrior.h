@@ -3,6 +3,7 @@
 #include "PatrolState.h"
 #include "NPC.h"
 #include "Cell.h"
+#include "definitions.h"
 #include <queue>
 #include "CompareCells.h"
 
@@ -25,8 +26,9 @@ public:
 	std::vector<Cell*> RunAStar(int targetRow, int targetCol, int maze[MSZ][MSZ]);
 	void AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, vector <Cell>& grays, vector <Cell>& black, int maze[MSZ][MSZ]);
 
-	// Movement to enemy
+	// Enemy interaction methods 
 	void moveToEnemy(Position enemyPos);
+	void shootEnemy(Position enemyPos);
 };
 
 // test

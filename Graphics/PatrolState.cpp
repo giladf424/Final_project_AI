@@ -12,8 +12,6 @@ void PatrolState::OnEnter(NPC* p)
 	Position target = Team::findNearestEnemy(w);
 	if (target.row != -1 && target.col != -1)
 		w->moveToEnemy(target);
-
-
     std::cout << "Entering PatrolState\n";
 }
 
@@ -22,8 +20,7 @@ void PatrolState::Transition(NPC* p)
     // Exiting from current state
 	OnExit(p);
 
-    Warrior* w = (Warrior*)p;
-	w->SetState(new CombatState());
+	p->SetState(new CombatState());
 
     // entering new state
     p->GetState()->OnEnter(p);

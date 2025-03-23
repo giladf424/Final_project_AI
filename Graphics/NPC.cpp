@@ -8,9 +8,10 @@ NPC::NPC(Position startPos, TeamID teamID)
 	pos = startPos;
 }
 
-void NPC::move(Position p)
+void NPC::move(Position pos)
 {
 	maze[GetPosition().row][GetPosition().col] = SPACE;
 	maze[pos.row][pos.col] = NPC_;
-	SetPosition(p);
+	SetPosition(pos);
+
 }
