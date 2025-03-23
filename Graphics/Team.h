@@ -27,5 +27,6 @@ public:
 
 	// Find nearest enemy
 	static Position findNearestEnemy(NPC* n);
+	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
 };
 

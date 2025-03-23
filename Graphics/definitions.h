@@ -3,10 +3,11 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
+#include <queue>
 using namespace std;
 
 const int MSZ = 100;
-
+const int NUM_ROOMS = 12;
 const double WALL_COST = 5;
 const double SPACE_COST = 1;
 
@@ -15,6 +16,8 @@ const int SPACE = 1;
 const int MEDICINE_PACK = 2;
 const int AMMUNITION_PACK = 3;
 const int NPC_ = 4;
+const int BLACK = 5;
+const int GRAY = 6;
 const double PI = 3.14;
 const double SECURITY_FACTOR = 0.001;
 const double SECURITY_COEFFICIENT = 10;
@@ -28,6 +31,7 @@ const int MEDICINE_PACK_AMOUNT = 2;
 const int AMMUNITION_PACK_AMOUNT = 2;
 const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
+
 
 extern int maze[MSZ][MSZ];
 extern int dupMaze[MSZ][MSZ];
@@ -50,6 +54,7 @@ typedef struct
     int startCol, endCol;
 }RoomScope;
 
+extern RoomScope roomScopes[NUM_ROOMS];
 
 //const unordered_map<string, array<double, 3>> team_colors = {
 //    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},

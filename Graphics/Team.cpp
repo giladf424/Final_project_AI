@@ -48,3 +48,25 @@ Position Team::findNearestEnemy(NPC* n)
 	}
 	return enemyPos;
 }
+
+vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors)
+{
+	vector<Position> enemiesPos;
+	RoomScope rs = roomScopes[roomIndex];
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamID().team != teamNum)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				if (onlyWarriors && strcmp(n->getType(), "Squire") == 0)
+					continue;
+
+				Position p = n->GetPosition();
+				if (p.row >= rs.startRow && p.row <= rs.endRow && p.col >= rs.startCol && p.col <= rs.endCol)
+					enemiesPos.push_back(p);
+			}
+		}
+	}
+	return enemiesPos;
+}

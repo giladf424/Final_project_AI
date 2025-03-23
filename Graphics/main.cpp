@@ -19,7 +19,7 @@ using namespace std;
 const int WIDTH = 700;
 const int HEIGHT = 700;
 
-const int NUM_ROOMS = 12;
+
 
 Room* rooms[NUM_ROOMS];
 RoomScope roomScopes[NUM_ROOMS];
@@ -394,28 +394,11 @@ void GenerateSecurityMap()
 
 }
 
-vector<Position> GetEnemiesPositionsInRoom(int roomIndex, Team* team)
-{
-	vector<Position> enemiesPos;
-	RoomScope rs = roomScopes[roomIndex];
-	for (Team* t : Team::Teams)
-	{
-		if (t->GetTeamID().team != team->GetTeamID().team)
-		{
-			for (NPC* n : t->GetTeammates())
-			{
-				Position p = n->GetPosition();
-				if (p.row >= rs.startRow && p.row <= rs.endRow && p.col >= rs.startCol && p.col <= rs.endCol)
-					enemiesPos.push_back(p);
-			}
-		}
-	}
-	return enemiesPos;
-}
-
-void GenerateSecurityMapForSpecificNPC(NPC* n, vector<Position> enemiesPos)
+void GenerateSecurityMapForSpecificNPC(NPC* n)
 {
 	DuplicateSecurityMap(security_map, dupSecurityMap);
+	int roomIndex = n->GetRoomIndex();
+	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
 
 	int numSimulations = 20;
 	if (enemiesPos.size() > 0)
