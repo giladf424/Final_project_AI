@@ -31,6 +31,7 @@ const int MEDICINE_PACK_AMOUNT = 2;
 const int AMMUNITION_PACK_AMOUNT = 2;
 const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
+const int BFS_ITERATIONS = 150;
 
 
 extern int maze[MSZ][MSZ];
