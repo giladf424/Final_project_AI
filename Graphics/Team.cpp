@@ -89,3 +89,16 @@ vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, boo
 	}
 	return enemiesPos;
 }
+
+NPC* Team::GetTeammate(Position pos)
+{
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (n->GetPosition().row == pos.row && n->GetPosition().col == pos.col)
+				return n;
+		}
+	}
+	return nullptr;
+}

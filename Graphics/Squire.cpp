@@ -15,10 +15,12 @@ void Squire::MoveToTeamMate(Position teammatePos)
 	if (isMoving)
 	{
 		DuplicateMaze(maze, dupMaze);
+		DuplicateSecurityMap(security_map, dupSecurityMap);
 		// Run A* algorithm to find the path to the teammate
-		Position nextPos = RunAStar(teammatePos, dupMaze, security_map);
+		Position nextPos = RunAStar(teammatePos, dupMaze, dupSecurityMap);
 		// Move to the next position
 		move(nextPos);
+
 	}
 }
 

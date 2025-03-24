@@ -100,10 +100,10 @@ void Warrior::moveToEnemy(Position enemyPos)
         Position nextStep = NPC::RunAStar(enemyPos, dupMaze, dupSecurityMap);
         move(nextStep);
         this->GetRoomIndex();
-        if (path.size() > 1) {
+        /*if (path.size() > 1) {
             Position nextPos = { path[1]->getRow(), path[1]->getCol() };
             isEnemyInRange = abs(enemyPos.row - pos.row) + abs(enemyPos.col - pos.col) <= 5;
-        }
+        }*/
 		if (isEnemyInRange)
 			pCurrentState->Transition(this);
     }

@@ -8,6 +8,7 @@ void FleeState::OnEnter(NPC* p)
 {
     // Initialize combat behavior
     Warrior* w = (Warrior*)p;
+	//Position safestPos = findSafestPointOnMap(p);
     w->SetIsMoving(true);
     std::cout << "Entering FleeState\n";
 }
