@@ -327,7 +327,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(time(0));
+	srand(1);
 
 	SetupDungeon();
 }
@@ -446,14 +446,17 @@ void idle()
 		pg->expand(maze);
 	if (startGame)
 	{
+		GenerateSecurityMap();
 		// move all NPCs
 		for (Team* t : Team::Teams)
 		{
 			for (NPC* n : t->GetTeammates())
 			{
+				GenerateSecurityMapForSpecificNPC(n);
 				n->GetState()->OnEnter(n);
 			}
 		}
+		Sleep(150);
 	}
 	glutPostRedisplay(); // indirect call to display
 }

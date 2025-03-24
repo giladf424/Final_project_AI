@@ -96,7 +96,8 @@ void Warrior::moveToEnemy(Position enemyPos)
     if (isMoving)
     {
         DuplicateMaze(maze, dupMaze);
-        vector<Cell*> path = RunAStar(enemyPos.row, enemyPos.col, dupMaze);
+		DuplicateSecurityMap(security_map, dupSecurityMap);
+        Position nextStep = RunAStar(enemyPos, dupMaze, dupSecurityMap);
         if (path.size() > 1) {
             Position nextPos = { path[1]->getRow(), path[1]->getCol() };
             move(nextPos);

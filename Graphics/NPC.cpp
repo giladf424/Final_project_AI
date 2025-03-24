@@ -35,6 +35,7 @@ Position NPC::RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ
 		Cell* c = grays.top();
 		grays.pop();
 		delete c;
+		c = nullptr;
 	}
 	return nextPos;
 }
