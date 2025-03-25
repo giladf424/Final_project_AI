@@ -55,7 +55,16 @@ typedef struct
     int startCol, endCol;
 }RoomScope;
 
+typedef struct
+{
+	vector<Position> path;
+	Position start;
+	Position end;
+	int sRoomIndex, eRoomIndex;
+}Corridor;
+
 extern RoomScope roomScopes[NUM_ROOMS];
+extern vector<Corridor> corridors;
 
 //const unordered_map<string, array<double, 3>> team_colors = {
 //    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},
@@ -72,3 +81,4 @@ const unordered_map<string, array<double, 3>> team_colors = {
 
 void DuplicateMaze(int source[MSZ][MSZ], int target[MSZ][MSZ]);
 void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ]);
+int GetRoomIndex(Position pos);

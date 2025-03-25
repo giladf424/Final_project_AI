@@ -22,10 +22,6 @@ public:
 
 	const char* getType() override { return "Warrior"; }
 
-	// A* Pathfinding
-	std::vector<Cell*> RunAStar(int targetRow, int targetCol, int maze[MSZ][MSZ]);
-	void AddNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, vector <Cell>& grays, vector <Cell>& black, int maze[MSZ][MSZ]);
-
 	// Enemy interaction methods 
 	void moveToEnemy(Position enemyPos);
 	void shootEnemy(Position enemyPos);

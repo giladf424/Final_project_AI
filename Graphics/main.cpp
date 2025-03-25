@@ -23,10 +23,12 @@ const int HEIGHT = 700;
 
 Room* rooms[NUM_ROOMS];
 RoomScope roomScopes[NUM_ROOMS];
+vector<Corridor> corridors;
 
 bool bulletFired = false;
 bool grenadeThrown = false;
 bool startGame = false;
+bool paused = true;
 Bullet* pb=nullptr;
 Grenade* pg = nullptr;
 
@@ -37,6 +39,33 @@ int dupMaze[MSZ][MSZ] = { 0 }; // copy of maze
 double security_map[MSZ][MSZ] = { 0 }; // security map
 double dupSecurityMap[MSZ][MSZ] = { 0 }; // copy of security_map
 
+
+void FindAllCorridors()
+{
+	int sRow, sCol, eRow, eCol;
+
+	for (int i = 0; i < NUM_ROOMS; i++)
+	{
+		sRow = roomScopes[i].startRow;
+		sCol = roomScopes[i].startCol;
+		eRow = roomScopes[i].endRow;
+		eCol = roomScopes[i].endCol;
+		// up
+		if (sRow - 1 >= 0)
+		{
+			for (int j = sCol; j <= eCol; j++)
+			{
+				if (maze[sRow - 1][j] == SPACE && GetRoomIndex({sRow - 1, j}) == -1)
+				{
+					Position sRoom = { sRow, j };
+					Position sCorridor = { sRow - 1, j };
+					if (GetRoomIndex(sRoom) == -1)
+						std::cout << "Error: room not found\n";
+				}
+			}
+		}
+	}
+}
 
 void RestorePath(Cell* pc)
 {
@@ -444,7 +473,7 @@ void idle()
 		pb->move(maze);
 	if (grenadeThrown)
 		pg->expand(maze);
-	if (startGame)
+	if (!paused)
 	{
 		GenerateSecurityMap();
 		// move all NPCs
@@ -491,6 +520,14 @@ void mouse(int button, int state, int x, int y)
 		pg = new Grenade(MSZ * (HEIGHT - y) / (double)HEIGHT, MSZ * x / (double)WIDTH);
 	}
 }
+
+void keyboard(unsigned char key, int x, int y) {
+	if (key == ' ')
+		paused = !paused;
+	if (key == 'q')
+		exit(0);
+}
+
 void main(int argc, char* argv[]) 
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -507,6 +544,7 @@ void main(int argc, char* argv[])
 	glutIdleFunc(idle);
 	
 	glutMouseFunc(mouse);
+	glutKeyboardFunc(keyboard);
 
 	// menu
 	glutCreateMenu(menu);
