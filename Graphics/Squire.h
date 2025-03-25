@@ -22,11 +22,11 @@ public:
 
 	// Movement
 	void MoveToTeamMate(Position teammatePos);
-	void RunFromEnemy();
+	void RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate);
 	//void move(int maze[MSZ][MSZ]) override;
-	Position RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	Cell* RunBFSIteration(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], queue<Cell*>& grays);
-    void CheckNeighbor(int r, int c, Cell* pCurrent, queue<Cell*>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	Position RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n);
+	Cell* RunBFSIteration(int dupMaze[MSZ][MSZ], queue<Cell*>& grays);
+    void CheckNeighbor(int r, int c, Cell* pCurrent, queue<Cell*>& grays, int dupMaze[MSZ][MSZ]);
 
 };
 

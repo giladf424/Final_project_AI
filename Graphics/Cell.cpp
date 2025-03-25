@@ -13,14 +13,12 @@ Cell::Cell()
 	f = 0;
 }
 
-// gets row, col, parent and security map
-Cell::Cell(int row, int col, Cell* p, double sec_map[MSZ][MSZ])
+// gets row, col, parent
+Cell::Cell(int row, int col, Cell* p)
 {
 	this->row = row;
 	this->col = col;
 	parent = p;
-	ComputeH(sec_map);
-	f = h + g;
 }
 
 // gets row, col, target row, target col, parent g and parent itself
