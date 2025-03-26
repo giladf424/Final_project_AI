@@ -286,6 +286,43 @@ void initTeams()
 	}
 }
 
+bool isCorridor(Position p)
+{
+	for (Corridor* c : Corridor::corridors)
+	{
+		if (c->isEntrance(p))
+			return true;
+	}
+	return false;
+}
+
+void initCorridors()
+{
+	DuplicateMaze(maze, dupMaze);
+	int sRow, sCol, eRow, eCol;
+	for (int i = 0; i < NUM_ROOMS; i++)
+	{
+		sRow = roomScopes[i].startRow;
+		sCol = roomScopes[i].startCol;
+		eRow = roomScopes[i].endRow;
+		eCol = roomScopes[i].endCol;
+		// up
+		if (sRow - 1 >= 0)
+		{
+			for (int j = sCol; j <= eCol; j++)
+			{
+				if (maze[sRow - 1][j] == SPACE && GetRoomIndex({ sRow - 1, j }) == -1 && !isCorridor({sRow - 1, j}))
+				{
+					Position sRoom = { sRow, j };
+					Position sCorridor = { sRow - 1, j };
+					if (GetRoomIndex(sRoom) == -1)
+						std::cout << "Error: room not found\n";
+				}
+			}
+		}
+	}
+}
+
 void SetupDungeon()
 {
 	int i,j;
