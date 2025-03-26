@@ -14,6 +14,7 @@ public:
 	void show();
 	void setIsMoving(bool value) { isMoving = value; }
 	void SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ]);
+	bool IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos);
 
 };
 

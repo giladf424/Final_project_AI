@@ -6,6 +6,8 @@
 #include "definitions.h"
 #include <queue>
 #include "CompareCells.h"
+#include "Bullet.h"
+#include "Grenade.h"
 
 class Warrior : public NPC
 {
@@ -24,7 +26,10 @@ public:
 
 	// Enemy interaction methods 
 	void moveToEnemy(Position enemyPos);
-	void shootEnemy(Position enemyPos);
+	void attackEnemy(Position enemyPos);
+	void fireBullet(Position enemyPos);
+	void throwGrenade(Position enemyPos);
+
 };
 
 // test

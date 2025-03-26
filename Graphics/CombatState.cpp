@@ -11,7 +11,7 @@ void CombatState::OnEnter(NPC* p)
 	// Initialize combat behavior
 	Warrior* w = (Warrior*)p;
 	Position target = Team::findNearestEnemy(w);
-
+	w->attackEnemy(target);
 	w->SetIsMoving(false);
 	std::cout << "Entering CombatState\n";
 }

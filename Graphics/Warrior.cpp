@@ -28,12 +28,29 @@ void Warrior::moveToEnemy(Position enemyPos)
 		if (isEnemyInRange)
 			pCurrentState->Transition(this);
     }
-	
 }
 
-void Warrior::shootEnemy(Position enemyPos)
+void Warrior::attackEnemy(Position enemyPos)
+{
+	Grenade* grenade = new Grenade(pos.row, pos.col);
+    if (grenade->IsEnemyFoundByExplosion(maze, enemyPos))
+    {
+        //enemy is found
+		int chooseRandomWeapon = rand() % 10;
+		if (chooseRandomWeapon < 7)
+			fireBullet(enemyPos);
+		else
+			throwGrenade(enemyPos);
+
+    }
+}
+
+void Warrior::fireBullet(Position enemyPos)
 {
 
+}
 
+void Warrior::throwGrenade(Position enemyPos)
+{
 }
 

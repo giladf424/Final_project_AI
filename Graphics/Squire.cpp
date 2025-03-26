@@ -17,7 +17,9 @@ void Squire::MoveToTeamMate(Position teammatePos)
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		// Run A* algorithm to find the path to the teammate
+		isAstar = true;
 		Position nextPos = RunAStar(teammatePos, dupMaze, dupSecurityMap);
+		isAstar = false;
 		// Move to the next position
 		move(nextPos);
 
@@ -30,6 +32,7 @@ void Squire::RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate)
 	{
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
+		isAstar = false;
 		Position nextStep = RunBFS(dupMaze, dupSecurityMap, nearestTeamate);
 		move(nextStep);
 	}
