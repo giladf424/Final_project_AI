@@ -31,6 +31,7 @@ const int MEDICINE_PACK_AMOUNT = 2;
 const int AMMUNITION_PACK_AMOUNT = 2;
 const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
+const int MAX_CORRIDORS_ENTRANCES = 4;
 const int BFS_ITERATIONS = 150;
 
 
@@ -56,16 +57,7 @@ typedef struct
     int startCol, endCol;
 }RoomScope;
 
-typedef struct
-{
-	vector<Position> path;
-	Position start;
-	Position end;
-	int sRoomIndex, eRoomIndex;
-}Corridor;
-
 extern RoomScope roomScopes[NUM_ROOMS];
-extern vector<Corridor> corridors;
 
 //const unordered_map<string, array<double, 3>> team_colors = {
 //    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},

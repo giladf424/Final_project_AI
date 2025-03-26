@@ -13,6 +13,7 @@
 #include "Grenade.h"
 #include "definitions.h"
 #include "Team.h"
+#include "Corridor.h"
 
 using namespace std;
 
@@ -39,33 +40,6 @@ int dupMaze[MSZ][MSZ] = { 0 }; // copy of maze
 double security_map[MSZ][MSZ] = { 0 }; // security map
 double dupSecurityMap[MSZ][MSZ] = { 0 }; // copy of security_map
 
-
-void FindAllCorridors()
-{
-	int sRow, sCol, eRow, eCol;
-
-	for (int i = 0; i < NUM_ROOMS; i++)
-	{
-		sRow = roomScopes[i].startRow;
-		sCol = roomScopes[i].startCol;
-		eRow = roomScopes[i].endRow;
-		eCol = roomScopes[i].endCol;
-		// up
-		if (sRow - 1 >= 0)
-		{
-			for (int j = sCol; j <= eCol; j++)
-			{
-				if (maze[sRow - 1][j] == SPACE && GetRoomIndex({sRow - 1, j}) == -1)
-				{
-					Position sRoom = { sRow, j };
-					Position sCorridor = { sRow - 1, j };
-					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found\n";
-				}
-			}
-		}
-	}
-}
 
 void RestorePath(Cell* pc)
 {

@@ -41,8 +41,8 @@ Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 	int roomIndex = n->GetRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
 	Cell* pc = new Cell(pos.row, pos.col, nullptr, 0);
-	pc->CulcH(dupMap, enemiesPos);
-	pc->CulcF();
+	pc->CalcH(dupMap, enemiesPos);
+	pc->CalcF();
 	grays.push(pc);
 	Cell* nextStep = nullptr;
 	for (int i = 0; i < BFS_ITERATIONS; i++)
@@ -92,8 +92,8 @@ void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, v
 	if (dupMaze[r][c] == SPACE)
 	{
 		Cell* pNeighbor = new Cell(r, c, pCurrent, 0);
-		pNeighbor->CulcH(dupMap, enemiesPos);
-		pNeighbor->CulcF();
+		pNeighbor->CalcH(dupMap, enemiesPos);
+		pNeighbor->CalcF();
 		dupMaze[r][c] = GRAY;
 		grays.push(pNeighbor);
 	}
