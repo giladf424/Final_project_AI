@@ -1,5 +1,6 @@
 #pragma once
 #include "definitions.h"
+
 class Cell
 {
 private:
@@ -9,12 +10,14 @@ private:
 	double f, g, h;
 public:
 	Cell();
-	Cell(int row, int col, Cell* parent);
+	Cell(int row, int col, Cell* parent, double newg);
 	Cell(int r, int c,int tr,int tc, double newg,Cell* p, double sec_map[MSZ][MSZ]);
 	int getRow() { return row; }
 	int getCol() { return col; }
 	Cell* getParent() { return parent; }
 	void ComputeH(double sec_map[MSZ][MSZ]);
+	void CulcH(double sec_map[MSZ][MSZ], vector<Position> positions);
+	void CulcF() { f = g + h; }
 
 	double getF() { return f; }
 	double getH() { return h; }

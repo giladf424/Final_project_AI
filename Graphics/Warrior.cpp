@@ -16,7 +16,9 @@ void Warrior::moveToEnemy(Position enemyPos)
     {
         DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
+        isAstar = true;
         Position nextStep = RunAStar(enemyPos, dupMaze, dupSecurityMap);
+        isAstar = false;
         move(nextStep);
         this->GetRoomIndex();
         /*if (path.size() > 1) {

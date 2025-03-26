@@ -12,7 +12,7 @@ void IdleState::OnEnter(NPC* p)
 	if (teammatePos.row != -1 && teammatePos.col != -1)
 		s->MoveToTeamMate(teammatePos);
     //if(abs(teammatePos.row - s->GetPosition().row) + abs(teammatePos.col - s->GetPosition().col) <= 2)
-    if(Team::GetTeammate(teammatePos)->GetState()->toString()._Equal("Combat"))
+    //if(Team::GetTeammate(teammatePos)->GetState()->toString()._Equal("Combat"))
 		Transition(p);
     std::cout << "Entering IdleState\n";
 }

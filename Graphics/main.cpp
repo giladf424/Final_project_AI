@@ -348,7 +348,9 @@ void SetupDungeon()
 		}
 	}
 	placeResources();
+	isAstar = true;
 	BuildPathBetweenTheRooms();
+	isAstar = false;
 }
 
 void init()

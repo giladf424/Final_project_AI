@@ -37,21 +37,23 @@ void Squire::RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate)
 
 Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 {
-	queue<Cell*> grays;
+	priority_queue<Cell*, vector<Cell*>, CompareCells> grays;
 	int roomIndex = n->GetRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
-	Cell* pc = new Cell(pos.row, pos.col, nullptr);
+	Cell* pc = new Cell(pos.row, pos.col, nullptr, 0);
+	pc->CulcH(dupMap, enemiesPos);
+	pc->CulcF();
 	grays.push(pc);
 	Cell* nextStep = nullptr;
 	for (int i = 0; i < BFS_ITERATIONS; i++)
 	{
-		nextStep = RunBFSIteration(dupMaze, grays);
+		nextStep = RunBFSIteration(dupMaze, grays, dupMap, enemiesPos);
 		//HERE YOU NEED TO ADD THE HEURISTIC CALCULATION TO DECIDE TO SAVE THE BEST CELL TO MOVE TO
 	}
 	Position nextPos = Position{ nextStep->getRow(), nextStep->getCol() };
 	while (!grays.empty())
 	{
-		Cell* c = grays.front();
+		Cell* c = grays.top();
 		grays.pop();
 		delete c;
 		c = nullptr;
@@ -59,7 +61,7 @@ Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 	return nextPos;
 }
 
-Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], queue<Cell*>& grays)
+Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, double dupMap[MSZ][MSZ], vector<Position> enemiesPos)
 {
 	Cell* pCurrent;
 	int row, col;
@@ -68,28 +70,30 @@ Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], queue<Cell*>& grays)
 		return nullptr;
 	else 
 	{
-		pCurrent = grays.front();
+		pCurrent = grays.top();
 		grays.pop();
 		row = pCurrent->getRow();
 		col = pCurrent->getCol();
 		dupMaze[row][col] = BLACK;
 		if (dupMaze[row + 1][col] != WALL)
-			CheckNeighbor(row + 1, col, pCurrent, grays, dupMaze);
+			CheckNeighbor(row + 1, col, pCurrent, grays, dupMaze, dupMap, enemiesPos);
 		if (dupMaze[row - 1][col] != WALL)
-			CheckNeighbor(row - 1, col, pCurrent, grays, dupMaze);
+			CheckNeighbor(row - 1, col, pCurrent, grays, dupMaze, dupMap, enemiesPos);
 		if (dupMaze[row][col + 1] != WALL)
-			CheckNeighbor(row, col + 1, pCurrent, grays, dupMaze);
+			CheckNeighbor(row, col + 1, pCurrent, grays, dupMaze, dupMap, enemiesPos);
 		if (dupMaze[row][col - 1] != WALL)
-			CheckNeighbor(row, col - 1, pCurrent, grays, dupMaze);
+			CheckNeighbor(row, col - 1, pCurrent, grays, dupMaze, dupMap, enemiesPos);
 		return pCurrent;
 	}
 }
 
-void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, queue<Cell*>& grays, int dupMaze[MSZ][MSZ])
+void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position> enemiesPos)
 {
 	if (dupMaze[r][c] == SPACE)
 	{
-		Cell* pNeighbor = new Cell(r, c, pCurrent);
+		Cell* pNeighbor = new Cell(r, c, pCurrent, 0);
+		pNeighbor->CulcH(dupMap, enemiesPos);
+		pNeighbor->CulcF();
 		dupMaze[r][c] = GRAY;
 		grays.push(pNeighbor);
 	}

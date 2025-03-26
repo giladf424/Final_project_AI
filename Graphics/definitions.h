@@ -38,6 +38,7 @@ extern int maze[MSZ][MSZ];
 extern int dupMaze[MSZ][MSZ];
 extern double security_map[MSZ][MSZ];
 extern double dupSecurityMap[MSZ][MSZ];
+extern bool isAstar;
 
 typedef struct
 {
