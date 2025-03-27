@@ -6,9 +6,11 @@ NPC::NPC(Position startPos, TeamID teamID)
 	id = teamID;
 	isMoving = false;
 	pos = startPos;
+	prevPos = {-1, -1};
+	corridorIndex = -1;
 }
 
-int NPC::GetRoomIndex()
+int NPC::getRoomIndex()
 {
 	for (int i = 0; i < NUM_ROOMS; i++)
 	{
@@ -95,6 +97,19 @@ void NPC::move(Position pos)
 {
 	maze[GetPosition().row][GetPosition().col] = SPACE;
 	maze[pos.row][pos.col] = NPC_;
+	SetPrevPosition(GetPosition());
 	SetPosition(pos);
-
+	if (getRoomIndex() == -1 && GetRoomIndex(GetPrevPosition()) != -1)
+	{
+		for (Corridor* c : Corridor::corridors)
+		{
+			if (c->isEntrance(GetPosition()))
+			{
+				SetCorridorIndex(c->getId());
+				return;
+			}
+		}
+	}
+	else if (getRoomIndex() != -1 && GetRoomIndex(GetPrevPosition()) == -1)
+		SetCorridorIndex(-1);
 }

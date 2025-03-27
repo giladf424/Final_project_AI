@@ -41,7 +41,7 @@ void Squire::RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate)
 Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 {
 	priority_queue<Cell*, vector<Cell*>, CompareCells> grays;
-	int roomIndex = n->GetRoomIndex();
+	int roomIndex = n->getRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
 	Cell* pc = new Cell(pos.row, pos.col, nullptr, 0);
 	pc->CalcH(dupMap, enemiesPos);

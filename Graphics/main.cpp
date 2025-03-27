@@ -510,8 +510,8 @@ void SetupDungeon()
 	BuildPathBetweenTheRooms();
 	isAstar = false;
 	initCorridors();
-//	PrintCorridors();
-//	PrintRoomScopes();
+	PrintCorridors();
+	PrintRoomScopes();
 }
 
 void init()
@@ -589,7 +589,7 @@ void GenerateSecurityMap()
 void GenerateSecurityMapForSpecificNPC(NPC* n)
 {
 	DuplicateSecurityMap(security_map, dupSecurityMap);
-	int roomIndex = n->GetRoomIndex();
+	int roomIndex = n->getRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
 
 	int numSimulations = 20;

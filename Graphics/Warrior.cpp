@@ -20,7 +20,7 @@ void Warrior::moveToEnemy(Position enemyPos)
         Position nextStep = RunAStar(enemyPos, dupMaze, dupSecurityMap);
         isAstar = false;
         move(nextStep);
-        this->GetRoomIndex();
+        this->getRoomIndex();
         /*if (path.size() > 1) {
             Position nextPos = { path[1]->getRow(), path[1]->getCol() };
             isEnemyInRange = abs(enemyPos.row - pos.row) + abs(enemyPos.col - pos.col) <= 5;

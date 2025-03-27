@@ -10,6 +10,8 @@ private:
 	vector<Position> entrances;
 	int connectedRooms[MAX_CORRIDORS_ENTRANCES];
 	int numOfRooms;
+	static int nextId;
+	int id;
 public:
 	static vector<Corridor*> corridors;
 	Corridor();
@@ -24,5 +26,6 @@ public:
 	void CorridorRestorePath(Cell* pc);
 	bool isEntrance(Position p);
 	bool isConnectedRoom(int roomIndex);
+	int getId() const { return id; }
 };
 

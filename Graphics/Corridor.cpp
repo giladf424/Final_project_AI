@@ -2,7 +2,8 @@
 
 vector<Corridor*> Corridor::corridors;
 bool runBFS = false;
-Corridor::Corridor()
+int Corridor::nextId = 0;
+Corridor::Corridor() : id(nextId++)
 {
 	numOfRooms = 0;
 	for (int i = 0; i < MAX_CORRIDORS_ENTRANCES; i++)
