@@ -317,11 +317,158 @@ void initCorridors()
 					Position sCorridor = { sRow - 1, j };
 					if (GetRoomIndex(sRoom) == -1)
 						std::cout << "Error: room not found\n";
+					Corridor* corridor = new Corridor();
+					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
+					Corridor::corridors.push_back(corridor);
+				}
+			}
+		}
+		// down
+		if (eRow + 1 < MSZ)
+		{
+			for (int j = sCol; j <= eCol; j++)
+			{
+				if (maze[eRow + 1][j] == SPACE && GetRoomIndex({ eRow + 1, j }) == -1 && !isCorridor({ eRow + 1, j }))
+				{
+					Position sRoom = { eRow, j };
+					Position sCorridor = { eRow + 1, j };
+					if (GetRoomIndex(sRoom) == -1)
+						std::cout << "Error: room not found\n";
+					Corridor* corridor = new Corridor();
+					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
+					Corridor::corridors.push_back(corridor);
+				}
+			}
+		}
+		// left
+		if (sCol - 1 >= 0)
+		{
+			for (int j = sRow; j <= eRow; j++)
+			{
+				if (maze[j][sCol - 1] == SPACE && GetRoomIndex({ j, sCol - 1 }) == -1 && !isCorridor({ j, sCol - 1 }))
+				{
+					Position sRoom = { j, sCol };
+					Position sCorridor = { j, sCol - 1 };
+					if (GetRoomIndex(sRoom) == -1)
+						std::cout << "Error: room not found\n";
+					Corridor* corridor = new Corridor();
+					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
+					Corridor::corridors.push_back(corridor);
+				}
+			}
+		}
+		// right
+		if (eCol + 1 < MSZ)
+		{
+			for (int j = sRow; j <= eRow; j++)
+			{
+				if (maze[j][eCol + 1] == SPACE && GetRoomIndex({ j, eCol + 1 }) == -1 && !isCorridor({ j, eCol + 1 }))
+				{
+					Position sRoom = { j, eCol };
+					Position sCorridor = { j, eCol + 1 };
+					if (GetRoomIndex(sRoom) == -1)
+						std::cout << "Error: room not found\n";
+					Corridor* corridor = new Corridor();
+					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
+					Corridor::corridors.push_back(corridor);
 				}
 			}
 		}
 	}
 }
+
+void PrintCorridors()
+{
+	for (size_t i = 0; i < Corridor::corridors.size(); ++i)
+	{
+		Corridor* corridor = Corridor::corridors[i];
+		cout << "Corridor " << i + 1 << ":\n";
+		cout << "Path: ";
+		for (const Position& pos : corridor->getPath())
+		{
+			cout << "(" << pos.row << ", " << pos.col << ") ";
+		}
+		cout << "\nEntrances: ";
+		for (const Position& entrance : corridor->getEntrances())
+		{
+			cout << "(" << entrance.row << ", " << entrance.col << ") ";
+			// Check if the entrance is adjacent to a room
+			bool isAdjacentToRoom = false;
+			for (int r = entrance.row - 1; r <= entrance.row + 1; ++r)
+			{
+				for (int c = entrance.col - 1; c <= entrance.col + 1; ++c)
+				{
+					if (r >= 0 && r < MSZ && c >= 0 && c < MSZ && maze[r][c] == SPACE)
+					{
+						isAdjacentToRoom = true;
+						break;
+					}
+				}
+				if (isAdjacentToRoom) break;
+			}
+			if (!isAdjacentToRoom)
+			{
+				cout << " (Error: Not adjacent to a room)";
+			}
+		}
+		cout << "\nConnected Rooms: ";
+		for (int j = 0; j < corridor->getNumOfRooms(); ++j)
+		{
+			int roomIndex = corridor->getConnectedRoom(j);
+			cout << roomIndex << " ";
+			// Check if the room index is valid
+			if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
+			{
+				cout << "(Error: Invalid room index)";
+			}
+		}
+		cout << "\n\n";
+	}
+}
+
+
+void PrintRoomScopes()
+{
+	for (int i = 0; i < NUM_ROOMS; ++i)
+	{
+		RoomScope scope = roomScopes[i];
+		cout << "Room " << i  << " Scope:\n";
+
+		// Print top edge
+		cout << "Top Edge: ";
+		for (int col = scope.startCol; col <= scope.endCol; ++col)
+		{
+			cout << "(" << scope.startRow << ", " << col << ") ";
+		}
+		cout << "\n";
+
+		// Print bottom edge
+		cout << "Bottom Edge: ";
+		for (int col = scope.startCol; col <= scope.endCol; ++col)
+		{
+			cout << "(" << scope.endRow << ", " << col << ") ";
+		}
+		cout << "\n";
+
+		// Print left edge
+		cout << "Left Edge: ";
+		for (int row = scope.startRow; row <= scope.endRow; ++row)
+		{
+			cout << "(" << row << ", " << scope.startCol << ") ";
+		}
+		cout << "\n";
+
+		// Print right edge
+		cout << "Right Edge: ";
+		for (int row = scope.startRow; row <= scope.endRow; ++row)
+		{
+			cout << "(" << row << ", " << scope.endCol << ") ";
+		}
+		cout << "\n\n";
+	}
+}
+
+
 
 void SetupDungeon()
 {
@@ -362,6 +509,9 @@ void SetupDungeon()
 	isAstar = true;
 	BuildPathBetweenTheRooms();
 	isAstar = false;
+	initCorridors();
+//	PrintCorridors();
+//	PrintRoomScopes();
 }
 
 void init()
@@ -465,6 +615,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 		}
 	}
 }
+
 
 
 void display()

@@ -28,23 +28,26 @@ void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MS
 	Cell* pc = new Cell(sCorridor.row, sCorridor.col, sRoom.row, sRoom.col, nullptr);
 	pq.push(pc);
 	
-	Corridor* corridor = new Corridor();
+	Corridor* corridor = this;
 	corridor->addConnectedRoom(GetRoomIndex(sRoom));
-	corridor->getEntrances().push_back(sCorridor);
-	corridor->getPath().push_back(sCorridor);
-	corridors.push_back(corridor);
+	corridor->entrances.push_back(sCorridor);
+	cout << "Entrance: (" << corridor->getEntrances().back().row << ", " << corridor->getEntrances().back().col << ") \n";
+	corridor->path.push_back(sCorridor);
+	cout << "Path: (" << corridor->getPath().back().row << ", " << corridor->getPath().back().col << ") \n";
+	//corridors.push_back(corridor);
 
 	runBFS = true;
 	do
 	{
 		while (runBFS)
-			CorridorRunBFSIteration(pq, dupMaze);
+			corridor->CorridorRunBFSIteration(pq, dupMaze);
 
 		if (!pq.empty())
 		{
 			pc = pq.top();
 			pq.pop();
-			corridors.back()->getPath().push_back({ pc->getRow(), pc->getCol() });
+			//corridors.back()->getPath().push_back({ pc->getRow(), pc->getCol() });
+			corridor->path.push_back({ pc->getRow(), pc->getCol() });
 			Cell* newPc = new Cell(pc->getRow(), pc->getCol(), pc->getTargetRow(), pc->getTargetCol(), nullptr);
 			pq.push(newPc);
 			runBFS = true;
@@ -60,6 +63,7 @@ void Corridor::CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, Comp
 	Cell* pCurrent;
 	int r, c;
 	bool go_on = false;
+	Corridor* corridor = this;
 
 	if (pq.empty())
 	{
@@ -74,14 +78,14 @@ void Corridor::CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, Comp
 
 	dupMaze[r][c] = BLACK;
 
-	if(dupMaze[r + 1][c] == SPACE && !isConnectedRoom(GetRoomIndex({r + 1, c})))
-		go_on = CorridorCheckNeighbor(r + 1, c, pCurrent, pq, dupMaze);
-	if (!go_on && dupMaze[r - 1][c] == SPACE && !isConnectedRoom(GetRoomIndex({ r - 1, c })))
-		go_on = CorridorCheckNeighbor(r - 1, c, pCurrent, pq, dupMaze);
-	if (!go_on && dupMaze[r][c + 1] == SPACE && !isConnectedRoom(GetRoomIndex({ r, c + 1 })))
-		go_on = CorridorCheckNeighbor(r, c + 1, pCurrent, pq, dupMaze);
-	if (!go_on && dupMaze[r][c - 1] == SPACE && !isConnectedRoom(GetRoomIndex({ r, c - 1 })))
-		go_on = CorridorCheckNeighbor(r, c - 1, pCurrent, pq, dupMaze);
+	if(dupMaze[r + 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({r + 1, c})))
+		go_on = corridor->CorridorCheckNeighbor(r + 1, c, pCurrent, pq, dupMaze);
+	if (!go_on && dupMaze[r - 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r - 1, c })))
+		go_on = corridor->CorridorCheckNeighbor(r - 1, c, pCurrent, pq, dupMaze);
+	if (!go_on && dupMaze[r][c + 1] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r, c + 1 })))
+		go_on = corridor->CorridorCheckNeighbor(r, c + 1, pCurrent, pq, dupMaze);
+	if (!go_on && dupMaze[r][c - 1] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r, c - 1 })))
+		go_on = corridor->CorridorCheckNeighbor(r, c - 1, pCurrent, pq, dupMaze);
 
 }
 
@@ -90,8 +94,11 @@ bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queu
 	int roomIndex = GetRoomIndex({ r, c });
 	if (roomIndex != -1)
 	{
-		corridors.back()->addConnectedRoom(roomIndex);
-		CorridorRestorePath(pCurrent);
+		//corridors.back()->addConnectedRoom(roomIndex);
+		Corridor* corridor = this;
+		corridor->addConnectedRoom(roomIndex);
+		corridor->CorridorRestorePath(pCurrent);
+		//CorridorRestorePath(pCurrent);
 		runBFS = false;
 		return true;
 	}
@@ -106,13 +113,17 @@ bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queu
 void Corridor::CorridorRestorePath(Cell* pc)
 {
 	Position p = {pc->getRow(), pc->getCol()};
-	corridors.back()->path.push_back(p);
-	corridors.back()->entrances.push_back(p);
+	/*corridors.back()->path.push_back(p);
+	corridors.back()->entrances.push_back(p);*/
+	Corridor* corridor = this;
+	corridor->path.push_back(p);
+	corridor->entrances.push_back(p);
 	pc = pc->getParent();
 	while (pc->getParent() != nullptr)
 	{
 		p = { pc->getRow(), pc->getCol() };
-		corridors.back()->path.push_back(p);
+		//corridors.back()->path.push_back(p);
+		corridor->path.push_back(p);
 		pc = pc->getParent();
 	}
 }
