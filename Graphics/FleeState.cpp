@@ -11,7 +11,7 @@ void FleeState::OnEnter(NPC* p)
     //w->SetIsMoving(true);
 	Squire* s = (Squire*)p;
 	s->SetIsMoving(true);
-	Position target = Team::findNearestEnemy(p);
+	Position target = Team::findNearestTeammate(p);
 	NPC* nearestTeammate = Team::GetTeammate(target);
     s->RunFromEnemyWithHeuristicLogic(nearestTeammate);
     std::cout << "Entering FleeState\n";

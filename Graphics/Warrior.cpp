@@ -47,10 +47,31 @@ void Warrior::attackEnemy(Position enemyPos)
 
 void Warrior::fireBullet(Position enemyPos)
 {
-
+	double angle = atan2(enemyPos.row - pos.row, enemyPos.col - pos.col);
+	Bullet bullet = Bullet((double)pos.row+0.5, (double)pos.col+0.5, angle);
+	bullet.setIsMoving(true);
+	//while (bullet())
+	//{
+		bullet.move(maze);
+	//}
+	int BulletHitType = bullet.moveToEnemyOrWall(enemyPos);
+	if (BulletHitType == 1)
+	{
+		//enemy is hit
+		NPC* enemy = Team::GetTeammate(enemyPos);
+		//bulletDamage = enemy->GetHp() - BULLET_DAMAGE;
+		//enemy->SetHp(bulletDamage);
+		bullet.setIsMoving(false);
+	}
+	else if (BulletHitType == 2)
+	{
+		//wall is hit
+		bullet.setIsMoving(false);
+	}
 }
 
 void Warrior::throwGrenade(Position enemyPos)
 {
+
 }
 

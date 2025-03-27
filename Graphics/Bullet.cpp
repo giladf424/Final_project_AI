@@ -65,3 +65,21 @@ bool Bullet::IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos)
 	isMoving = false;
 	return false;
 }
+
+int Bullet::moveToEnemyOrWall(Position enemyPos)
+{
+	if (isMoving)
+	{
+		if (abs(enemyPos.row - (int)y) + abs(enemyPos.col - (int)x) == 0)
+		{
+			isMoving = false;
+			return 1;
+		}
+		if (maze[(int)y][(int)x] == WALL)
+		{
+			isMoving = false;
+			return 2;
+		}
+	}
+	return 0;
+}
