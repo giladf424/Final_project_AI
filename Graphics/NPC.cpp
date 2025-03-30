@@ -8,6 +8,7 @@ NPC::NPC(Position startPos, TeamID teamID)
 	pos = startPos;
 	prevPos = {-1, -1};
 	corridorIndex = -1;
+	pCurrentState = nullptr;
 }
 
 int NPC::getRoomIndex()
@@ -91,6 +92,24 @@ Cell* NPC::RestorePath(Cell* pc)
 		pc = pc->getParent();
 	
 	return pc;
+}
+
+bool NPC::IsEnemyInCorridorConnectedToMyRoom(int corridorIndex)
+{
+	for (Corridor* c : Corridor::corridors)
+	{
+		if (c->getId() == corridorIndex)
+			return c->isConnectedRoom(getRoomIndex());
+	}
+	return false;
+}
+
+bool NPC::IsEnemyInSameRoom(int roomIndex)
+{
+	int myRoomIndex = getRoomIndex();
+	if (myRoomIndex != -1 && myRoomIndex == roomIndex)
+		return true;
+	return false;
 }
 
 void NPC::move(Position pos)

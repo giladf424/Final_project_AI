@@ -25,7 +25,7 @@ public:
 	const char* getType() override { return "Warrior"; }
 
 	// Enemy interaction methods 
-	void moveToEnemy(Position enemyPos);
+	void moveToEnemy(NPC* target);
 	void attackEnemy(Position enemyPos);
 	void fireBullet(Position enemyPos);
 	void throwGrenade(Position enemyPos);

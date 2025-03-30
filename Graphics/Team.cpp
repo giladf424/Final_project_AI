@@ -29,10 +29,10 @@ void Team::addTeammate(Position start_pos, bool isWarrior)
 		teammates.push_back(new Squire(start_pos, generateTeamIDForTeammate()));
 }
 
-Position Team::findNearestEnemy(NPC* n)
+NPC* Team::findNearestEnemy(NPC* n)
 {
 	int minDistance = INT_MAX;
-	Position enemyPos = { -1, -1 }; // Default value if no enemy is found
+	NPC* nearestEnemy = nullptr; // Default value if no enemy is found
 	for (Team* t : Teams) {
 		if (t->GetTeamID().team != n->GetTeamID().team) {
 			for (NPC* enemy : t->GetTeammates()) {
@@ -40,13 +40,13 @@ Position Team::findNearestEnemy(NPC* n)
 					int distance = abs(enemy->GetPosition().row - n->GetPosition().row) + abs(enemy->GetPosition().col - n->GetPosition().col); // Manhattan distance
 					if (distance < minDistance) {
 						minDistance = distance;
-						enemyPos = enemy->GetPosition();
+						nearestEnemy = enemy;
 					}
 				}
 			}
 		}
 	}
-	return enemyPos;
+	return nearestEnemy;
 }
 
 Position Team::findNearestTeammate(NPC* n)

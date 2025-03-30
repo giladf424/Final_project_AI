@@ -9,24 +9,30 @@ Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 }
 
 
-void Warrior::moveToEnemy(Position enemyPos)
+void Warrior::moveToEnemy(NPC* target)
 {
-    bool isEnemyInRange = false;
     if (isMoving)
     {
+		if (this->IsEnemyInSameRoom(target->getRoomIndex()))
+		{
+			pCurrentState->Transition(this);
+			return;
+		}
         DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
-        isAstar = true;
-        Position nextStep = RunAStar(enemyPos, dupMaze, dupSecurityMap);
-        isAstar = false;
+		Position nextStep;
+		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()))
+		{
+
+		}
+		else
+		{
+			isAstar = true;
+			nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap);
+			isAstar = false;
+
+		}
         move(nextStep);
-        this->getRoomIndex();
-        /*if (path.size() > 1) {
-            Position nextPos = { path[1]->getRow(), path[1]->getCol() };
-            isEnemyInRange = abs(enemyPos.row - pos.row) + abs(enemyPos.col - pos.col) <= 5;
-        }*/
-		if (isEnemyInRange)
-			pCurrentState->Transition(this);
     }
 }
 
