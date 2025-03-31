@@ -15,16 +15,16 @@ Cell::Cell()
 }
 
 // gets row, col, parent
-Cell::Cell(int row, int col, Cell* p, double newg)
+Cell::Cell(int row, int col, Cell* p, double sec_map[MSZ][MSZ])
 {
 	this->row = row;
 	this->col = col;
 	target_col = 0;
 	target_row = 0;
 	parent = p;
-	g = newg;
-	h = 0;
-	f = 0;
+	g = 0;
+	ComputeH(sec_map);
+	f = h + g;
 }
 
 Cell::Cell(int r, int c, int tr, int tc, Cell* p)
@@ -58,6 +58,11 @@ void Cell::ComputeH(double sec_map[MSZ][MSZ])
 {
 	if (sec_map == nullptr)
 		h = abs(row - target_row) + abs(col - target_col);
+	else if (target_col == 0 && target_row == 0)
+	{
+		double security = sec_map[row][col];
+		h = security * SECURITY_COEFFICIENT;
+	}
 	else
 	{
 		double distance = sqrt(pow(row - target_row, 2) + pow(col - target_col, 2));

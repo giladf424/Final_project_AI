@@ -16,7 +16,7 @@ public:
 	void SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ]);
 	bool IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos);
 
-	int moveToEnemyOrWall(Position enemyPos);
+	bool moveToEnemyOrWall(Position enemyPos, int maze[MSZ][MSZ]);
 
 };
 

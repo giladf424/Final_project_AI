@@ -10,7 +10,7 @@ private:
 	double f, g, h;
 public:
 	Cell();
-	Cell(int row, int col, Cell* parent, double newg);
+	Cell(int row, int col, Cell* parent, double sec_map[MSZ][MSZ]);
 	Cell(int r, int c, int tr, int tc, Cell* p);
 	Cell(int r, int c,int tr,int tc, double newg,Cell* p, double sec_map[MSZ][MSZ]);
 	int getRow() { return row; }

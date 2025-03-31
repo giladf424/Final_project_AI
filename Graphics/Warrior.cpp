@@ -20,16 +20,18 @@ void Warrior::moveToEnemy(NPC* target)
 		}
         DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
-		Position nextStep;
+		Position nextStep = {-1, -1};
+		int numSteps = 0;
 		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()))
 		{
-
+			Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex());
+			
+			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &numSteps);
+			nextStep = BFSRadius(GetPosition(), entrance, numSteps, dupMaze, dupSecurityMap);
 		}
 		else
 		{
-			isAstar = true;
-			nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap);
-			isAstar = false;
+			nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &numSteps);
 
 		}
         move(nextStep);
@@ -60,7 +62,8 @@ void Warrior::fireBullet(Position enemyPos)
 	//{
 		bullet.move(maze);
 	//}
-	int BulletHitType = bullet.moveToEnemyOrWall(enemyPos);
+	//int BulletHitType = bullet.moveToEnemyOrWall(enemyPos);
+	int BulletHitType = 0;
 	if (BulletHitType == 1)
 	{
 		//enemy is hit

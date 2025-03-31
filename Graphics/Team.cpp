@@ -102,3 +102,4 @@ NPC* Team::GetTeammate(Position pos)
 	}
 	return nullptr;
 }
+

@@ -17,9 +17,8 @@ void Squire::MoveToTeamMate(Position teammatePos)
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		// Run A* algorithm to find the path to the teammate
-		isAstar = true;
-		Position nextPos = RunAStar(teammatePos, dupMaze, dupSecurityMap);
-		isAstar = false;
+		int numSteps = 0;
+		Position nextPos = RunAStar(teammatePos, dupMaze, dupSecurityMap, &numSteps);
 		// Move to the next position
 		move(nextPos);
 
@@ -43,7 +42,7 @@ Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 	priority_queue<Cell*, vector<Cell*>, CompareCells> grays;
 	int roomIndex = n->getRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
-	Cell* pc = new Cell(pos.row, pos.col, nullptr, 0);
+	Cell* pc = new Cell(pos.row, pos.col, nullptr, dupMap);
 	pc->CalcH(dupMap, enemiesPos);
 	pc->CalcF();
 	grays.push(pc);
@@ -94,7 +93,7 @@ void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, v
 {
 	if (dupMaze[r][c] == SPACE)
 	{
-		Cell* pNeighbor = new Cell(r, c, pCurrent, 0);
+		Cell* pNeighbor = new Cell(r, c, pCurrent, dupMap);
 		pNeighbor->CalcH(dupMap, enemiesPos);
 		pNeighbor->CalcF();
 		dupMaze[r][c] = GRAY;

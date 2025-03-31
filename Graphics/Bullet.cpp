@@ -48,38 +48,31 @@ void Bullet::SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ])
 
 bool Bullet::IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos)
 {
+	isMoving = true;
+	while (isMoving)
+	{
+		if (moveToEnemyOrWall(enemyPos, maze))
+			return true;
+	}
+	return false;
+}
+
+bool Bullet::moveToEnemyOrWall(Position enemyPos, int maze[MSZ][MSZ])
+{
 	if (isMoving)
 	{
+		x += speed * dirX;
+		y += speed * dirY;
+		if ((int)x == enemyPos.col && (int)y == enemyPos.row)
+		{
+			isMoving = false;
+			return true;
+		}
 		if (maze[(int)y][(int)x] == WALL)
 		{
 			isMoving = false;
 			return false;
 		}
-		if (abs(enemyPos.row - (int)y) == 0 && abs(enemyPos.col - (int)x) == 0)
-		{
-			isMoving = false;
-			return true;
-		}
-		return false;
 	}
-	isMoving = false;
 	return false;
-}
-
-int Bullet::moveToEnemyOrWall(Position enemyPos)
-{
-	if (isMoving)
-	{
-		if (abs(enemyPos.row - (int)y) + abs(enemyPos.col - (int)x) == 0)
-		{
-			isMoving = false;
-			return 1;
-		}
-		if (maze[(int)y][(int)x] == WALL)
-		{
-			isMoving = false;
-			return 2;
-		}
-	}
-	return 0;
 }

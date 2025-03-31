@@ -148,3 +148,13 @@ bool Corridor::isConnectedRoom(int roomIndex)
 	}
 	return false;
 }
+
+Corridor* Corridor::getCorridorById(int id)
+{
+	for (Corridor* c : corridors)
+	{
+		if (c->getId() == id)
+			return c;
+	}
+	return nullptr;
+}

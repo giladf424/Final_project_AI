@@ -4,6 +4,7 @@
 #include "Cell.h"
 #include "CompareCells.h"
 #include "Corridor.h"
+#include "Grenade.h"
 
 class State;
 
@@ -37,15 +38,19 @@ public:
 	TeamID GetTeamID() { return id; }
 
 	int getRoomIndex();
-	Position RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	Cell* RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	Cell* CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	Cell* RestorePath(Cell* pc);
+	Position RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
+	Cell* RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
+	Cell* CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
+	Cell* RestorePath(Cell* pc, int* numSteps);
 
 	bool IsEnemyInCorridorConnectedToMyRoom(int corridorIndex);
 	bool IsEnemyInSameRoom(int roomIndex);
 
 	virtual const char* getType() = 0;
 	void move(Position p); // Add this line
+	Position BFSRadius(Position start, Position enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*> q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	bool IsEnemyInHitRange(Position myPos, Position enemyPos);
+	Position getEntranceToCorridor(int corridorIndex);
 };
 
