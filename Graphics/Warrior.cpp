@@ -13,7 +13,7 @@ void Warrior::moveToEnemy(NPC* target)
 {
     if (isMoving)
     {
-		if (this->IsEnemyInSameRoom(target->getRoomIndex()))
+		if (Team::GetEnemiesPositionsInRoom(getRoomIndex(),GetTeamID().team, true).size() > 0)
 		{
 			pCurrentState->Transition(this);
 			return;
@@ -21,17 +21,22 @@ void Warrior::moveToEnemy(NPC* target)
         DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		Position nextStep = {-1, -1};
-		int numSteps = 0;
+		int radius = 0;
 		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()))
 		{
 			Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex());
-			
-			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &numSteps);
-			nextStep = BFSRadius(GetPosition(), entrance, numSteps, dupMaze, dupSecurityMap);
+			vector<Position> entrances = this->GetAllEntrancesToMyRoom();
+			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
+			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &radius);
+			Position bestPos = BFSRadius(GetPosition(), entrance, radius, dupMaze, dupSecurityMap);
+			if (bestPos.row != -1 && bestPos.col != -1)
+				nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
+			else
+				std::cout << "No bestPos found from BFSRadius\n";
 		}
 		else
 		{
-			nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &numSteps);
+			nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &radius);
 
 		}
         move(nextStep);

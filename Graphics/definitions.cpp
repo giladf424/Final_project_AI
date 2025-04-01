@@ -14,6 +14,17 @@ void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ])
 			target[i][j] = source[i][j];
 }
 
+//void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
+//{
+//	for (Position p : positions)
+//	{
+//		Grenade* g = new Grenade(p.row, p.col);
+//		g->SimulateExplosion(dupMaze, dupMap);
+//		delete g;
+//		g = nullptr;
+//	}
+//}
+
 int GetRoomIndex(Position pos)
 {
 	for (int i = 0; i < NUM_ROOMS; i++)

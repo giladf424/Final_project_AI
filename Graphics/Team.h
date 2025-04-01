@@ -31,5 +31,7 @@ public:
 	static Position findNearestTeammate(NPC* n);
 	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
 	static NPC* GetTeammate(Position pos);
+	static Position GetLowestHPEnemyPositionInRoom(int roomIndex, int teamNum);
+	static Position GetSquireEnemyPositionInRoom(int roomIndex, int teamNum);
 };
 

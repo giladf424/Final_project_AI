@@ -4,6 +4,7 @@
 #include <array>
 #include <unordered_map>
 #include <queue>
+
 using namespace std;
 
 const int MSZ = 100;
@@ -74,4 +75,5 @@ const unordered_map<string, array<double, 3>> team_colors = {
 
 void DuplicateMaze(int source[MSZ][MSZ], int target[MSZ][MSZ]);
 void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ]);
+//void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 int GetRoomIndex(Position pos);

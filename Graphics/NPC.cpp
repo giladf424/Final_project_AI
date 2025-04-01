@@ -60,15 +60,15 @@ Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*
 	if (row == target.row && col == target.col)
 		return pCurrent;
 	// need to check if instead assign BLACK to dupMap, we need to assign it to maze
-	dupMap[row][col] = BLACK;
+	dupMaze[row][col] = BLACK;
 	
-	if (dupMaze[row + 1][col] != WALL && dupMap[row + 1][col] != BLACK)
+	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
 		go_on = CheckNeighbor(row + 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps);
-	if (!go_on && dupMaze[row - 1][col] != WALL && dupMap[row - 1][col] != BLACK)
+	if (!go_on && dupMaze[row - 1][col] != WALL && dupMaze[row - 1][col] != BLACK)
 		go_on = CheckNeighbor(row - 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps);
-	if (!go_on && dupMaze[row][col - 1] != WALL && dupMap[row][col - 1] != BLACK)
+	if (!go_on && dupMaze[row][col - 1] != WALL && dupMaze[row][col - 1] != BLACK)
 		go_on = CheckNeighbor(row, col - 1, pCurrent, target, grays, dupMaze, dupMap, numSteps);
-	if (!go_on && dupMaze[row][col + 1] != WALL && dupMap[row][col + 1] != BLACK)
+	if (!go_on && dupMaze[row][col + 1] != WALL && dupMaze[row][col + 1] != BLACK)
 		go_on = CheckNeighbor(row, col + 1, pCurrent, target, grays, dupMaze, dupMap, numSteps);
 
 	return go_on;
@@ -172,7 +172,7 @@ Position NPC::BFSRadius(Position start, Position enemyPos, int radius, int dupMa
 		}
 		currentRadius++;
 	}
-	Position bestPos = Position();
+	Position bestPos = {-1, -1};
 	while (!pq.empty())
 	{
 		Cell* isBest = pq.top();
@@ -227,6 +227,7 @@ bool NPC::IsEnemyInHitRange(Position myPos, Position enemyPos)
 		inRange = true;
 
 	delete pg;
+	pg = nullptr;
 	return inRange;
 }
 
@@ -253,3 +254,44 @@ Position NPC::getEntranceToCorridor(int corridorIndex)
 	std::cout << "Error: entrance not found\n";
 	return {-1, -1};
 }
+
+vector<Position> NPC::GetAllEntrancesToMyRoom()
+{
+	int roomIndex = getRoomIndex();
+	vector<Position> entrances;
+	for (Corridor* c : Corridor::corridors)
+	{
+		if (c->isConnectedRoom(roomIndex))
+			entrances.push_back(getEntranceToCorridor(c->getId()));
+	}
+	return entrances;
+}
+
+void NPC::UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
+{
+	int numSimulations = 100;
+	for (Position p : positions)
+	{
+		for (int i = 0; i < numSimulations; i++)
+		{
+			Grenade* g = new Grenade(p.row, p.col);
+			g->SimulateExplosion(dupMaze, dupMap);
+			delete g;
+			g = nullptr;
+		}
+	}
+}
+
+int NPC::GetNumofEnemiesInHitRange(Position myPos, Position enemyPos)
+{
+	int numEnemies = 0;
+	vector<Position> enemiesPos;// = Team::GetEnemiesPositionsInRoom(getRoomIndex(), GetTeamID().team, false);
+	for (Position p : enemiesPos)
+	{
+		if (IsEnemyInHitRange(myPos, p))
+			numEnemies++;
+	}
+	return 0;
+}
+
+

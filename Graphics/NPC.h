@@ -6,6 +6,7 @@
 #include "Corridor.h"
 #include "Grenade.h"
 
+
 class State;
 
 class NPC
@@ -52,5 +53,8 @@ public:
 	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*> q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	bool IsEnemyInHitRange(Position myPos, Position enemyPos);
 	Position getEntranceToCorridor(int corridorIndex);
+	vector<Position> GetAllEntrancesToMyRoom();
+	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	int GetNumofEnemiesInHitRange(Position myPos, Position enemyPos);
 };
 

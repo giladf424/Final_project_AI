@@ -37,7 +37,7 @@ NPC* Team::findNearestEnemy(NPC* n)
 		if (t->GetTeamID().team != n->GetTeamID().team) {
 			for (NPC* enemy : t->GetTeammates()) {
 				if (enemy->GetIsAlive()) {
-					int distance = abs(enemy->GetPosition().row - n->GetPosition().row) + abs(enemy->GetPosition().col - n->GetPosition().col); // Manhattan distance
+					int distance = (int)sqrt(pow(enemy->GetPosition().row - n->GetPosition().row, 2) + pow(enemy->GetPosition().col - n->GetPosition().col, 2)); // Manhattan distance
 					if (distance < minDistance) {
 						minDistance = distance;
 						nearestEnemy = enemy;
@@ -53,18 +53,20 @@ Position Team::findNearestTeammate(NPC* n)
 {
 	int minDistance = INT_MAX;
 	Position teammatePos = { -1, -1 }; // Default value if no teammate is found
-	for (NPC* teammate : Teams.at(n->GetTeamID().team)->GetTeammates())
-	{
-		if (teammate->GetIsAlive() && teammate->GetPosition().row != n->GetPosition().row && teammate->GetPosition().col != n->GetPosition().col)
-		{
-			int distance = abs(teammate->GetPosition().row - n->GetPosition().row) + abs(teammate->GetPosition().col - n->GetPosition().col); // Manhattan distance
-			if (distance < minDistance)
-			{
-				minDistance = distance;
-				teammatePos = teammate->GetPosition();
+	for (Team* t : Teams) {
+		if (t->GetTeamID().team == n->GetTeamID().team) {
+			for (NPC* teammate : t->GetTeammates()) {
+				if (teammate->GetIsAlive() && teammate->GetTeamID().place != n->GetTeamID().place) {
+					int distance = (int)sqrt(pow(teammate->GetPosition().row - n->GetPosition().row, 2) + pow(teammate->GetPosition().col - n->GetPosition().col, 2)); // Manhattan distance
+					if (distance < minDistance) {
+						minDistance = distance;
+						teammatePos = teammate->GetPosition();
+					}
+				}
 			}
 		}
 	}
+	
 	return teammatePos;
 }
 
@@ -101,5 +103,51 @@ NPC* Team::GetTeammate(Position pos)
 		}
 	}
 	return nullptr;
+}
+
+Position Team::GetLowestHPEnemyPositionInRoom(int roomIndex, int teamNum)
+{
+	int minHP = INT_MAX;
+	Position lowestHPEnemyPos = { -1, -1 }; // Default value if no enemy is found
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamID().team != teamNum)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				Position p = n->GetPosition();
+				if (n->getRoomIndex() == roomIndex)
+				{
+					if (n->GetHp() < minHP)
+					{
+						minHP = n->GetHp();
+						lowestHPEnemyPos = p;
+					}
+				}
+			}
+		}
+	}
+	return lowestHPEnemyPos;
+}
+
+Position Team::GetSquireEnemyPositionInRoom(int roomIndex, int teamNum)
+{
+	Position squireEnemyPos = { -1, -1 }; // Default value if no enemy is found
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamID().team != teamNum)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				Position p = n->GetPosition();
+				if (n->getRoomIndex() == roomIndex && strcmp(n->getType(), "Squire") == 0)
+				{
+					squireEnemyPos = p;
+					break;
+				}
+			}
+		}
+	}
+	return squireEnemyPos;
 }
 

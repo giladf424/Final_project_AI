@@ -30,6 +30,7 @@ bool bulletFired = false;
 bool grenadeThrown = false;
 bool startGame = false;
 bool paused = true;
+bool showSecurityMap = false;
 Bullet* pb=nullptr;
 Grenade* pg = nullptr;
 
@@ -514,15 +515,6 @@ void SetupDungeon()
 	PrintRoomScopes();
 }
 
-void init()
-{
-	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
-	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
-
-	srand(1);
-
-	SetupDungeon();
-}
 
 void ShowDungeon()
 {
@@ -532,7 +524,8 @@ void ShowDungeon()
 	for(i=0;i<MSZ;i++)
 		for (j = 0;j < MSZ;j++)
 		{
-			s = security_map[i][j];
+			if (showSecurityMap) s = security_map[i][j];
+			else s = 0;
 			//1. set color of cell
 			switch (maze[i][j])
 			{
@@ -574,7 +567,7 @@ void ShowDungeon()
 
 void GenerateSecurityMap()
 {
-	int numSimulations = 1000;
+	int numSimulations = 3000;
 	int i;
 
 	for (i = 0;i < numSimulations;i++)
@@ -582,6 +575,8 @@ void GenerateSecurityMap()
 		Grenade* g = new Grenade(rand() % MSZ, rand() % MSZ);
 
 		g->SimulateExplosion(maze, security_map);
+		delete g;
+		g = nullptr;
 	}
 
 }
@@ -592,7 +587,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 	int roomIndex = n->getRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
 
-	int numSimulations = 20;
+	int numSimulations = 100;
 	if (enemiesPos.size() > 0)
 	{
 		for (Position p : enemiesPos)
@@ -602,21 +597,38 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 				Grenade* g = new Grenade(p.row, p.col);
 				g->SimulateExplosion(maze, dupSecurityMap);
 				delete g;
+				g = nullptr;
 			}
 		}
 	}
 	else
 	{
-		for (int i = 0; i < numSimulations; i++)
+		vector<Position> entrances = n->GetAllEntrancesToMyRoom();
+		entrances.push_back(n->GetPosition());
+		for (Position p : entrances)
 		{
-			Grenade* g = new Grenade(n->GetPosition().row, n->GetPosition().col);
-			g->SimulateExplosion(maze, dupSecurityMap);
-			delete g;
+			for (int i = 0; i < numSimulations; i++)
+			{
+				Grenade* g = new Grenade(p.row, p.col);
+				g->SimulateExplosion(maze, dupSecurityMap);
+				delete g;
+				g = nullptr;
+			}
 		}
 	}
 }
 
 
+void init()
+{
+	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
+	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
+
+	srand(1);
+
+	SetupDungeon();
+	GenerateSecurityMap();
+}
 
 void display()
 {
@@ -639,7 +651,6 @@ void idle()
 		pg->expand(maze);
 	if (!paused)
 	{
-		GenerateSecurityMap();
 		// move all NPCs
 		for (Team* t : Team::Teams)
 		{
@@ -649,7 +660,7 @@ void idle()
 				n->GetState()->OnEnter(n);
 			}
 		}
-		Sleep(150);
+		Sleep(200);
 	}
 	glutPostRedisplay(); // indirect call to display
 }
@@ -690,6 +701,8 @@ void keyboard(unsigned char key, int x, int y) {
 		paused = !paused;
 	if (key == 'q')
 		exit(0);
+	if (key == 's')
+		showSecurityMap = !showSecurityMap;
 }
 
 void main(int argc, char* argv[]) 
