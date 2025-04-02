@@ -1,5 +1,5 @@
 #pragma once
-#include "NPC.h"
+//#include "NPC.h"
 #include "definitions.h"
 #include "Warrior.h"
 #include "Squire.h"

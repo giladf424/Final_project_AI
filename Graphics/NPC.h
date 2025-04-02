@@ -6,6 +6,7 @@
 #include "Corridor.h"
 #include "Grenade.h"
 
+//class Team; // Forward declaration
 
 class State;
 
@@ -55,6 +56,5 @@ public:
 	Position getEntranceToCorridor(int corridorIndex);
 	vector<Position> GetAllEntrancesToMyRoom();
 	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	int GetNumofEnemiesInHitRange(Position myPos, Position enemyPos);
+	int GetNumofEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
 };
-
