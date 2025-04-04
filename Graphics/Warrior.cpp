@@ -6,22 +6,91 @@ Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	grenades = MAX_GRENADES_WARRIOR;
 	aggressive = (rand() % 2 == 0);
 	pCurrentState = new PatrolState();
+	target = nullptr;
 }
 
 
-void Warrior::moveToEnemy(NPC* target)
+void Warrior::moveToEnemy()
 {
     if (isMoving)
     {
-		if (Team::GetEnemiesPositionsInRoom(getRoomIndex(),GetTeamID().team, true).size() > 0)
-		{
-			pCurrentState->Transition(this);
-			return;
-		}
+		vector<Position> enemiesPositions = Team::GetEnemiesPositionsInRoom(getRoomIndex(), GetTeamID().team, false);
+		vector<Position> enemiesInHitRange = GetEnemiesInHitRange(GetPosition(), enemiesPositions);
         DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		Position nextStep = {-1, -1};
 		int radius = 0;
+		if (enemiesPositions.size() > 0)
+		{
+			if (target->getRoomIndex() == this->getRoomIndex())
+			{
+				if (IsEnemyInHitRange(GetPosition(), target->GetPosition()))
+				{
+					pCurrentState->Transition(this);
+					return;
+				}
+				else if (enemiesInHitRange.size() > 0 && !aggressive)
+				{
+					Position enemyPos = enemiesInHitRange[0];
+					this->SetTarget(Team::GetNPCByPosition(enemyPos));
+					pCurrentState->Transition(this);
+					return;
+				}
+				else
+				{
+					radius = 3;
+					Position bestPos = BFSRadius(GetPosition(), target->GetPosition(), radius, dupMaze, dupSecurityMap);
+					DuplicateMaze(maze, dupMaze);
+					if (bestPos.row != -1 && bestPos.col != -1)
+						nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
+					else
+					{
+						std::cout << "No bestPos found from BFSRadius (enemy in the same room)\n";
+						nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &radius);
+					}
+					move(nextStep);
+					return;
+				}
+			}
+			else if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()) && enemiesInHitRange.size() > 0)
+			{
+				pCurrentState->Transition(this);
+				return;
+			}
+			else if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()) && enemiesInHitRange.size() == 0)
+			{
+				
+			}
+			else
+			{
+				if (!this->aggressive)
+				{
+					if (enemiesInHitRange.size() > 0)
+					{
+						Position enemyPos = enemiesInHitRange[0];
+						this->SetTarget(Team::GetNPCByPosition(enemyPos));
+						pCurrentState->Transition(this);
+						return;
+					}
+					else
+					{
+						this->SetTarget(Team::findNearestEnemy(this));
+						radius = 3;
+						Position bestPos = BFSRadius(GetPosition(), target->GetPosition(), radius, dupMaze, dupSecurityMap);
+						DuplicateMaze(maze, dupMaze);
+						if (bestPos.row != -1 && bestPos.col != -1)
+							nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
+						else
+						{
+							std::cout << "No bestPos found from BFSRadius (enemy in the same room)\n";
+							nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &radius);
+						}
+						move(nextStep);
+						return;
+					}
+				}
+			}
+		}
 		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()))
 		{
 			Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex());
@@ -32,7 +101,10 @@ void Warrior::moveToEnemy(NPC* target)
 			if (bestPos.row != -1 && bestPos.col != -1)
 				nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
 			else
+			{
 				std::cout << "No bestPos found from BFSRadius\n";
+				nextStep = RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &radius);
+			}
 		}
 		else
 		{
@@ -72,7 +144,7 @@ void Warrior::fireBullet(Position enemyPos)
 	if (BulletHitType == 1)
 	{
 		//enemy is hit
-		NPC* enemy = Team::GetTeammate(enemyPos);
+		NPC* enemy = Team::GetNPCByPosition(enemyPos);
 		//bulletDamage = enemy->GetHp() - BULLET_DAMAGE;
 		//enemy->SetHp(bulletDamage);
 		bullet.setIsMoving(false);

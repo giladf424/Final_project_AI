@@ -92,7 +92,7 @@ vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, boo
 	return enemiesPos;
 }
 
-NPC* Team::GetTeammate(Position pos)
+NPC* Team::GetNPCByPosition(Position pos)
 {
 	for (Team* t : Teams)
 	{
@@ -102,6 +102,7 @@ NPC* Team::GetTeammate(Position pos)
 				return n;
 		}
 	}
+	std::cout << "Error: NPC not found (GetNPCByPosition)\n";
 	return nullptr;
 }
 
@@ -193,4 +194,3 @@ NPC* Team::findTargetEnemy(NPC* n, bool aggresive)
 		return findNearestEnemy(n);
 	}
 }
-

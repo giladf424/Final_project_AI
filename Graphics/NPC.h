@@ -56,5 +56,5 @@ public:
 	Position getEntranceToCorridor(int corridorIndex);
 	vector<Position> GetAllEntrancesToMyRoom();
 	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	int GetNumofEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
+	vector<Position> GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
 };

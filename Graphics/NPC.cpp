@@ -282,16 +282,16 @@ void NPC::UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], d
 	}
 }
 
-int NPC::GetNumofEnemiesInHitRange(Position myPos, vector<Position> enemiesPos)
+vector<Position> NPC::GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos)
 {
 	int numEnemies = 0;
-	vector<Position> enemiesPositions = enemiesPos;
-	for (Position p : enemiesPositions)
+	vector<Position> enemiesPositions;
+	for (Position p : enemiesPos)
 	{
 		if (IsEnemyInHitRange(myPos, p))
-			numEnemies++;
+			enemiesPositions.push_back(p);
 	}
-	return numEnemies;
+	return enemiesPositions;
 }
 
 

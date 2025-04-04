@@ -9,9 +9,8 @@ void PatrolState::OnEnter(NPC* p)
 	// Initialize patrol behavior
 	Warrior* w = (Warrior*)p;
     w->SetIsMoving(true);
-	NPC* target = Team::findNearestEnemy(w);
-	if (target != nullptr)
-		w->moveToEnemy(target);
+	w->SetTarget(Team::findTargetEnemy(w, w->GetAggressive()));
+	w->moveToEnemy();
     std::cout << "Entering PatrolState\n";
 }
 
@@ -19,9 +18,11 @@ void PatrolState::Transition(NPC* p)
 {
     // Exiting from current state
 	OnExit(p);
-
+	State* currentState = p->GetState();
+	// Check for state transitions
 	p->SetState(new CombatState());
-
+	delete currentState; // Clean up the old state
+	currentState = nullptr;
     // entering new state
     p->GetState()->OnEnter(p);
 

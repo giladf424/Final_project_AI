@@ -35,7 +35,7 @@ void Squire::RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate)
 		Position nextStep = { -1, -1 };
 		vector<Position> entrances = this->GetAllEntrancesToMyRoom();
 		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
-		NPC* target = Team::findNearestEnemy(Team::GetTeammate(GetPosition()));
+		NPC* target = Team::findNearestEnemy(Team::GetNPCByPosition(GetPosition()));
 		Position bestEscapePos = BFSRadius(GetPosition(), target->GetPosition(), BFS_ITERATIONS, dupMaze, dupSecurityMap);
 		//Position nextStep = RunBFS(dupMaze, dupSecurityMap, nearestTeamate);
 		move(bestEscapePos);
