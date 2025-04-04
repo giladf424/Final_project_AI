@@ -4,7 +4,7 @@
 #include "Cell.h"
 #include "CompareCells.h"
 #include "Corridor.h"
-#include "Grenade.h"
+//#include "Grenade.h"
 
 //class Team; // Forward declaration
 
@@ -57,4 +57,5 @@ public:
 	vector<Position> GetAllEntrancesToMyRoom();
 	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	vector<Position> GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
+	void hitByBullet() { hp -= DAMAGE; };
 };

@@ -1,7 +1,7 @@
 #pragma once
 //#include "NPC.h"
 #include "definitions.h"
-#include "Warrior.h"
+//#include "Warrior.h"
 #include "Squire.h"
 #include <vector>
 

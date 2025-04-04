@@ -1,4 +1,5 @@
 #include "Squire.h"
+#include "IdleState.h"
 
 Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 {

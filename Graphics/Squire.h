@@ -1,10 +1,10 @@
 #pragma once
 #include "NPC.h"
-#include "IdleState.h"
+//#include "IdleState.h"
 #include <queue>
-#include "CompareCells.h"
-#include "Cell.h"
-#include "definitions.h"
+//#include "CompareCells.h"
+//#include "Cell.h"
+//#include "definitions.h"
 
 class Squire : public NPC
 {

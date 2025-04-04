@@ -1,4 +1,5 @@
 #include "Warrior.h"
+#include "Grenade.h"
 
 Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 {

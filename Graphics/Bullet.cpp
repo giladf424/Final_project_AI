@@ -2,6 +2,7 @@
 #include <math.h>
 #include "glut.h"
 
+vector<Bullet*> Bullet::bullets;
 // angle is in radians
 Bullet::Bullet(double xx, double yy, double angle)
 {
@@ -11,10 +12,25 @@ Bullet::Bullet(double xx, double yy, double angle)
 	dirX = cos(angle);
 	dirY = sin(angle);
 	speed = 0.3;
+	teamID = { -1, -1 };
 	isMoving = false;
+	isVisualization = true;
 }
 
-void Bullet::move(int maze[MSZ][MSZ])
+Bullet::Bullet(double xx, double yy, double angle, TeamID id)
+{
+	x = xx;
+	y = yy;
+	dir_angle = angle;
+	dirX = cos(angle);
+	dirY = sin(angle);
+	speed = 0.9;
+	teamID = id;
+	isMoving = false;
+	isVisualization = false;
+}
+
+Position Bullet::move(int maze[MSZ][MSZ])
 {
 	if (isMoving)
 	{
@@ -22,7 +38,20 @@ void Bullet::move(int maze[MSZ][MSZ])
 		y += speed * dirY;
 		if (maze[(int)y][(int)x] == WALL)
 			isMoving = false;
+
+		if (maze[(int)y][(int)x] == NPC_ && !isVisualization)
+		{
+			Position enemyPos = { (int)y, (int)x };
+			NPC* n = findNPCByPosition(enemyPos);
+			if (n != nullptr && IsEnemyTeam(n))
+			{
+				n->hitByBullet();
+				isMoving = false;
+			}
+			return enemyPos;
+		}
 	}
+	return { -1, -1 };
 }
 
 void Bullet::show()
@@ -75,4 +104,24 @@ bool Bullet::moveToEnemyOrWall(Position enemyPos, int maze[MSZ][MSZ])
 		}
 	}
 	return false;
+}
+
+NPC* Bullet::findNPCByPosition(Position pos)
+{
+	for (Team* t : Team::Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (n->GetPosition().row == pos.row && n->GetPosition().col == pos.col)
+			{
+				return n;
+			}
+		}
+	}
+	return nullptr;
+}
+
+bool Bullet::IsEnemyTeam(NPC* n)
+{
+	return n->GetTeamID().team != teamID.team;
 }

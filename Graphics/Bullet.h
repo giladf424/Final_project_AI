@@ -1,5 +1,7 @@
 #pragma once
 #include "definitions.h"
+#include "Team.h"
+//#include "NPC.h"
 class Bullet
 {
 private: 
@@ -8,15 +10,23 @@ private:
 	double dirX, dirY;
 	double speed;
 	bool isMoving;
+	bool isVisualization;
+	TeamID teamID;
 public:
+	static vector<Bullet*> bullets;
 	Bullet(double xx, double yy, double angle);
-	void move(int maze[MSZ][MSZ]);
+	Bullet(double xx, double yy, double angle, TeamID id);
+	~Bullet() = default;
+	Position move(int maze[MSZ][MSZ]);
 	void show();
 	void setIsMoving(bool value) { isMoving = value; }
+	bool getIsMoving() { return isMoving; }
 	void SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ]);
 	bool IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos);
-
+	Position getPosition() { return { (int)x, (int)y }; }
 	bool moveToEnemyOrWall(Position enemyPos, int maze[MSZ][MSZ]);
+	NPC* findNPCByPosition(Position pos);
+	bool IsEnemyTeam(NPC* n);
 
 };
 

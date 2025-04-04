@@ -3,11 +3,11 @@
 #include "PatrolState.h"
 #include "NPC.h"
 #include "Cell.h"
-#include "definitions.h"
+//#include "definitions.h"
 #include <queue>
 #include "CompareCells.h"
-#include "Bullet.h"
-#include "Grenade.h"
+//#include "Bullet.h"
+//#include "Grenade.h"
 
 class Warrior : public NPC
 {

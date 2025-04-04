@@ -34,6 +34,7 @@ const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
 const int MAX_CORRIDORS_ENTRANCES = 4;
 const int BFS_ITERATIONS = 150;
+const int DAMAGE = 10;
 
 
 extern int maze[MSZ][MSZ];

@@ -1,4 +1,5 @@
 #include "NPC.h"
+#include "Grenade.h"
 
 NPC::NPC(Position startPos, TeamID teamID)
 {
