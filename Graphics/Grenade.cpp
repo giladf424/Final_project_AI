@@ -1,5 +1,6 @@
 #include "Grenade.h"
 
+vector<Grenade*> Grenade::grenades;
 Grenade::Grenade(double r, double c)
 {
 	int i;
@@ -8,8 +9,37 @@ Grenade::Grenade(double r, double c)
 	double alpha = 2*PI/NUM_BULLETS; // bullet separation angle
 	for (i = 0;i < NUM_BULLETS;i++)
 	{
-		bullets[i] = new Bullet(c, r, i * alpha);
+		bullets.push_back(new Bullet(col, row, i * alpha));
 	}
+	isExpending = false;
+	id = { -1, -1 };
+}
+
+Grenade::Grenade(double r, double c, TeamID teamID)
+{
+	int i;
+	row = r;
+	col = c;
+	double alpha = 2 * PI / NUM_BULLETS; // bullet separation angle
+	for (i = 0; i < NUM_BULLETS; i++)
+	{
+		bullets.push_back(new Bullet(col, row, i * alpha, teamID));
+	}
+	isExpending = false;
+	id = teamID;
+}
+
+Grenade::~Grenade()
+{
+	int i;
+	for (i = 0; i < NUM_BULLETS; i++)
+	{
+		Bullet* b = bullets.back();
+		bullets.pop_back();
+		delete b;
+		b = nullptr;
+	}
+	
 }
 
 void Grenade::explode()
@@ -26,13 +56,15 @@ void Grenade::explode()
 
 void Grenade::expand(int maze[MSZ][MSZ])
 {
+	bool stillExpanding = false;
 	int i;
 
 	for (i = 0;i < NUM_BULLETS;i++)
 	{
 		bullets[i]->move(maze);
+		stillExpanding = bullets.at(i)->getIsMoving() || stillExpanding;
 	}
-
+	isExpending = stillExpanding;
 }
 
 void Grenade::show()
@@ -53,7 +85,7 @@ void Grenade::SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ])
 	for (i = 0;i < NUM_BULLETS;i++)
 	{
 		bullets[i]->SimulateExplosion(maze,sm);
-		delete bullets[i];
+		//delete bullets[i];
 	}
 
 

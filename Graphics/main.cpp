@@ -28,7 +28,6 @@ vector<Corridor> corridors;
 
 bool bulletFired = false;
 bool grenadeThrown = false;
-bool startGame = false;
 bool paused = true;
 bool showSecurityMap = false;
 Bullet* pb=nullptr;
@@ -645,6 +644,7 @@ void display()
 
 void idle() 
 {
+	Sleep(200);
 	if (bulletFired)
 		pb->move(maze);
 	if (grenadeThrown)
@@ -660,7 +660,28 @@ void idle()
 				n->GetState()->OnEnter(n);
 			}
 		}
-		Sleep(200);
+
+		// move all bullets and grenades and check if a bullet or grenade attribute is moving == false remove it from the vector and delete him
+		for (Bullet* b : Bullet::bullets)
+		{
+			b->move(maze);
+			if (b->getIsMoving() == false)
+			{
+				Bullet::bullets.erase(std::remove(Bullet::bullets.begin(), Bullet::bullets.end(), b), Bullet::bullets.end());
+				delete b;
+				b = nullptr;
+			}
+		}
+		for (Grenade* g : Grenade::grenades)
+		{
+			g->expand(maze);
+			if (g->getIsExpending() == false)
+			{
+				Grenade::grenades.erase(std::remove(Grenade::grenades.begin(), Grenade::grenades.end(), g), Grenade::grenades.end());
+				delete g;
+				g = nullptr;
+			}
+		}
 	}
 	glutPostRedisplay(); // indirect call to display
 }
@@ -680,9 +701,6 @@ void menu(int choice)
 	case 3: // security map
 		GenerateSecurityMap();
 		break;
-	case 4: // start game
-		startGame = true;
-		break;
 	}
 }
 void mouse(int button, int state, int x, int y)
@@ -699,13 +717,13 @@ void mouse(int button, int state, int x, int y)
 void keyboard(unsigned char key, int x, int y) {
 	if (key == ' ')
 		paused = !paused;
-	if (key == 'q')
-		exit(0);
 	if (key == 's')
 		showSecurityMap = !showSecurityMap;
+	if (key == 'q')
+		exit(0);
 }
 
-void main(int argc, char* argv[]) 
+int main(int argc, char* argv[]) 
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	glutInit(&argc, argv);
@@ -728,11 +746,11 @@ void main(int argc, char* argv[])
 	glutAddMenuEntry("Fire bullet", 1);
 	glutAddMenuEntry("Throw Grenade", 2);
 	glutAddMenuEntry("Generate Security Map", 3);
-	glutAddMenuEntry("Start the game!", 4);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 
 	init();
 
 	glutMainLoop();
+	return 0;
 }
