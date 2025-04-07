@@ -15,7 +15,7 @@ class NPC
 protected:
 	int hp;
 	TeamID id;
-	bool isAlive = true;
+	bool isAlive;
 	bool isMoving;
 	Position pos;
 	Position prevPos;
@@ -48,7 +48,6 @@ public:
 	bool IsEnemyInCorridorConnectedToMyRoom(int corridorIndex);
 	bool IsEnemyInSameRoom(int roomIndex);
 
-	virtual const char* getType() = 0;
 	void move(Position p); // Add this line
 	Position BFSRadius(Position start, Position enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*> q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
@@ -57,5 +56,9 @@ public:
 	vector<Position> GetAllEntrancesToMyRoom();
 	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	vector<Position> GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
-	void hitByBullet() { hp -= DAMAGE; };
+	void hitByBullet();
+
+	virtual const char* getType() = 0;
+	virtual int getAmmo() = 0;
+	virtual int getGrenades() = 0;
 };

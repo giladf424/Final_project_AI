@@ -6,6 +6,7 @@ NPC::NPC(Position startPos, TeamID teamID)
 	hp = MAX_HP;
 	id = teamID;
 	isMoving = false;
+	isAlive = true;
 	pos = startPos;
 	prevPos = {-1, -1};
 	corridorIndex = -1;
@@ -178,7 +179,7 @@ Position NPC::BFSRadius(Position start, Position enemyPos, int radius, int dupMa
 	{
 		Cell* isBest = pq.top();
 		pq.pop();
-		if (IsEnemyInHitRange({ isBest->getRow(), isBest->getCol() }, enemyPos))
+		if (IsEnemyInHitRange({ isBest->getRow(), isBest->getCol() }, enemyPos) && (isBest->getRow() != enemyPos.row || isBest->getCol() != enemyPos.col))
 		{
 			bestPos.row = isBest->getRow();
 			bestPos.col = isBest->getCol();
@@ -293,6 +294,16 @@ vector<Position> NPC::GetEnemiesInHitRange(Position myPos, vector<Position> enem
 			enemiesPositions.push_back(p);
 	}
 	return enemiesPositions;
+}
+
+void NPC::hitByBullet()
+{
+	hp -= DAMAGE;
+	if (hp <= 0)
+	{
+		isAlive = false;
+		maze[pos.row][pos.col] = SPACE;
+	}
 }
 
 

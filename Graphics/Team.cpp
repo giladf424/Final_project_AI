@@ -38,7 +38,7 @@ NPC* Team::findNearestEnemy(NPC* n)
 		if (t->GetTeamID().team != n->GetTeamID().team) {
 			for (NPC* enemy : t->GetTeammates()) {
 				if (enemy->GetIsAlive()) {
-					int distance = (int)sqrt(pow(enemy->GetPosition().row - n->GetPosition().row, 2) + pow(enemy->GetPosition().col - n->GetPosition().col, 2)); // Manhattan distance
+					int distance = (int)findDistance(enemy->GetPosition(), n->GetPosition());
 					if (distance < minDistance) {
 						minDistance = distance;
 						nearestEnemy = enemy;
@@ -58,7 +58,7 @@ Position Team::findNearestTeammate(NPC* n)
 		if (t->GetTeamID().team == n->GetTeamID().team) {
 			for (NPC* teammate : t->GetTeammates()) {
 				if (teammate->GetIsAlive() && teammate->GetTeamID().place != n->GetTeamID().place) {
-					int distance = (int)sqrt(pow(teammate->GetPosition().row - n->GetPosition().row, 2) + pow(teammate->GetPosition().col - n->GetPosition().col, 2));
+					int distance = (int)findDistance(teammate->GetPosition(), n->GetPosition());
 					if (distance < minDistance) {
 						minDistance = distance;
 						teammatePos = teammate->GetPosition();
@@ -140,7 +140,7 @@ NPC* Team::findNearestSquireEnemy(NPC* n)
 			{
 				if (strcmp(enemy->getType(), "Squire") == 0 && enemy->GetIsAlive())
 				{
-					int distance = (int)sqrt(pow(enemy->GetPosition().row - n->GetPosition().row, 2) + pow(enemy->GetPosition().col - n->GetPosition().col, 2));
+					int distance = (int)findDistance(enemy->GetPosition(), n->GetPosition());
 					if (distance < minDistance)
 					{
 						minDistance = distance;
@@ -194,4 +194,41 @@ NPC* Team::findTargetEnemy(NPC* n, bool aggresive)
 	{
 		return findNearestEnemy(n);
 	}
+}
+
+void Team::removeTeammate(NPC* dead)
+{
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamID().team == dead->GetTeamID().team)
+		{
+			for (size_t i = 0; i < t->GetTeammates().size(); i++)
+			{
+				if (t->GetTeammates()[i] == dead)
+				{
+					t->GetTeammates().erase(t->GetTeammates().begin() + i);
+					t->teamSize--;
+					break;
+				}
+			}
+			break;
+		}
+	}
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamID().team != dead->GetTeamID().team)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				if (strcmp(n->getType(), "Warrior") == 0)
+					if (((Warrior*)n)->GetTarget() == dead)
+						((Warrior*)n)->SetTarget(nullptr);
+			}
+		}
+	}
+}
+
+double Team::findDistance(Position p1, Position p2)
+{
+	return sqrt(pow(p1.row - p2.row, 2) + pow(p1.col - p2.col, 2));
 }

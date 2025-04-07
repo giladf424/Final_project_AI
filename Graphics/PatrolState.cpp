@@ -25,7 +25,7 @@ void PatrolState::Transition(NPC* p)
 	delete currentState; // Clean up the old state
 	currentState = nullptr;
     // entering new state
-    p->GetState()->OnEnter(p);
+    //p->GetState()->OnEnter(p);
 
 }
 

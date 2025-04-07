@@ -23,6 +23,11 @@ const double PI = 3.14;
 const double SECURITY_FACTOR = 0.001;
 const double SECURITY_COEFFICIENT = 10;
 const int MAX_HP = 100;
+const int HP_TH = 35;
+const int HP_TH_AGGRESSIVE = 25;
+const int AMMO_TH = 7;
+const int AMMO_TH_AGGRESSIVE = 4;
+const int GRENADE_TH = 2;
 const int MAX_BULLETS_WARRIOR = 15;
 const int MAX_GRENADES_WARRIOR = 10;
 const int MAX_BULLETS_SQUIRE = 30;
@@ -35,6 +40,7 @@ const int TEAM_SIZE = 2;
 const int MAX_CORRIDORS_ENTRANCES = 4;
 const int BFS_ITERATIONS = 150;
 const int DAMAGE = 10;
+const int RELOAD_TIME = 10;
 
 
 extern int maze[MSZ][MSZ];
@@ -78,3 +84,4 @@ void DuplicateMaze(int source[MSZ][MSZ], int target[MSZ][MSZ]);
 void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ]);
 //void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 int GetRoomIndex(Position pos);
+void printMaze(int maze[MSZ][MSZ]);

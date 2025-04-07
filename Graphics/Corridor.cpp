@@ -32,9 +32,7 @@ void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MS
 	Corridor* corridor = this;
 	corridor->addConnectedRoom(GetRoomIndex(sRoom));
 	corridor->entrances.push_back(sCorridor);
-	cout << "Entrance: (" << corridor->getEntrances().back().row << ", " << corridor->getEntrances().back().col << ") \n";
 	corridor->path.push_back(sCorridor);
-	cout << "Path: (" << corridor->getPath().back().row << ", " << corridor->getPath().back().col << ") \n";
 	//corridors.push_back(corridor);
 
 	runBFS = true;

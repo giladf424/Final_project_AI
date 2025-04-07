@@ -7,6 +7,7 @@
 #include <queue>
 #include "Cell.h"
 #include <iostream>
+#include <sstream>
 #include "Room.h"
 #include "CompareCells.h"
 #include "Bullet.h"
@@ -14,6 +15,7 @@
 #include "definitions.h"
 #include "Team.h"
 #include "Corridor.h"
+#include "Warrior.h"
 
 using namespace std;
 
@@ -510,8 +512,8 @@ void SetupDungeon()
 	BuildPathBetweenTheRooms();
 	isAstar = false;
 	initCorridors();
-	PrintCorridors();
-	PrintRoomScopes();
+	/*PrintCorridors();
+	PrintRoomScopes();*/
 }
 
 
@@ -589,6 +591,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 	int numSimulations = 100;
 	if (enemiesPos.size() > 0)
 	{
+		enemiesPos.push_back(n->GetPosition());
 		for (Position p : enemiesPos)
 		{
 			for (int i = 0; i < numSimulations; i++)
@@ -629,22 +632,61 @@ void init()
 	GenerateSecurityMap();
 }
 
+void renderBitmapString(float x, float y, void* font, const string& str) {
+	glRasterPos2f(x, y);
+	for (char c : str) {
+		glutBitmapCharacter(font, c);
+	}
+}
+
+void drawHUD()
+{
+	// a HUD for our convinenece
+	float y_offset = MSZ - 2;
+	float x_offset = 1;
+
+	glColor3d(0, 0, 0);
+	int soldierIndex = 1;
+
+	for (Team* t : Team::Teams) {
+		for (NPC* s : t->GetTeammates()) {
+			stringstream ss;
+			ss << " [" << (dynamic_cast<Warrior*>(s) ? "Warrior" : "Squire") << "] "
+				<< "HP: " << s->GetHp() << " Ammo: " << s->getAmmo() << " State: " << s->GetState()->toString()
+				<< " Team: " << ((t->GetTeamID().team == 0) ? "Red" : "Orange");
+			renderBitmapString(x_offset, y_offset, GLUT_BITMAP_HELVETICA_10, ss.str());
+
+			y_offset -= 2; // Move down for next soldier
+			if (y_offset < MSZ - 10) break; // Prevent overlapping
+		}
+		x_offset += MSZ / 2;
+		y_offset = MSZ - 2;
+		soldierIndex = 1;
+	}
+}
+
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT); // clean frame buffer
 
 	ShowDungeon();
+	drawHUD();
+
 	if (pb != nullptr)
 		pb->show();
 	if (pg != nullptr)
 		pg->show();
+	for (Bullet* b : Bullet::bullets)
+		b->show();
+	for (Grenade* g : Grenade::grenades)
+		g->show();
 
 	glutSwapBuffers(); // show all
 }
 
 void idle() 
 {
-	Sleep(200);
+	Sleep(25);
 	if (bulletFired)
 		pb->move(maze);
 	if (grenadeThrown)
@@ -665,21 +707,57 @@ void idle()
 		for (Bullet* b : Bullet::bullets)
 		{
 			b->move(maze);
-			if (b->getIsMoving() == false)
+			/*if (!b->getIsMoving())
 			{
 				Bullet::bullets.erase(std::remove(Bullet::bullets.begin(), Bullet::bullets.end(), b), Bullet::bullets.end());
 				delete b;
 				b = nullptr;
-			}
+			}*/
 		}
 		for (Grenade* g : Grenade::grenades)
 		{
 			g->expand(maze);
-			if (g->getIsExpending() == false)
+			/*if (!g->getIsExpending())
 			{
 				Grenade::grenades.erase(std::remove(Grenade::grenades.begin(), Grenade::grenades.end(), g), Grenade::grenades.end());
 				delete g;
 				g = nullptr;
+			}*/
+		}
+
+		Bullet::bullets.erase(
+			remove_if(Bullet::bullets.begin(), Bullet::bullets.end(), [](Bullet* b) {
+				if (!b->getIsMoving()) {
+					delete b;
+					b = nullptr;
+					return true;
+				}
+				return false;
+				}),
+			Bullet::bullets.end()
+		);
+		Grenade::grenades.erase(
+			remove_if(Grenade::grenades.begin(), Grenade::grenades.end(), [](Grenade* g) {
+				if (!g->getIsExpending()) {
+					delete g;
+					g = nullptr;
+					return true;
+				}
+				return false;
+				}),
+			Grenade::grenades.end()
+		);
+		// check if anyone is dead
+		for (Team* t : Team::Teams)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				if (!n->GetIsAlive())
+				{
+					t->removeTeammate(n);
+					delete n;
+					n = nullptr;
+				}
 			}
 		}
 	}
@@ -722,35 +800,48 @@ void keyboard(unsigned char key, int x, int y) {
 	if (key == 'q')
 		exit(0);
 }
+LONG MyFilter(LONG excode) {
+	return (excode == EXCEPTION_ACCESS_VIOLATION) ?
+		EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH;
+}
 
 int main(int argc, char* argv[]) 
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	glutInit(&argc, argv);
-	// definitions for visual memory (Frame buffer) and double buffer
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-	glutInitWindowSize(WIDTH, HEIGHT);
-	glutInitWindowPosition(600, 20);
-	glutCreateWindow("BFS");
+	__try
+	{
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+		glutInit(&argc, argv);
+		// definitions for visual memory (Frame buffer) and double buffer
+		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+		glutInitWindowSize(WIDTH, HEIGHT);
+		glutInitWindowPosition(600, 20);
+		glutCreateWindow("BFS");
 
-	// display is a refresh function
-	glutDisplayFunc(display);
-	// idle is a update function
-	glutIdleFunc(idle);
+		// display is a refresh function
+		glutDisplayFunc(display);
+		// idle is a update function
+		glutIdleFunc(idle);
 	
-	glutMouseFunc(mouse);
-	glutKeyboardFunc(keyboard);
+		glutMouseFunc(mouse);
+		glutKeyboardFunc(keyboard);
 
-	// menu
-	glutCreateMenu(menu);
-	glutAddMenuEntry("Fire bullet", 1);
-	glutAddMenuEntry("Throw Grenade", 2);
-	glutAddMenuEntry("Generate Security Map", 3);
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
+		// menu
+		glutCreateMenu(menu);
+		glutAddMenuEntry("Fire bullet", 1);
+		glutAddMenuEntry("Throw Grenade", 2);
+		glutAddMenuEntry("Generate Security Map", 3);
+		glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 
-	init();
+		init();
 
-	glutMainLoop();
+		glutMainLoop();
+       
+	}
+	__except (MyFilter(GetExceptionCode())) {
+		std::cerr << "Access violation caught!" << std::endl;
+		// Handle the exception (e.g., clean up resources)
+	}
+
 	return 0;
 }

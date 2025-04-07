@@ -34,3 +34,26 @@ int GetRoomIndex(Position pos)
 	}
 	return -1;
 }
+
+void printMaze(int maze[MSZ][MSZ])
+{
+	for (int i = 0; i < MSZ; i++)
+	{
+		for (int j = 0; j < MSZ; j++)
+		{
+			if (maze[i][j] == WALL)
+				std::cout << "#";
+			else if (maze[i][j] == SPACE)
+				std::cout << ".";
+			else if (maze[i][j] == NPC_)
+				std::cout << "N";
+			else if (maze[i][j] == GRAY)
+				std::cout << "G";
+			else if (maze[i][j] == BLACK)
+				std::cout << "B";
+			else
+				std::cout << " ";
+		}
+		std::cout << "\n";
+	}
+}

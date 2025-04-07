@@ -26,7 +26,7 @@ void IdleState::Transition(NPC* p)
     s->SetState(new FleeState());
 
     // entering new state
-    p->GetState()->OnEnter(p);
+  //  p->GetState()->OnEnter(p);
 }
 
 void IdleState::OnExit(NPC* p)

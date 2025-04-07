@@ -35,5 +35,7 @@ public:
 	static NPC* findNearestSquireEnemy(NPC* n);
 	static Position GetSquireEnemyPositionInRoom(int roomIndex, int teamNum);
 	static NPC* findTargetEnemy(NPC* n, bool aggresive);
+	void removeTeammate(NPC* dead);
+	static double findDistance(Position p1, Position p2);
 };
 

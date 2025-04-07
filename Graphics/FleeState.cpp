@@ -26,7 +26,7 @@ void FleeState::Transition(NPC* p)
     w->SetState(new PatrolState());
 
     // entering new state
-    p->GetState()->OnEnter(p);
+  //  p->GetState()->OnEnter(p);
    
 }
 
