@@ -106,6 +106,8 @@ void Warrior::moveToEnemy()
 			vector<Position> entrances = this->GetAllEntrancesToMyRoom();
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &radius);
+			std::cout << "Radius: ( " << radius << " ) patrol last\n";
+			DuplicateMaze(maze, dupMaze);
 			Position bestPos = BFSRadius(GetPosition(), entrance, radius, dupMaze, dupSecurityMap);
 			DuplicateMaze(maze, dupMaze);
 			if (bestPos.row != -1 && bestPos.col != -1)

@@ -1,18 +1,18 @@
 #include "PatrolState.h"
 #include "CombatState.h"
-#include "SeekResourcesState.h"
 #include "Warrior.h"
 #include <iostream>
 
 void PatrolState::OnEnter(NPC* p)
 {
 	// Initialize patrol behavior
+    std::cout << "Entering PatrolState\n\n";
 	Warrior* w = (Warrior*)p;
     w->SetIsMoving(true);
 	if(w->GetTarget() == nullptr)
 		w->SetTarget(Team::findTargetEnemy(w, w->GetAggressive()));
 	w->moveToEnemy();
-    std::cout << "Entering PatrolState\n";
+	std::cout << "Exiting PatrolState\n\n";
 }
 
 void PatrolState::Transition(NPC* p)

@@ -1,19 +1,18 @@
 #include "CombatState.h"
 #include "PatrolState.h"
 #include "RequestResourcesState.h"
-#include "FleeState.h"
-
 #include "Warrior.h"
 #include <iostream>
 
 void CombatState::OnEnter(NPC* p)
 {
 	// Initialize combat behavior
+	std::cout << "Entering CombatState\n\n";
 	Warrior* w = (Warrior*)p;
 	w->SetIsMoving(true);
 	w->attackEnemy();
 	w->SetIsMoving(false);
-	std::cout << "Entering CombatState\n";
+	std::cout << "Exiting CombatState\n\n";
 }
 
 void CombatState::Transition(NPC* p)

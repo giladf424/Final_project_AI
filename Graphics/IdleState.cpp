@@ -6,6 +6,7 @@
 void IdleState::OnEnter(NPC* p)
 {
     // Initialize idle behavior
+    std::cout << "Entering IdleState\n\n";
     Squire* s = (Squire*)p;
     s->SetIsMoving(true);
 	Position teammatePos = Team::findNearestTeammate(p);
@@ -14,7 +15,7 @@ void IdleState::OnEnter(NPC* p)
     //if(abs(teammatePos.row - s->GetPosition().row) + abs(teammatePos.col - s->GetPosition().col) <= 2)
     //if(Team::GetTeammate(teammatePos)->GetState()->toString()._Equal("Combat"))
 		//Transition(p);
-    std::cout << "Entering IdleState\n";
+    std::cout << "Exiting IdleState\n\n";
 }
 
 void IdleState::Transition(NPC* p)

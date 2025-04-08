@@ -98,7 +98,7 @@ Cell* NPC::RestorePath(Cell* pc, int* numSteps)
 		pc = pc->getParent();
 		*numSteps += 1;
 	}
-	
+	std::cout << "Radius : " << *numSteps << "\n";
 	return pc;
 }
 
@@ -122,23 +122,27 @@ bool NPC::IsEnemyInSameRoom(int roomIndex)
 
 void NPC::move(Position pos)
 {
-	maze[GetPosition().row][GetPosition().col] = SPACE;
-	maze[pos.row][pos.col] = NPC_;
-	SetPrevPosition(GetPosition());
-	SetPosition(pos);
-	if (getRoomIndex() == -1 && GetRoomIndex(GetPrevPosition()) != -1)
+	if (pos.row != GetPosition().row || pos.col != GetPosition().col)
 	{
-		for (Corridor* c : Corridor::corridors)
+		std::cout << "Moving from (" << GetPosition().row << ", " << GetPosition().col << ") to (" << pos.row << ", " << pos.col << ")\n";
+		maze[GetPosition().row][GetPosition().col] = SPACE;
+		maze[pos.row][pos.col] = NPC_;
+		SetPrevPosition(GetPosition());
+		SetPosition(pos);
+		if (getRoomIndex() == -1 && GetRoomIndex(GetPrevPosition()) != -1)
 		{
-			if (c->isEntrance(GetPosition()))
+			for (Corridor* c : Corridor::corridors)
 			{
-				SetCorridorIndex(c->getId());
-				return;
+				if (c->isEntrance(GetPosition()))
+				{
+					SetCorridorIndex(c->getId());
+					return;
+				}
 			}
 		}
+		else if (getRoomIndex() != -1 && GetRoomIndex(GetPrevPosition()) == -1)
+			SetCorridorIndex(-1);
 	}
-	else if (getRoomIndex() != -1 && GetRoomIndex(GetPrevPosition()) == -1)
-		SetCorridorIndex(-1);
 }
 
 Position NPC::BFSRadius(Position start, Position enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
@@ -175,12 +179,17 @@ Position NPC::BFSRadius(Position start, Position enemyPos, int radius, int dupMa
 		currentRadius++;
 	}
 	Position bestPos = {-1, -1};
+	std::cout << "Size: " << q.size() << " ###############################\n\n";
+	std::cout << "Current radius: " << currentRadius << "\nSize: " << pq.size() << "###############################\n\n";
 	while (!pq.empty())
 	{
 		Cell* isBest = pq.top();
 		pq.pop();
-		if (IsEnemyInHitRange({ isBest->getRow(), isBest->getCol() }, enemyPos) && (isBest->getRow() != enemyPos.row || isBest->getCol() != enemyPos.col))
+		bool inRange = IsEnemyInHitRange({ isBest->getRow(), isBest->getCol() }, enemyPos);
+		std::cout << "Enemy in hit range: " << inRange << "--------------- out -------------\n";
+		if (inRange) // && (isBest->getRow() != enemyPos.row || isBest->getCol() != enemyPos.col)
 		{
+			std::cout << "Enemy in hit range: " << inRange << "--------------------------------\n";
 			bestPos.row = isBest->getRow();
 			bestPos.col = isBest->getCol();
 			delete isBest;
@@ -201,14 +210,14 @@ Position NPC::BFSRadius(Position start, Position enemyPos, int radius, int dupMa
 	{
 		Cell* p = q.front();
 		q.pop();
-		delete p;
-		p = nullptr;
+		/*delete p;
+		p = nullptr;*/
 	}
 	isAstar = false;
 	return bestPos;
 }
 
-void NPC::BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*> q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
+void NPC::BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
 {
 	if (dupMaze[r][c] == SPACE || (dupMaze[r][c] == NPC_ && pCurrent->getParent() != nullptr))
 	{

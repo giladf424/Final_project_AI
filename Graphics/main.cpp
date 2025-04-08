@@ -653,8 +653,8 @@ void drawHUD()
 			stringstream ss;
 			ss << " [" << (dynamic_cast<Warrior*>(s) ? "Warrior" : "Squire") << "] "
 				<< "HP: " << s->GetHp() << " Ammo: " << s->getAmmo() << " State: " << s->GetState()->toString()
-				<< " Team: " << ((t->GetTeamID().team == 0) ? "Red" : "Orange");
-			renderBitmapString(x_offset, y_offset, GLUT_BITMAP_HELVETICA_10, ss.str());
+				<< " Team: " << ((t->GetTeamID().team == 0) ? "Red" : "Yellow");
+			renderBitmapString(x_offset, y_offset, GLUT_BITMAP_HELVETICA_12, ss.str());
 
 			y_offset -= 2; // Move down for next soldier
 			if (y_offset < MSZ - 10) break; // Prevent overlapping
@@ -684,9 +684,17 @@ void display()
 	glutSwapBuffers(); // show all
 }
 
+template <typename T>
+void safe_delete(T*& ptr) {
+	if (ptr) {
+		delete ptr;
+		ptr = nullptr;
+	}
+}
+
 void idle() 
 {
-	Sleep(25);
+	Sleep(100);
 	if (bulletFired)
 		pb->move(maze);
 	if (grenadeThrown)
@@ -699,6 +707,9 @@ void idle()
 			for (NPC* n : t->GetTeammates())
 			{
 				GenerateSecurityMapForSpecificNPC(n);
+				cout << " [" << (dynamic_cast<Warrior*>(n) ? "Warrior" : "Squire") << "] "
+					<< "HP: " << n->GetHp() << " Ammo: " << n->getAmmo() << " Grenades: " << n->getGrenades() << " State: " << n->GetState()->toString()
+					<< " Team: " << ((t->GetTeamID().team == 0) ? "Red\n" : "Yellow\n");
 				n->GetState()->OnEnter(n);
 			}
 		}
@@ -755,9 +766,15 @@ void idle()
 				if (!n->GetIsAlive())
 				{
 					t->removeTeammate(n);
-					delete n;
-					n = nullptr;
+					safe_delete(n);
+					/*delete n;
+					n = nullptr;*/
 				}
+			}
+			if (t->GetTeammates().size() == 0)
+			{
+				paused = true;
+				cout << "Game Over! Team " << ((t->GetTeamID().team == 0) ? "Yellow" : "Red") << " is won!\n";
 			}
 		}
 	}
@@ -781,16 +798,16 @@ void menu(int choice)
 		break;
 	}
 }
-void mouse(int button, int state, int x, int y)
-{
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-//		pb = new Bullet(MSZ*x/(double)WIDTH,
-//			MSZ* (HEIGHT - y) / (double)HEIGHT, (rand() % 360)* PI / 180);
-
-		pg = new Grenade(MSZ * (HEIGHT - y) / (double)HEIGHT, MSZ * x / (double)WIDTH);
-	}
-}
+//void mouse(int button, int state, int x, int y)
+//{
+//	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+//	{
+////		pb = new Bullet(MSZ*x/(double)WIDTH,
+////			MSZ* (HEIGHT - y) / (double)HEIGHT, (rand() % 360)* PI / 180);
+//
+//		pg = new Grenade(MSZ * (HEIGHT - y) / (double)HEIGHT, MSZ * x / (double)WIDTH);
+//	}
+//}
 
 void keyboard(unsigned char key, int x, int y) {
 	if (key == ' ')
@@ -822,15 +839,15 @@ int main(int argc, char* argv[])
 		// idle is a update function
 		glutIdleFunc(idle);
 	
-		glutMouseFunc(mouse);
+		//glutMouseFunc(mouse);
 		glutKeyboardFunc(keyboard);
 
 		// menu
-		glutCreateMenu(menu);
+		/*glutCreateMenu(menu);
 		glutAddMenuEntry("Fire bullet", 1);
 		glutAddMenuEntry("Throw Grenade", 2);
 		glutAddMenuEntry("Generate Security Map", 3);
-		glutAttachMenu(GLUT_RIGHT_BUTTON);
+		glutAttachMenu(GLUT_RIGHT_BUTTON);*/
 
 
 		init();
