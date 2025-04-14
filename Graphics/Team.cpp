@@ -74,6 +74,11 @@ Position Team::findNearestTeammate(NPC* n)
 vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors)
 {
 	vector<Position> enemiesPos;
+	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
+	{
+		//std::cout << "Error: Invalid room index\n";
+		return enemiesPos;
+	}
 	RoomScope rs = roomScopes[roomIndex];
 	for (Team* t : Teams)
 	{
@@ -93,13 +98,15 @@ vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, boo
 	return enemiesPos;
 }
 
-NPC* Team::GetNPCByPosition(Position pos)
+NPC* Team::GetNPCByPosition(Position p, int teamNum, int id)
 {
 	for (Team* t : Teams)
 	{
 		for (NPC* n : t->GetTeammates())
 		{
-			if (n->GetPosition().row == pos.row && n->GetPosition().col == pos.col)
+			if (n->GetTeamID().team == teamNum && n->GetTeamID().place == id)
+				continue;
+			if (n->isSamePosAsMyPos(p))
 				return n;
 		}
 	}
@@ -231,4 +238,69 @@ void Team::removeTeammate(NPC* dead)
 double Team::findDistance(Position p1, Position p2)
 {
 	return sqrt(pow(p1.row - p2.row, 2) + pow(p1.col - p2.col, 2));
+}
+
+void Team::blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ])
+{
+	int maxDistance = INT_MAX;
+	int distance = 0;
+	Position toBlock = { -1, -1 };
+	if (maze[p1.row + 1][p1.col] != WALL)
+	{
+		distance = (int)findDistance({ p1.row + 1, p1.col }, p2);
+		if (distance < maxDistance)
+		{
+			maxDistance = distance;
+			toBlock = { p1.row + 1, p1.col };
+		}
+	}
+	if (maze[p1.row - 1][p1.col] != WALL)
+	{
+		distance = (int)findDistance({ p1.row - 1, p1.col }, p2);
+		if (distance < maxDistance)
+		{
+			maxDistance = distance;
+			toBlock = { p1.row - 1, p1.col };
+		}
+	}
+	if (maze[p1.row][p1.col + 1] != WALL)
+	{
+		distance = (int)findDistance({ p1.row, p1.col + 1 }, p2);
+		if (distance < maxDistance)
+		{
+			maxDistance = distance;
+			toBlock = { p1.row, p1.col + 1 };
+		}
+	}
+	if (maze[p1.row][p1.col - 1] != WALL)
+	{
+		distance = (int)findDistance({ p1.row, p1.col - 1 }, p2);
+		if (distance < maxDistance)
+		{
+			maxDistance = distance;
+			toBlock = { p1.row, p1.col - 1 };
+		}
+	}
+	if (toBlock.row != -1 && toBlock.col != -1)
+	{
+		std::cout << "Blocking path from " << p1.row << ", " << p1.col << " to " << toBlock.row << ", " << toBlock.col << "\n";
+		maze[toBlock.row][toBlock.col] = BLACK;
+	}
+		
+}
+
+bool Team::isAnyBodyInMyPosition(Position p, int teamNum, int id)
+{
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (n->GetTeamID().team == teamNum && n->GetTeamID().place == id)
+				continue;
+
+			if (n->GetIsAlive() && n->isSamePosAsMyPos(p))
+				return true;
+		}
+	}
+	return false;
 }

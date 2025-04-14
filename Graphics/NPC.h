@@ -19,7 +19,9 @@ protected:
 	bool isMoving;
 	Position pos;
 	Position prevPos;
+	int prevStep;
 	int corridorIndex;
+	int prevRoomIndex;
 	State* pCurrentState;
 public:
 	NPC(Position startPos, TeamID teamID);
@@ -38,6 +40,10 @@ public:
 	void SetIsAlive(bool value) { isAlive = value; }
 	bool GetIsAlive() { return isAlive; }
 	TeamID GetTeamID() { return id; }
+	int GetPrevStep() { return prevStep; }
+	void SetPrevStep(int step) { prevStep = step; }
+	int getPrevRoomIndex() { return prevRoomIndex; }
+	void SetPrevRoomIndex(int index) { prevRoomIndex = index; }
 
 	int getRoomIndex();
 	Position RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
@@ -47,13 +53,16 @@ public:
 
 	bool IsEnemyInCorridorConnectedToMyRoom(int corridorIndex);
 	bool IsEnemyInSameRoom(int roomIndex);
+	bool isValidPos(Position nextStep);
+	bool isSamePosAsMyPos(Position p);
+	bool isStillInSamePos();
 
-	void move(Position p); // Add this line
-	Position BFSRadius(Position start, Position enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	void move(Position nextPos); // Add this line
+	Position BFSRadius(Position start, vector <Position> enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	bool IsEnemyInHitRange(Position myPos, Position enemyPos);
-	Position getEntranceToCorridor(int corridorIndex);
-	vector<Position> GetAllEntrancesToMyRoom();
+	Position getEntranceToCorridor(int corridorIndex, int roomIndex);
+	vector<Position> GetAllEntrancesToMyRoom(int roomIndex);
 	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	vector<Position> GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
 	void hitByBullet();

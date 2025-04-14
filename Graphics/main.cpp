@@ -32,6 +32,7 @@ bool bulletFired = false;
 bool grenadeThrown = false;
 bool paused = true;
 bool showSecurityMap = false;
+bool setGridlines = false;
 Bullet* pb=nullptr;
 Grenade* pg = nullptr;
 
@@ -563,6 +564,17 @@ void ShowDungeon()
 			glVertex2d(j+1, i + 1);
 			glVertex2d(j + 1, i );
 			glEnd();
+
+			// set grid lines
+			if (setGridlines) {
+				glColor3d(0, 0, 0);
+				glBegin(GL_LINE_LOOP);
+				glVertex2d(j, i);
+				glVertex2d(j, i + 1);
+				glVertex2d(j + 1, i + 1);
+				glVertex2d(j + 1, i);
+				glEnd();
+			}
 		}
 }
 
@@ -605,7 +617,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 	}
 	else
 	{
-		vector<Position> entrances = n->GetAllEntrancesToMyRoom();
+		vector<Position> entrances = n->GetAllEntrancesToMyRoom(n->getRoomIndex());
 		entrances.push_back(n->GetPosition());
 		for (Position p : entrances)
 		{
@@ -694,7 +706,7 @@ void safe_delete(T*& ptr) {
 
 void idle() 
 {
-	Sleep(100);
+	Sleep(150);
 	if (bulletFired)
 		pb->move(maze);
 	if (grenadeThrown)
@@ -709,8 +721,16 @@ void idle()
 				GenerateSecurityMapForSpecificNPC(n);
 				cout << " [" << (dynamic_cast<Warrior*>(n) ? "Warrior" : "Squire") << "] "
 					<< "HP: " << n->GetHp() << " Ammo: " << n->getAmmo() << " Grenades: " << n->getGrenades() << " State: " << n->GetState()->toString()
-					<< " Team: " << ((t->GetTeamID().team == 0) ? "Red\n" : "Yellow\n");
+					<< " Team: " << ((t->GetTeamID().team == 0) ? "Red " : "Yellow ");
+				if (dynamic_cast<Warrior*>(n))
+				{
+					Warrior* w = (Warrior*)n;
+					cout << "Target: " << (w->GetTarget() != nullptr ? w->GetTarget()->GetTeamID().place : -1) << "\n";
+				}
+				else
+					cout << "\n";
 				n->GetState()->OnEnter(n);
+				n->SetPrevStep((Team::isAnyBodyInMyPosition(n->GetPosition(), n->GetTeamID().team, n->GetTeamID().place) ? NPC_ : SPACE));
 			}
 		}
 
@@ -810,6 +830,8 @@ void menu(int choice)
 //}
 
 void keyboard(unsigned char key, int x, int y) {
+	if (key == 'g')
+		setGridlines = !setGridlines;		 // toggle gridlines
 	if (key == ' ')
 		paused = !paused;
 	if (key == 's')

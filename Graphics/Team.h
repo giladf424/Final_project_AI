@@ -14,6 +14,7 @@ private:
 	vector<array<double, 3>> teamColor;
 public:
 	static vector<Team*> Teams;
+	queue<NPC*> woundedWarriors;
 	Team(vector<array<double, 3>> tc);
 	TeamID GetTeamID() { return teamID; }
 	int GetTeamSize() { return teamSize; }
@@ -30,12 +31,14 @@ public:
 	static Position findNearestEnemyInRoom(NPC* n, int roomIndex);
 	static Position findNearestTeammate(NPC* n);
 	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
-	static NPC * GetNPCByPosition(Position pos);
+	static NPC * GetNPCByPosition(Position p, int teamNum, int id);
 	static NPC* findLowestHPEnemy(int teamNum);
 	static NPC* findNearestSquireEnemy(NPC* n);
 	static Position GetSquireEnemyPositionInRoom(int roomIndex, int teamNum);
 	static NPC* findTargetEnemy(NPC* n, bool aggresive);
 	void removeTeammate(NPC* dead);
 	static double findDistance(Position p1, Position p2);
+	static void blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ]);
+	static bool isAnyBodyInMyPosition(Position p, int teamNum, int id);
 };
 

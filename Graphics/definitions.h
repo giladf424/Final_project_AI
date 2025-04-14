@@ -38,7 +38,7 @@ const int AMMUNITION_PACK_AMOUNT = 2;
 const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
 const int MAX_CORRIDORS_ENTRANCES = 4;
-const int BFS_ITERATIONS = 150;
+const int BFS_RADIUS_SQUIRE = 20;
 const int DAMAGE = 10;
 const int RELOAD_TIME = 10;
 
