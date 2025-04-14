@@ -27,6 +27,8 @@ public:
 	bool isEntrance(Position p);
 	bool isConnectedRoom(int roomIndex);
 	int getId() const { return id; }
+	Position getEntranceToRoom(int roomIndex);
+	int getDistanceBetweenConnectedRooms(int roomIndex1, int roomIndex2);
 	static Corridor* getCorridorById(int id);
 };
 

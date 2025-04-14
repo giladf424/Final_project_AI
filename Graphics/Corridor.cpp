@@ -147,6 +147,39 @@ bool Corridor::isConnectedRoom(int roomIndex)
 	return false;
 }
 
+Position Corridor::getEntranceToRoom(int roomIndex)
+{
+	for (Position entrance : entrances)
+	{
+		if (GetRoomIndex({ entrance.row + 1, entrance.col }) == roomIndex)
+			return entrance;
+		if (GetRoomIndex({ entrance.row - 1, entrance.col }) == roomIndex)
+			return entrance;
+		if (GetRoomIndex({ entrance.row, entrance.col + 1 }) == roomIndex)
+			return entrance;
+		if (GetRoomIndex({ entrance.row, entrance.col - 1 }) == roomIndex)
+			return entrance;
+	}
+	std::cout << "Error: entrance not found (corridor, getEntranceToRoom )\n";
+	return {-1, -1};
+}
+
+int Corridor::getDistanceBetweenConnectedRooms(int roomIndex1, int roomIndex2)
+{
+	Position p1 = getEntranceToRoom(roomIndex1);
+	Position p2 = getEntranceToRoom(roomIndex2);
+	if (p1.row == -1 || p2.row == -1)
+	{
+		std::cout << "Error: entrance not found (corridor, getDistanceBetweenConnectedRooms )\n";
+		return -1;
+	}
+	int distance = abs(p1.row - p2.row) + abs(p1.col - p2.col);
+	if (p1.row == p2.row || p1.col == p2.col)
+		return distance;
+	else
+		return distance + 1;
+}
+
 Corridor* Corridor::getCorridorById(int id)
 {
 	for (Corridor* c : corridors)

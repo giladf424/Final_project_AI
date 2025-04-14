@@ -304,3 +304,32 @@ bool Team::isAnyBodyInMyPosition(Position p, int teamNum, int id)
 	}
 	return false;
 }
+
+vector<RoomDetails> Team::getConnectedRooms(int roomIndex, int teamNum)
+{
+	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
+	{
+		std::cout << "Error: Invalid room index\n";
+		return vector<RoomDetails>();
+	}
+	vector<RoomDetails> connectedRooms;
+	int numEnemies = GetEnemiesPositionsInRoom(roomIndex, teamNum, true).size();
+	connectedRooms.push_back({ roomIndex, numEnemies, 0 });
+	for (Corridor* c : Corridor::corridors)
+	{
+		if (c->isConnectedRoom(roomIndex))
+		{
+			for (int i = 0; i < c->getNumOfRooms(); i++)
+			{
+				if (c->getConnectedRoom(i) != roomIndex)
+				{
+					RoomDetails rd = { c->getConnectedRoom(i), 0, 0 };
+					rd.numEnemies = GetEnemiesPositionsInRoom(rd.roomIndex, teamNum, true).size();
+					rd.distance = c->getDistanceBetweenConnectedRooms(roomIndex, rd.roomIndex);
+					connectedRooms.push_back(rd);
+				}
+			}
+		}
+	}
+	return connectedRooms;
+}

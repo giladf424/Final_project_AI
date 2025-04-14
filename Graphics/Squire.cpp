@@ -35,7 +35,7 @@ void Squire::MoveToTeamMate(Position teammatePos)
 		Position nextPos = RunAStar(safestPos, dupMaze, dupSecurityMap, &numSteps);
 		// Move to the next position
 		move(nextPos);
-
+		
 	}
 }
 

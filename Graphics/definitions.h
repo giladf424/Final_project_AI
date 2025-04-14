@@ -65,6 +65,13 @@ typedef struct
     int startCol, endCol;
 }RoomScope;
 
+typedef struct
+{
+    int roomIndex;
+    int numEnemies;
+    int distance;
+}RoomDetails;
+
 extern RoomScope roomScopes[NUM_ROOMS];
 
 //const unordered_map<string, array<double, 3>> team_colors = {
