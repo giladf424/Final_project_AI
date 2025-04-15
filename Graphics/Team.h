@@ -41,5 +41,6 @@ public:
 	static void blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ]);
 	static bool isAnyBodyInMyPosition(Position p, int teamNum, int id);
 	static vector<RoomDetails> getConnectedRooms(int roomIndex, int teamNum);
+	static Position findRoomCenter(int roomIndex);
 };
 

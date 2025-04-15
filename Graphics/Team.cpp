@@ -333,3 +333,17 @@ vector<RoomDetails> Team::getConnectedRooms(int roomIndex, int teamNum)
 	}
 	return connectedRooms;
 }
+
+Position Team::findRoomCenter(int roomIndex)
+{
+	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
+	{
+		std::cout << "Error: Invalid room index (Team, findRoomCenter)\n";
+		return Position();
+	}
+	RoomScope rs = roomScopes[roomIndex];
+	int centerRow = (rs.startRow + rs.endRow) / 2;
+	int centerCol = (rs.startCol + rs.endCol) / 2;
+	Position center = { centerRow, centerCol };
+	return center;
+}
