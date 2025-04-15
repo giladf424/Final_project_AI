@@ -1,12 +1,26 @@
 #include "DeliverResourcesState.h"
 #include "IdleState.h"
 #include "Squire.h"
+#include "Warrior.h"
 #include <iostream>
 
 void DeliverResourcesState::OnEnter(NPC* p)
 {
     // Initialize deliver resources behavior
     Squire* s = (Squire*)p;
+	// get the first warrior in the queue
+	// if the queue is empty, return
+	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty() || s->GetHealthPack())
+	{
+		
+        std::cout << "No wounded warriors in the queue\n";
+		s->SetPrevPosition(s->GetPosition());
+        s->GetState()->Transition(p);
+		return;
+	}
+	Warrior* w = (Warrior*)(Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
+    
+    s->deliverToWarrior(w);
     s->SetIsMoving(true);
     std::cout << "Entering DeliverResourcesState\n";
 }

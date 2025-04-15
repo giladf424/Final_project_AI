@@ -1,5 +1,6 @@
 #include "Squire.h"
 #include "IdleState.h"
+#include "Warrior.h"
 
 Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 {
@@ -155,6 +156,11 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 	}
 	
 	return safestRoomIndex;
+}
+
+void Squire::deliverToWarrior(Warrior* warrior)
+{
+
 }
 
 

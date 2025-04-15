@@ -16,6 +16,8 @@ public:
 	void SetGrenadesPack(int g) { grenadesPack = g; }
 	void SetHealthPack(int h) { healthPack = h; }
 	int GetHealthPack() { return healthPack; }
+	int GetBulletsPack() { return bulletsPack; }
+	int GetGrenadesPack() { return grenadesPack; }
 
 	const char* getType() override { return "Squire"; }
 	int getAmmo() override { return bulletsPack; }
@@ -29,6 +31,9 @@ public:
 	Cell* RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, double dupMap[MSZ][MSZ], vector<Position> enemiesPos);
     void CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position> enemiesPos);
 	int findSafestRoom(vector<RoomDetails> connectedRooms);
+
+	// Warrior interaction methods
+	void deliverToWarrior(Warrior* warrior);
 
 };
 
