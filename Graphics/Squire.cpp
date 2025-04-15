@@ -19,7 +19,7 @@ void Squire::MoveToTeamMate(Position teammatePos)
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		int teammateRoomIndex = GetRoomIndex(teammatePos);
 		//Position safestPos = { teammatePos.row, teammatePos.col };
-		vector<Position> entrances = this->GetAllEntrancesToMyRoom(teammateRoomIndex);
+		vector<Position> entrances = this->GetAllEntrancesToMyRoom(teammateRoomIndex, true);
 		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 		vector<Position> enemyPos;
 		Position safestPos = BFSRadius(teammatePos, enemyPos, BFS_RADIUS_SQUIRE, dupMaze, dupSecurityMap);
@@ -47,7 +47,7 @@ void Squire::RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate)
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		isAstar = false;
 		Position nextStep = { -1, -1 };
-		vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex());
+		vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
 		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 		NPC* target = Team::findNearestEnemy(Team::GetNPCByPosition(GetPosition(), this->GetTeamID().team, this->GetTeamID().place));
 		Position bestEscapePos = BFSRadius(GetPosition(), entrances, BFS_RADIUS_SQUIRE, dupMaze, dupSecurityMap);

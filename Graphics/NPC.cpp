@@ -314,7 +314,7 @@ bool NPC::IsEnemyInHitRange(Position myPos, Position enemyPos)
 	return inRange;
 }
 
-Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex)
+Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSecMap)
 {
 	Corridor* corridor = Corridor::getCorridorById(corridorIndex);
 	if (corridor == nullptr)
@@ -324,26 +324,39 @@ Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex)
 	}
 	for (Position p : corridor->getEntrances())
 	{
+		Position p2 = { p.row, p.col };
 		if (GetRoomIndex({p.row + 1, p.col}) == roomIndex)
-			return { p.row + 1, p.col };
+		{
+			p2.row = p.row + 1;
+			return (forSecMap) ? p2 : p;
+		}
 		if (GetRoomIndex({ p.row - 1, p.col }) == roomIndex)
-			return { p.row - 1, p.col };
+		{
+			p2.row = p.row - 1;
+			return (forSecMap) ? p2 : p;
+		}
 		if (GetRoomIndex({ p.row, p.col + 1 }) == roomIndex)
-			return { p.row, p.col + 1 };
+		{
+			p2.col = p.col + 1;
+			return (forSecMap) ? p2 : p;
+		}
 		if (GetRoomIndex({ p.row, p.col - 1 }) == roomIndex)
-			return { p.row, p.col - 1 };
+		{
+			p2.col = p.col - 1;
+			return (forSecMap) ? p2 : p;
+		}
 	}
 	std::cout << "Error: entrance not found\n";
 	return {-1, -1};
 }
 
-vector<Position> NPC::GetAllEntrancesToMyRoom(int roomIndex)
+vector<Position> NPC::GetAllEntrancesToMyRoom(int roomIndex, bool forSecMap)
 {
 	vector<Position> entrances;
 	for (Corridor* c : Corridor::corridors)
 	{
 		if (c->isConnectedRoom(roomIndex))
-			entrances.push_back(getEntranceToCorridor(c->getId(), roomIndex));
+			entrances.push_back(getEntranceToCorridor(c->getId(), roomIndex, forSecMap));
 	}
 	return entrances;
 }

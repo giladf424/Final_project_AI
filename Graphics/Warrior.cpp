@@ -114,15 +114,15 @@ void Warrior::moveToEnemy()
 				}
 			}
 		}
-		Position myEntrance = this->getEntranceToCorridor(this->corridorIndex, this->prevRoomIndex);
-		Position targetEntrance = this->getEntranceToCorridor(this->target->GetCorridorIndex(), this->target->getPrevRoomIndex());
+		Position myEntrance = this->getEntranceToCorridor(this->corridorIndex, this->prevRoomIndex, true);
+		Position targetEntrance = this->getEntranceToCorridor(this->target->GetCorridorIndex(), this->target->getPrevRoomIndex(), true);
 		bool isMyRoomCloser = (Team::findDistance(pos, myEntrance) < Team::findDistance(this->target->GetPosition(), targetEntrance));
 		// if the target is in connected corridor and coming
 		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()) && isComing)
 		{ // find the best position to wait for the target
-			Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex(), this->getRoomIndex());
+			Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex(), this->getRoomIndex(), true);
 			enemyPos.push_back(entrance);
-			vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex());
+			vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &radius);
 			std::cout << "Radius: ( " << radius << " ) patrol last\n";
@@ -140,7 +140,7 @@ void Warrior::moveToEnemy()
 		else if (getRoomIndex() == -1 && this->corridorIndex == this->target->GetCorridorIndex() && isComing && isMyRoomCloser)
 		{// go back to the room you came from and find the best position to wait for the target
 			enemyPos.push_back(myEntrance);
-			vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->prevRoomIndex);
+			vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->prevRoomIndex, true);
 			enemiesPositions = Team::GetEnemiesPositionsInRoom(this->prevRoomIndex, this->GetTeamID().team, false);
 			UpdateSecurityMap(enemiesPositions, dupMaze, dupSecurityMap);
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
@@ -229,7 +229,7 @@ void Warrior::attackEnemy()
 			else if (isTargetInCorridor && isComing)
 			{
 				// find the best position to wait for the target before he comes to the room
-				Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex(), this->getRoomIndex());
+				Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex(), this->getRoomIndex(), true);
 				enemyPos.push_back(entrance);
 				vector<Position> entrances;
 				entrances.push_back(entrance);
@@ -360,7 +360,7 @@ void Warrior::moveToSquire(Position squirePos)
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		int squireRoomIndex = GetRoomIndex(squirePos);
-		vector<Position> entrances = this->GetAllEntrancesToMyRoom(squireRoomIndex);
+		vector<Position> entrances = this->GetAllEntrancesToMyRoom(squireRoomIndex, true);
 		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);

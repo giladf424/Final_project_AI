@@ -61,8 +61,8 @@ public:
 	Position BFSRadius(Position start, vector <Position> enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	bool IsEnemyInHitRange(Position myPos, Position enemyPos);
-	Position getEntranceToCorridor(int corridorIndex, int roomIndex);
-	vector<Position> GetAllEntrancesToMyRoom(int roomIndex);
+	Position getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSecMap);
+	vector<Position> GetAllEntrancesToMyRoom(int roomIndex, bool forSecMap);
 	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	vector<Position> GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
 	void hitByBullet();

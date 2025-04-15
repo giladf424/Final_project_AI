@@ -617,7 +617,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 	}
 	else
 	{
-		vector<Position> entrances = n->GetAllEntrancesToMyRoom(n->getRoomIndex());
+		vector<Position> entrances = n->GetAllEntrancesToMyRoom(n->getRoomIndex(), true);
 		entrances.push_back(n->GetPosition());
 		for (Position p : entrances)
 		{
