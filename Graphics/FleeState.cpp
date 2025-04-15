@@ -12,8 +12,11 @@ void FleeState::OnEnter(NPC* p)
 	Squire* s = (Squire*)p;
 	s->SetIsMoving(true);
 	Position target = Team::findNearestTeammate(p);
-    NPC* nearestTeammate = Team::GetNPCByPosition(target, s->GetTeamID().team, s->GetTeamID().place);
-    s->RunFromEnemyWithHeuristicLogic(nearestTeammate);
+    int roomIndex = GetRoomIndex(target);
+    if (roomIndex == -1)
+        roomIndex = (Team::GetNPCByPosition(target, s->GetTeamID().team, s->GetTeamID().place))->getPrevRoomIndex();
+	vector<RoomDetails> connectedRooms = Team::getConnectedRooms(roomIndex, s->GetTeamID().team);
+	int roomIndexToScan = s->findSafestRoom(connectedRooms);
     std::cout << "Entering FleeState\n";
 }
 

@@ -15,6 +15,7 @@ private:
 	int bullets, grenades;
 	bool aggressive;
 	bool isReloading;
+	bool isWounded;
 	int reloadTime;
 	NPC* target;
 public:
@@ -28,6 +29,8 @@ public:
 	void SetTarget(NPC* t) { target = t; }
 	bool getIsReloading() { return isReloading; }
 	void setIsReloading(bool r) { isReloading = r; }
+	bool getIsWounded() { return isWounded; }
+	void setIsWounded(bool w) { isWounded = w; }
 
 	const char* getType() override { return "Warrior"; }
 	int getAmmo() override { return bullets; }

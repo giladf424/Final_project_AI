@@ -120,4 +120,35 @@ void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, v
 	}
 }
 
+int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
+{
+	int minNumEnemies = INT_MAX;
+	int minDistance = INT_MAX;
+	int safestRoomIndex = -1;
+	for (auto it = connectedRooms.begin(); it != connectedRooms.end();)
+	{
+		if (it->distance > 30)
+		{
+			it = connectedRooms.erase(it); // Erase returns the next iterator
+			continue; // Skip to the next iteration
+		}
+		else if (it->numEnemies < minNumEnemies)
+		{
+			minNumEnemies = it->numEnemies;
+		}
+		++it; // Increment the iterator only if no element was erased
+	}
+	// Find the room with the minimum number of enemies, if there is more than one, choose the one with the smallest distance
+	for (auto it = connectedRooms.begin(); it != connectedRooms.end(); ++it)
+	{
+		if (it->numEnemies == minNumEnemies && it->distance < minDistance)
+		{
+			minDistance = it->distance;
+			safestRoomIndex = it->roomIndex;
+		}
+	}
+	
+	return safestRoomIndex;
+}
+
 
