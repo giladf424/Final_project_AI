@@ -15,7 +15,7 @@ void RequestResourcesState::OnEnter(NPC* p)
 	Position teammateSquireposition = teammateSquire->GetPosition();
     if (w->isValidPos(teammateSquireposition))
         w->moveToSquire(teammateSquireposition);
-
+    w->isWarriorCanReturnToFight();
     std::cout << "Entering RequestResourcesState\n";
 }
 
@@ -24,7 +24,7 @@ void RequestResourcesState::Transition(NPC* p)
 	// Exiting from current state
 	OnExit(p);
     State* currentState = p->GetState();
-	p->SetState(new CombatState());
+	p->SetState(new PatrolState());
     delete currentState; // Clean up the old state
     currentState = nullptr;
     // entering new state

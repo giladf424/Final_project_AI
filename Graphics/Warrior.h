@@ -46,6 +46,7 @@ public:
 	// Squire interaction methods
 	void addWoundedWarriorToQueue();
 	void moveToSquire(Position squirePos);
+	void isWarriorCanReturnToFight();
 
 };
 
