@@ -135,29 +135,29 @@ NPC* Team::findLowestHPEnemy(int teamNum)
 	return lowestHPEnemy;
 }
 
-NPC* Team::findNearestSquireEnemy(NPC* n)
+NPC* Team::findNearestSquireEnemyOrTeammate(NPC* n, bool isEnemy)
 {
 	int minDistance = INT_MAX;
-	NPC* nearestSquireEnemy = nullptr; // Default value if no enemy is found
+	NPC* nearestSquireEnemyOrTeammate = nullptr; // Default value if no enemy is found
 	for (Team* t : Teams)
 	{
-		if (t->GetTeamID().team != n->GetTeamID().team)
+		if ((t->GetTeamID().team != n->GetTeamID().team && isEnemy) || (t->GetTeamID().team == n->GetTeamID().team && !isEnemy))
 		{
-			for (NPC* enemy : t->GetTeammates())
+			for (NPC* enemyOrTeammate : t->GetTeammates())
 			{
-				if (strcmp(enemy->getType(), "Squire") == 0 && enemy->GetIsAlive())
+				if (strcmp(enemyOrTeammate->getType(), "Squire") == 0 && enemyOrTeammate->GetIsAlive())
 				{
-					int distance = (int)findDistance(enemy->GetPosition(), n->GetPosition());
+					int distance = (int)findDistance(enemyOrTeammate->GetPosition(), n->GetPosition());
 					if (distance < minDistance)
 					{
 						minDistance = distance;
-						nearestSquireEnemy = enemy;
+						nearestSquireEnemyOrTeammate = enemyOrTeammate;
 					}
 				}
 			}
 		}
 	}
-	return nearestSquireEnemy;
+	return nearestSquireEnemyOrTeammate;
 }
 
 Position Team::GetSquireEnemyPositionInRoom(int roomIndex, int teamNum)
@@ -186,7 +186,7 @@ NPC* Team::findTargetEnemy(NPC* n, bool aggresive)
 	int action = rand() % 100;
 	if (action < 50 && aggresive || action <= 10)
 	{
-		NPC* target = findNearestSquireEnemy(n);
+		NPC* target = findNearestSquireEnemyOrTeammate(n, true);
 		if (target == nullptr)
 		{
 			return  findLowestHPEnemy(n->GetTeamID().team);

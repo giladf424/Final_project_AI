@@ -33,7 +33,7 @@ public:
 	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
 	static NPC * GetNPCByPosition(Position p, int teamNum, int id);
 	static NPC* findLowestHPEnemy(int teamNum);
-	static NPC* findNearestSquireEnemy(NPC* n);
+	static NPC* findNearestSquireEnemyOrTeammate(NPC* n, bool isEnemy);
 	static Position GetSquireEnemyPositionInRoom(int roomIndex, int teamNum);
 	static NPC* findTargetEnemy(NPC* n, bool aggresive);
 	void removeTeammate(NPC* dead);

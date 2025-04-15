@@ -344,3 +344,31 @@ bool Warrior::updateTarget(vector<Position> enemiesPositions, vector<Position> e
 	return false;
 }
 
+void Warrior::addWoundedWarriorToQueue()
+{
+	if (!isWounded)
+	{
+		isWounded = true;
+		Team::Teams[this->GetTeamID().team]->woundedWarriors.push(this);
+	}
+}
+
+void Warrior::moveToSquire(Position squirePos)
+{
+	if (isMoving)
+	{
+		DuplicateMaze(maze, dupMaze);
+		DuplicateSecurityMap(security_map, dupSecurityMap);
+		int squireRoomIndex = GetRoomIndex(squirePos);
+		vector<Position> entrances = this->GetAllEntrancesToMyRoom(squireRoomIndex);
+		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
+		DuplicateMaze(maze, dupMaze);
+		DuplicateSecurityMap(security_map, dupSecurityMap);
+		int numSteps = 0;
+		Position nextPos = RunAStar(squirePos, dupMaze, dupSecurityMap, &numSteps);
+		if (nextPos.col == squirePos.col && nextPos.row == squirePos.row)
+			return;
+		move(nextPos);
+	}
+}
+

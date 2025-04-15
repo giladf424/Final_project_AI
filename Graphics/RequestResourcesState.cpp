@@ -6,9 +6,16 @@
 void RequestResourcesState::OnEnter(NPC* p)
 {
     // Initialize request resources behavior
-    /*Warrior* w = (Warrior*)p;
-    w->SetIsMoving(false);*/
-    p->GetState()->Transition(p);
+    Warrior* w = (Warrior*)p;
+    //w->SetIsMoving(false);
+    //p->GetState()->Transition(p);
+    w->addWoundedWarriorToQueue();
+	w->SetIsMoving(true);
+	NPC* teammateSquire = Team::findNearestSquireEnemyOrTeammate(p, false);
+	Position teammateSquireposition = teammateSquire->GetPosition();
+    if (w->isValidPos(teammateSquireposition))
+        w->moveToSquire(teammateSquireposition);
+
     std::cout << "Entering RequestResourcesState\n";
 }
 
