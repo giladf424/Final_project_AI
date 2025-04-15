@@ -1,7 +1,8 @@
 #include "IdleState.h"
 #include "FleeState.h"
-#include "Squire.h"
-#include <iostream>
+//#include "Squire.h"
+//#include "Team.h"
+//#include <iostream>
 
 void IdleState::OnEnter(NPC* p)
 {

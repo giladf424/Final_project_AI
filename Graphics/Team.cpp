@@ -1,5 +1,6 @@
 #include "Team.h"
 #include "Warrior.h"
+//#include "Squire.h"
 
 vector<Team*> Team::Teams;
 Team::Team(vector<array<double, 3>> tc)

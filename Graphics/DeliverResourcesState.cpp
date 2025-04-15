@@ -1,7 +1,7 @@
 #include "DeliverResourcesState.h"
 #include "IdleState.h"
-#include "Squire.h"
-#include "Warrior.h"
+//#include "Squire.h"
+//#include "Warrior.h"
 #include <iostream>
 
 void DeliverResourcesState::OnEnter(NPC* p)
@@ -18,9 +18,9 @@ void DeliverResourcesState::OnEnter(NPC* p)
         s->GetState()->Transition(p);
 		return;
 	}
-	Warrior* w = (Warrior*)(Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
+	//Warrior* w = (Warrior*)(Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
     
-    s->deliverToWarrior(w);
+    //s->deliverToWarrior(w);
     s->SetIsMoving(true);
     std::cout << "Entering DeliverResourcesState\n";
 }

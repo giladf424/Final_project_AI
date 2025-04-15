@@ -1,8 +1,8 @@
 #pragma once
-#include "definitions.h"
+//#include "definitions.h"
 #include "PatrolState.h"
 #include "NPC.h"
-#include "Cell.h"
+//#include "Cell.h"
 //#include "definitions.h"
 #include <queue>
 #include "CompareCells.h"

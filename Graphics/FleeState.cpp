@@ -1,6 +1,6 @@
 #include "FleeState.h"
-#include "PatrolState.h"
-#include "RequestResourcesState.h"
+//#include "PatrolState.h"
+//#include "RequestResourcesState.h"
 #include "DeliverResourcesState.h"
 #include "Warrior.h"
 #include <iostream>

@@ -6,7 +6,7 @@ Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 {
 	bulletsPack = MAX_BULLETS_SQUIRE;
 	grenadesPack = MAX_GRENADES_SQUIRE;
-	healthPack = MAX_HP_SQUIRE;
+	healthPack = MAX_HP_PACKS;
 	pCurrentState = new IdleState();
 }
 
@@ -158,9 +158,48 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 	return safestRoomIndex;
 }
 
-void Squire::deliverToWarrior(Warrior* warrior)
+void Squire::deliverToWarrior(NPC* w)
 {
+	if (w->GetIsAlive() && w->getType() == "Warrior")
+	{
+		Warrior* warrior = (Warrior*)w;
+		if (warrior->GetHp() < MAX_HP)
+		{
+			if (healthPack > 0)
+			{
+				warrior->SetHp(MAX_HP);
+				SetHealthPack(healthPack - 1);
+			}
+			else
+			{
+				std::cout << "No health packs available to deliver to warrior\n";
+			}
+		}
+		else if (warrior->getAmmo() < MAX_BULLETS_WARRIOR)
+		{
+			if (bulletsPack > 0)
+			{
+				//warrior->SetBulletsPack(MAX_BULLETS_WARRIOR);
+				SetBulletsPack(bulletsPack - 1);
+			}
+			else
+			{
+				std::cout << "No bullets packs available to deliver to warrior\n";
+			}
+		}
+		else if (warrior->getGrenades() < MAX_GRENADES_WARRIOR)
+		{
+			if (grenadesPack > 0)
+			{
+				//warrior->SetGrenadesPack(MAX_GRENADES_WARRIOR);
+				SetGrenadesPack(grenadesPack - 1);
+			}
+			else
+			{
+				std::cout << "No grenades packs available to deliver to warrior\n";
+			}
+		}
 
+	}
 }
-
 

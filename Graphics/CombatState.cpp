@@ -1,5 +1,5 @@
 #include "CombatState.h"
-#include "PatrolState.h"
+//#include "PatrolState.h"
 #include "RequestResourcesState.h"
 #include "Warrior.h"
 #include <iostream>

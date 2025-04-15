@@ -1,5 +1,6 @@
 #include "Warrior.h"
 #include "Grenade.h"
+//#include "PatrolState.h"
 
 Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 {
@@ -7,6 +8,7 @@ Warrior::Warrior(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	grenades = MAX_GRENADES_WARRIOR;
 	aggressive = (rand() % 2 == 0);
 	isReloading = false;
+	isWounded = false;
 	reloadTime = 0;
 	pCurrentState = new PatrolState();
 	target = nullptr;

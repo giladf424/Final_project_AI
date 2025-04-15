@@ -1,8 +1,8 @@
 #pragma once
 #include "definitions.h"
 #include "State.h"
-#include "Cell.h"
-#include "CompareCells.h"
+//#include "Cell.h"
+//#include "CompareCells.h"
 #include "Corridor.h"
 //#include "Grenade.h"
 
