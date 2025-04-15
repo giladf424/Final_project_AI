@@ -194,7 +194,8 @@ Position NPC::BFSRadius(Position start, vector <Position> enemyPos, int radius, 
 	priority_queue<Cell*, vector<Cell*>, CompareCells> pq;
 	Cell* pc = new Cell(start.row, start.col, nullptr, dupMap);
 	q.push(pc);
-	pq.push(pc);
+	if (dupMaze[start.row][start.col] == SPACE || dupMaze[start.row][start.col] == NPC_)
+		pq.push(pc);
 	int r, c;
 	int currentRadius = 0;
 

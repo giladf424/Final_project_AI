@@ -9,7 +9,7 @@ Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	pCurrentState = new IdleState();
 }
 
-void Squire::MoveToTeamMate(Position teammatePos)
+void Squire::MoveToTeamMate(Position sRoomCenter)
 {
 	// Move to the teammate position
 	// ...
@@ -17,20 +17,26 @@ void Squire::MoveToTeamMate(Position teammatePos)
 	{
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
-		int teammateRoomIndex = GetRoomIndex(teammatePos);
-		//Position safestPos = { teammatePos.row, teammatePos.col };
-		vector<Position> entrances = this->GetAllEntrancesToMyRoom(teammateRoomIndex, true);
+		int roomToScanIndex = GetRoomIndex(sRoomCenter);
+		vector<Position> enemiesPositions = Team::GetEnemiesPositionsInRoom(roomToScanIndex, GetTeamID().team, true);
+		vector<Position> entrances = this->GetAllEntrancesToMyRoom(roomToScanIndex, true);
 		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
+		UpdateSecurityMap(enemiesPositions, dupMaze, dupSecurityMap);
+		entrances.clear();
+		entrances = this->GetAllEntrancesToMyRoom(roomToScanIndex, false);
+		for (Position p : entrances)
+			dupMaze[p.row][p.col] = BLACK;
+
 		vector<Position> enemyPos;
-		Position safestPos = BFSRadius(teammatePos, enemyPos, BFS_RADIUS_SQUIRE, dupMaze, dupSecurityMap);
+		Position safestPos = BFSRadius(sRoomCenter, enemyPos, BFS_RADIUS_SQUIRE, dupMaze, dupSecurityMap);
 		if (!isValidPos(safestPos)) // dont forget to verifay that the squire not get stuck in teammate position
 		{
-			safestPos.row = teammatePos.row;
-			safestPos.col = teammatePos.col;
+			this->SetPrevPosition(this->GetPosition());
 			std::cout << "No bestPos found from BFSRadius (Squire, move to teammate)\n";
+			return;
 		}
 		DuplicateMaze(maze, dupMaze);
-		DuplicateSecurityMap(security_map, dupSecurityMap);
+		//DuplicateSecurityMap(security_map, dupSecurityMap);
 		int numSteps = 0;
 		Position nextPos = RunAStar(safestPos, dupMaze, dupSecurityMap, &numSteps);
 		// Move to the next position

@@ -22,7 +22,7 @@ public:
 	int getGrenades() override { return grenadesPack; }
 
 	// Movement
-	void MoveToTeamMate(Position teammatePos);
+	void MoveToTeamMate(Position sRoomCenter);
 	void RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate);
 	//void move(int maze[MSZ][MSZ]) override;
 	Position RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n);
