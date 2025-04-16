@@ -362,8 +362,8 @@ void Warrior::moveToSquire(Position squirePos)
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		int squireRoomIndex = GetRoomIndex(squirePos);
-		vector<Position> entrances = this->GetAllEntrancesToMyRoom(squireRoomIndex, true);
-		vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(squireRoomIndex, this->GetTeamID().team, false);
+		vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
+		vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(this->getRoomIndex(), this->GetTeamID().team, true);
 		if (enemiesPos.size() > 0)
 			UpdateSecurityMap(enemiesPos, dupMaze, dupSecurityMap);
 		else
@@ -383,18 +383,15 @@ void Warrior::isWarriorCanReturnToFight()
 {
 	if (!GetAggressive())
 	{
-		if (bullets > AMMO_TH && hp > HP_TH)
+		if (bullets > AMMO_TH && hp > HP_TH && grenades > GRENADE_TH)
 		{
 			isWounded = false;
 			pCurrentState->Transition(this);
 		}
 	}
-	else if (GetAggressive())
+	else if(bullets > AMMO_TH_AGGRESSIVE && hp > HP_TH_AGGRESSIVE && grenades > GRENADE_TH)
 	{
-		if (bullets > AMMO_TH_AGGRESSIVE && hp > HP_TH_AGGRESSIVE)
-		{
-			isWounded = false;
-		}
+		isWounded = false;
 		pCurrentState->Transition(this);
 	}
 	
