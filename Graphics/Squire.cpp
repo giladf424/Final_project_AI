@@ -161,6 +161,31 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 bool Squire::deliverToWarrior(NPC* w)
 {
 	
+	if (w->getType() == "Warrior")
+	{
+		Warrior* warrior = static_cast<Warrior*>(w);
+		if (warrior->GetIsAlive())
+		{
+			if (bulletsPack > 0)
+			{
+				warrior->SetBulletsPack(warrior->GetBulletsPack() + bulletsPack);
+				bulletsPack = 0;
+				return true;
+			}
+			else if (grenadesPack > 0)
+			{
+				warrior->SetGrenadesPack(warrior->GetGrenadesPack() + grenadesPack);
+				grenadesPack = 0;
+				return true;
+			}
+			else if (healthPack > 0)
+			{
+				warrior->SetHealthPack(warrior->GetHealthPack() + healthPack);
+				healthPack = 0;
+				return true;
+			}
+		}
+	}
 
 
 
@@ -194,32 +219,7 @@ bool Squire::deliverToWarrior(NPC* w)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 }
 
 
