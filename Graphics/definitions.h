@@ -73,6 +73,8 @@ typedef struct
 }RoomDetails;
 
 extern RoomScope roomScopes[NUM_ROOMS];
+extern vector<Position> ammunitionPack;
+extern vector<Position> medicinePack;
 
 //const unordered_map<string, array<double, 3>> team_colors = {
 //    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},

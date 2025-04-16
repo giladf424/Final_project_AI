@@ -235,6 +235,7 @@ void placeResources()
 		if (maze[p.row][p.col] == SPACE || maze[p.row][p.col] == WALL)
 		{
 			maze[p.row][p.col] = AMMUNITION_PACK;
+			ammunitionPack.push_back(p);
 			placed++;
 		}
 	}
@@ -246,6 +247,7 @@ void placeResources()
 		if (maze[p.row][p.col] == SPACE || maze[p.row][p.col] == WALL)
 		{
 			maze[p.row][p.col] = MEDICINE_PACK;
+			medicinePack.push_back(p);
 			placed++;
 		}
 	}

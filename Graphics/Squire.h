@@ -35,5 +35,8 @@ public:
 	// Warrior interaction methods
 	void deliverToWarrior(NPC* w);
 
+	// Refill
+	void refillResources();
+
 };
 

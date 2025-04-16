@@ -8,6 +8,7 @@ void SeekResourcesState::OnEnter(NPC* p)
     // Initialize seek resources behavior
     Squire* s = (Squire*)p;
     s->SetIsMoving(true);
+    s->refillResources();
     std::cout << "Entering SeekResourcesState\n";
 }
 

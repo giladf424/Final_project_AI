@@ -203,3 +203,13 @@ void Squire::deliverToWarrior(NPC* w)
 	}
 }
 
+
+
+
+void Squire::refillResources()
+{
+	if (isMoving)
+	{
+	}
+}
+
