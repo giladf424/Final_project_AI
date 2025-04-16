@@ -43,7 +43,7 @@ void Squire::MoveToTeamMate(Position sRoomCenter)
 		Position nextPos = RunAStar(safestPos, dupMaze, dupSecurityMap, &numSteps);
 		// Move to the next position
 		move(nextPos);
-		
+
 	}
 }
 
@@ -97,7 +97,7 @@ Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vecto
 	Cell* go_on = nullptr;
 	if (grays.empty())
 		return nullptr;
-	else 
+	else
 	{
 		pCurrent = grays.top();
 		grays.pop();
@@ -155,7 +155,7 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 			safestRoomIndex = it->roomIndex;
 		}
 	}
-	
+
 	return safestRoomIndex;
 }
 
@@ -245,58 +245,69 @@ void Squire::refillResources()
 	if (isMoving)
 	{
 		Position stashPos;
-		if (GetHealthPack() == 0 && GetReStocking())
+		int stashType = 0;
+		if (GetHealthPack() == 0)
+			stashType = (getAmmo() == 0 || getGrenades() == 0) ? BOTH_PACKS : MEDICINE_PACK;
+		else if (getAmmo() == 0 || getGrenades() == 0)
+			stashType = AMMUNITION_PACK;
+
+		if (stashType != 0)
 		{
-			stashPos = findNearestStash(medicineStash);
+			stashPos = findNearestStash(stashType);
 			DuplicateMaze(maze, dupMaze);
 			int numSteps = 0;
 			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
-			if (nextPos.col == stashPos.col && nextPos.row == stashPos.row)
-			{
-				this->SetPrevPosition(this->GetPosition());
-				SetHealthPack(MAX_HP_PACKS);
-			}
-			else
-				move(nextPos);
-		}
-			
-		if ((getAmmo() == 0 || getGrenades() == 0) && GetReStocking())
-		{
-			stashPos = findNearestStash(ammunitionStash);
-			DuplicateMaze(maze, dupMaze);
-			int numSteps = 0;
-			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
-			if (nextPos.col == stashPos.col && nextPos.row == stashPos.row)
-			{
-				this->SetPrevPosition(this->GetPosition());
-				SetBulletsPack(MAX_BULLETS_SQUIRE);
-				SetGrenadesPack(MAX_GRENADES_SQUIRE);
-				return;
-			}
 			move(nextPos);
+			if (this->isAdjacentToMyPos(stashPos))
+			{
+				if (maze[stashPos.row][stashPos.col] == AMMUNITION_PACK)
+				{
+					SetBulletsPack(MAX_BULLETS_SQUIRE);
+					SetGrenadesPack(MAX_GRENADES_SQUIRE);
+				}
+				else
+					SetHealthPack(MAX_HP_PACKS);
+				if (stashType != BOTH_PACKS)
+					this->GetState()->Transition(this);
+			}
 		}
-		if (getAmmo() != 0 && getGrenades() != 0 && GetHealthPack() != 0 && GetReStocking())
-		{
-			pCurrentState->Transition(this);
-			SetReStocking(false);
-			return;
-		}		
+		else
+			this->GetState()->Transition(this);
 	}
 }
 
-Position Squire::findNearestStash(vector<Position> stashes)
+Position Squire::findNearestStash(int stashType)
 {
-	Position nearestStash = { -1, -1 };
-	double minDistance = INT_MAX;
-	for (const auto& stash : stashes)
+	Position nearestStashAmmo = { -1, -1 };
+	Position nearestStashMed = { -1, -1 };
+	double minDistanceAmmo = INT_MAX;
+	double minDistanceMed = INT_MAX;
+	for (Position p : ammunitionStash)
 	{
-		double distance = Team::findDistance(GetPosition(), stash);
-		if (distance < minDistance)
+		double distance = Team::findDistance(GetPosition(), p);
+		if (distance < minDistanceAmmo)
 		{
-			minDistance = distance;
-			nearestStash = stash;
+			minDistanceAmmo = distance;
+			nearestStashAmmo.row = p.row;
+			nearestStashAmmo.col = p.col;
 		}
 	}
-	return nearestStash;
+	for (Position p : medicineStash)
+	{
+		double distance = Team::findDistance(GetPosition(), p);
+		if (distance < minDistanceMed)
+		{
+			minDistanceMed = distance;
+			nearestStashMed.row = p.row;
+			nearestStashMed.col = p.col;
+		}
+	}
+	if (stashType == BOTH_PACKS)
+		return (minDistanceAmmo <= minDistanceMed) ? nearestStashAmmo : nearestStashMed;
+	else if (stashType == AMMUNITION_PACK)
+		return nearestStashAmmo;
+	else
+		return nearestStashMed;
+
 }
 

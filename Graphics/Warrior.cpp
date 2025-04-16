@@ -202,7 +202,7 @@ void Warrior::attackEnemy()
 	}
 	bool isTargetInSameRoom = target->getRoomIndex() == this->getRoomIndex();
 	bool isTargetInCorridor = this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex());
-	bool isComing = (Team::findDistance(pos, target->GetPosition()) < Team::findDistance(pos, target->GetPrevPosition()));
+	bool isComing = (Team::findDistance(pos, target->GetPosition()) <= Team::findDistance(pos, target->GetPrevPosition()));
 	bool isAnybodyInMyPos = (Team::isAnyBodyInMyPosition(this->pos, this->id.team, this->id.place) ? (Team::GetNPCByPosition(this->pos, this->id.team, this->id.place))->isStillInSamePos() : false);
 	int radius = 0;
 	Position nextStep = { -1, -1 };

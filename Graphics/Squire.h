@@ -40,7 +40,7 @@ public:
 	bool moveToWarrior(Position warriorPos);
 	// Refill
 	void refillResources();
-	Position findNearestStash(vector<Position> stashes);
+	Position findNearestStash(int stashType);
 
 };
 

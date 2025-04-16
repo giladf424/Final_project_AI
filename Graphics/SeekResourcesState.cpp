@@ -6,37 +6,38 @@
 
 void SeekResourcesState::OnEnter(NPC* p)
 {
-    // Initialize seek resources behavior
-    Squire* s = (Squire*)p;
-    s->SetIsMoving(true);
-    s->refillResources();
-    std::cout << "Entering SeekResourcesState\n";
+	// Initialize seek resources behavior
+	std::cout << "Entering SeekResourcesState\n";
+	Squire* s = (Squire*)p;
+	s->SetIsMoving(true);
+	s->refillResources();
+	std::cout << "Exiting SeekResourcesState\n";
 }
 
 void SeekResourcesState::Transition(NPC* p)
 {
-    // Exiting from current state
-    OnExit(p);
+	// Exiting from current state
+	OnExit(p);
 
-	// Clean up the old state
-
-    Squire* s = (Squire*)p;
+	Squire* s = (Squire*)p;
 	State* currentState = p->GetState();
 	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
 		s->SetState(new IdleState);
-    else
-        s->SetState(new DeliverResourcesState());
+	else
+		s->SetState(new DeliverResourcesState());
 
 	delete currentState; // Clean up the old state
 	currentState = nullptr;
 
-    // entering new state
-    p->GetState()->OnEnter(p);
+	// entering new state
+	//p->GetState()->OnEnter(p);
 }
 
 void SeekResourcesState::OnExit(NPC* p)
 {
-    // Clean up seek resources behavior
+	// Clean up seek resources behavior
+	Squire* s = (Squire*)p;
+	s->SetReStocking(false);
 	p->SetIsMoving(true);
-    std::cout << "Exiting SeekResourcesState\n";
+	std::cout << "Exiting SeekResourcesState\n";
 }

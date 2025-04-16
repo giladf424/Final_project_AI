@@ -16,6 +16,7 @@ const int WALL = 0;
 const int SPACE = 1;
 const int MEDICINE_PACK = 2;
 const int AMMUNITION_PACK = 3;
+const int BOTH_PACKS = 1;
 const int NPC_ = 4;
 const int BLACK = 5;
 const int GRAY = 6;
