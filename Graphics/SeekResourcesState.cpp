@@ -1,6 +1,7 @@
 #include "SeekResourcesState.h"
 #include "DeliverResourcesState.h"
 #include "Squire.h"
+#include "IdleState.h"
 #include <iostream>
 
 void SeekResourcesState::OnEnter(NPC* p)
@@ -21,8 +22,10 @@ void SeekResourcesState::Transition(NPC* p)
 
     Squire* s = (Squire*)p;
 	State* currentState = p->GetState();
-
-    s->SetState(new DeliverResourcesState());
+	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
+		s->SetState(new IdleState);
+    else
+        s->SetState(new DeliverResourcesState());
 
 	delete currentState; // Clean up the old state
 	currentState = nullptr;

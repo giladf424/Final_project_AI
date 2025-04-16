@@ -27,6 +27,8 @@ const int HEIGHT = 700;
 Room* rooms[NUM_ROOMS];
 RoomScope roomScopes[NUM_ROOMS];
 vector<Corridor> corridors;
+vector<Position> ammunitionStash;
+vector<Position> medicineStash;
 
 bool bulletFired = false;
 bool grenadeThrown = false;

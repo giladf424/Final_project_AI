@@ -381,15 +381,12 @@ void Warrior::moveToSquire(Position squirePos)
 
 bool Warrior::isWarriorCanReturnToFight()
 {
-	if (!GetAggressive())
+	if (!GetAggressive() && bullets > AMMO_TH && hp > HP_TH && grenades > GRENADE_TH)
 	{
-		if (bullets > AMMO_TH && hp > HP_TH && grenades > GRENADE_TH)
-		{
-			isWounded = false;
-			return true;
-		}
+		isWounded = false;
+		return true;
 	}
-	else if(bullets > AMMO_TH_AGGRESSIVE && hp > HP_TH_AGGRESSIVE && grenades > GRENADE_TH)
+	else if(GetAggressive() && bullets > AMMO_TH_AGGRESSIVE && hp > HP_TH_AGGRESSIVE && grenades > GRENADE_TH)
 	{
 		isWounded = false;
 		return true;

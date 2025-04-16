@@ -2,27 +2,38 @@
 #include "IdleState.h"
 //#include "Squire.h"
 //#include "Warrior.h"
+#include "SeekResourcesState.h"
 #include <iostream>
 
 void DeliverResourcesState::OnEnter(NPC* p)
 {
     // Initialize deliver resources behavior
+    std::cout << "Entering DeliverResourcesState\n";
     Squire* s = (Squire*)p;
-	// get the first warrior in the queue
-	// if the queue is empty, return
 	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
 	{
-		
         std::cout << "No wounded warriors in the queue\n";
 		s->SetPrevPosition(s->GetPosition());
         s->GetState()->Transition(p);
 		return;
 	}
-	NPC* n = (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
-    
-    //s->deliverToWarrior(w);
     s->SetIsMoving(true);
-    std::cout << "Entering DeliverResourcesState\n";
+	NPC* n = (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
+    bool toDeliver = true;
+	if (!(s->isAdjacentToMyPos(n->GetPosition())))
+        toDeliver = s->moveToWarrior(n->GetPosition());
+    else
+		s->SetPrevPosition(s->GetPosition());
+
+    if (toDeliver)
+    {
+        if(s->deliverToWarrior(n))
+            Team::Teams.at(s->GetTeamID().team)->woundedWarriors.pop();
+
+        if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty() || s->GetReStocking())
+			s->GetState()->Transition(p);
+    }
+    std::cout << "Exiting DeliverResourcesState\n";
 }
 
 void DeliverResourcesState::Transition(NPC* p)
@@ -31,10 +42,16 @@ void DeliverResourcesState::Transition(NPC* p)
     OnExit(p);
 
     Squire* s = (Squire*)p;
-    s->SetState(new IdleState());
+	State* currentState = p->GetState();
+	if (s->GetReStocking())
+		p->SetState(new SeekResourcesState());
+	else
+        p->SetState(new IdleState());
 
+	delete currentState; // Clean up the old state
+	currentState = nullptr;
     // entering new state
-    p->GetState()->OnEnter(p);
+    //p->GetState()->OnEnter(p);
 }
 
 void DeliverResourcesState::OnExit(NPC* p)

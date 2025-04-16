@@ -37,10 +37,10 @@ public:
 
 	// Warrior interaction methods
 	bool deliverToWarrior(NPC* w);
-
+	bool moveToWarrior(Position warriorPos);
 	// Refill
 	void refillResources();
-	Position findNearestStash(vector<Position>& stashes);
+	Position findNearestStash(vector<Position> stashes);
 
 };
 

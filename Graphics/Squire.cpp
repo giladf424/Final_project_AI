@@ -212,6 +212,7 @@ bool Squire::deliverToWarrior(NPC* w)
 			return warrior->isWarriorCanReturnToFight();
 		}
 	}
+	return false;
 
 
 
@@ -220,7 +221,20 @@ bool Squire::deliverToWarrior(NPC* w)
 
 
 
+}
 
+bool Squire::moveToWarrior(Position warriorPos)
+{
+	if (isMoving)
+	{
+		DuplicateMaze(maze, dupMaze);
+		DuplicateSecurityMap(security_map, dupSecurityMap);
+		int numSteps = 0;
+		Position nextPos = RunAStar(warriorPos, dupMaze, dupSecurityMap, &numSteps);
+		move(nextPos);
+		return this->isAdjacentToMyPos(warriorPos);
+	}
+	return false;
 }
 
 
@@ -235,24 +249,21 @@ void Squire::refillResources()
 		{
 			stashPos = findNearestStash(medicineStash);
 			DuplicateMaze(maze, dupMaze);
-			DuplicateSecurityMap(security_map, dupSecurityMap);
 			int numSteps = 0;
 			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
 			if (nextPos.col == stashPos.col && nextPos.row == stashPos.row)
 			{
 				this->SetPrevPosition(this->GetPosition());
 				SetHealthPack(MAX_HP_PACKS);
-				SetReStocking(false);
-				return;
-			}	
-			move(nextPos);
+			}
+			else
+				move(nextPos);
 		}
 			
 		if ((getAmmo() == 0 || getGrenades() == 0) && GetReStocking())
 		{
 			stashPos = findNearestStash(ammunitionStash);
 			DuplicateMaze(maze, dupMaze);
-			DuplicateSecurityMap(security_map, dupSecurityMap);
 			int numSteps = 0;
 			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
 			if (nextPos.col == stashPos.col && nextPos.row == stashPos.row)
@@ -260,7 +271,6 @@ void Squire::refillResources()
 				this->SetPrevPosition(this->GetPosition());
 				SetBulletsPack(MAX_BULLETS_SQUIRE);
 				SetGrenadesPack(MAX_GRENADES_SQUIRE);
-				SetReStocking(false);
 				return;
 			}
 			move(nextPos);
@@ -274,7 +284,7 @@ void Squire::refillResources()
 	}
 }
 
-Position Squire::findNearestStash(vector<Position>& stashes)
+Position Squire::findNearestStash(vector<Position> stashes)
 {
 	Position nearestStash = { -1, -1 };
 	double minDistance = INT_MAX;
