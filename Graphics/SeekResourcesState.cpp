@@ -17,8 +17,15 @@ void SeekResourcesState::Transition(NPC* p)
     // Exiting from current state
     OnExit(p);
 
+	// Clean up the old state
+
     Squire* s = (Squire*)p;
+	State* currentState = p->GetState();
+
     s->SetState(new DeliverResourcesState());
+
+	delete currentState; // Clean up the old state
+	currentState = nullptr;
 
     // entering new state
     p->GetState()->OnEnter(p);

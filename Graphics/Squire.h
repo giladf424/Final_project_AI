@@ -40,6 +40,7 @@ public:
 
 	// Refill
 	void refillResources();
+	Position findNearestStash(vector<Position>& stashes);
 
 };
 

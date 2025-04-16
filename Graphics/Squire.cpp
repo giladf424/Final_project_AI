@@ -230,10 +230,63 @@ void Squire::refillResources()
 {
 	if (isMoving)
 	{
-		std::cout << "test";
+		Position stashPos;
+		if (GetHealthPack() == 0 && GetReStocking())
+		{
+			stashPos = findNearestStash(medicineStash);
+			DuplicateMaze(maze, dupMaze);
+			DuplicateSecurityMap(security_map, dupSecurityMap);
+			int numSteps = 0;
+			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
+			if (nextPos.col == stashPos.col && nextPos.row == stashPos.row)
+			{
+				this->SetPrevPosition(this->GetPosition());
+				SetHealthPack(MAX_HP_PACKS);
+				SetReStocking(false);
+				return;
+			}	
+			move(nextPos);
+		}
+			
+		if ((getAmmo() == 0 || getGrenades() == 0) && GetReStocking())
+		{
+			stashPos = findNearestStash(ammunitionStash);
+			DuplicateMaze(maze, dupMaze);
+			DuplicateSecurityMap(security_map, dupSecurityMap);
+			int numSteps = 0;
+			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
+			if (nextPos.col == stashPos.col && nextPos.row == stashPos.row)
+			{
+				this->SetPrevPosition(this->GetPosition());
+				SetBulletsPack(MAX_BULLETS_SQUIRE);
+				SetGrenadesPack(MAX_GRENADES_SQUIRE);
+				SetReStocking(false);
+				return;
+			}
+			move(nextPos);
+		}
+		if (getAmmo() != 0 && getGrenades() != 0 && GetHealthPack() != 0 && GetReStocking())
+		{
+			pCurrentState->Transition(this);
+			SetReStocking(false);
+			return;
+		}		
 	}
+}
 
-
-
+Position Squire::findNearestStash(vector<Position>& stashes)
+{
+	Position nearestStash = { -1, -1 };
+	double minDistance = INT_MAX;
+	for (const auto& stash : stashes)
+	{
+		double distance = Team::findDistance(GetPosition(), stash);
+		if (distance < minDistance)
+		{
+			minDistance = distance;
+			nearestStash = stash;
+		}
+	}
+	return nearestStash;
 }
 
