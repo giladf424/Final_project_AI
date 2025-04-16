@@ -215,6 +215,7 @@ void Team::removeTeammate(NPC* dead)
 				if (t->GetTeammates()[i] == dead)
 				{
 					t->GetTeammates().erase(t->GetTeammates().begin() + i);
+					t->removeWoundedWarrior(dead);
 					t->teamSize--;
 					break;
 				}
@@ -234,6 +235,26 @@ void Team::removeTeammate(NPC* dead)
 			}
 		}
 	}
+}
+
+void Team::removeWoundedWarrior(NPC* dead)
+{
+	queue<NPC*> tempQueue;
+	int count = 0;
+	while (!woundedWarriors.empty())
+	{
+		NPC* n = woundedWarriors.front();
+		woundedWarriors.pop();
+		if (n == dead && count == 0)
+			return;
+		else if (n == dead && count > 0)
+			continue;
+		else
+			tempQueue.push(n);
+		
+		count++;	
+	}
+	this->woundedWarriors.swap(tempQueue);
 }
 
 double Team::findDistance(Position p1, Position p2)

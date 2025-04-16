@@ -37,6 +37,7 @@ public:
 	static Position GetSquireEnemyPositionInRoom(int roomIndex, int teamNum);
 	static NPC* findTargetEnemy(NPC* n, bool aggresive);
 	void removeTeammate(NPC* dead);
+	void removeWoundedWarrior(NPC* dead);
 	static double findDistance(Position p1, Position p2);
 	static void blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ]);
 	static bool isAnyBodyInMyPosition(Position p, int teamNum, int id);
