@@ -18,7 +18,7 @@ void DeliverResourcesState::OnEnter(NPC* p)
         s->GetState()->Transition(p);
 		return;
 	}
-	//Warrior* w = (Warrior*)(Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
+	NPC* n = (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.front());
     
     //s->deliverToWarrior(w);
     s->SetIsMoving(true);

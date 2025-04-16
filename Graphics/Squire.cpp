@@ -161,30 +161,55 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 
 bool Squire::deliverToWarrior(NPC* w)
 {
-	
 	if (w->getType() == "Warrior")
 	{
 		Warrior* warrior = static_cast<Warrior*>(w);
-		if (warrior->GetIsAlive())
+		if (this->isAdjacentToMyPos(warrior->GetPosition()))
 		{
-			if (bulletsPack > 0)
+			if (warrior->GetHp() < MAX_HP)
 			{
-				warrior->SetBulletsPack(warrior->GetBulletsPack() + bulletsPack);
-				bulletsPack = 0;
-				return true;
+				if (this->GetHealthPack() > 0)
+				{
+					warrior->SetHp(MAX_HP);
+					this->SetHealthPack(this->GetHealthPack() - 1);
+					this->SetReStocking(this->GetHealthPack() == 0 ? true : false);
+				}
+				else
+					this->SetReStocking(true);
 			}
-			else if (grenadesPack > 0)
+			if (warrior->getAmmo() < MAX_BULLETS_WARRIOR)
 			{
-				warrior->SetGrenadesPack(warrior->GetGrenadesPack() + grenadesPack);
-				grenadesPack = 0;
-				return true;
+				if (this->GetBulletsPack() > MAX_BULLETS_WARRIOR - warrior->getAmmo())
+				{
+					this->bulletsPack -= (MAX_BULLETS_WARRIOR - warrior->getAmmo());
+					warrior->SetBullets(MAX_BULLETS_WARRIOR);
+				}
+				else if (this->GetBulletsPack() > 0)
+				{
+					warrior->SetBullets(warrior->getAmmo() + this->GetBulletsPack());
+					this->SetBulletsPack(0);
+					this->SetReStocking(true);
+				}
+				else
+					this->SetReStocking(true);
 			}
-			else if (healthPack > 0)
+			if (warrior->getGrenades() < MAX_GRENADES_WARRIOR)
 			{
-				warrior->SetHealthPack(warrior->GetHealthPack() + healthPack);
-				healthPack = 0;
-				return true;
+				if (this->GetGrenadesPack() > MAX_GRENADES_WARRIOR - warrior->getGrenades())
+				{
+					this->grenadesPack -= (MAX_GRENADES_WARRIOR - warrior->getGrenades());
+					warrior->SetGrenades(MAX_GRENADES_WARRIOR);
+				}
+				else if (this->GetGrenadesPack() > 0)
+				{
+					warrior->SetGrenades(warrior->getGrenades() + this->GetGrenadesPack());
+					this->SetGrenadesPack(0);
+					this->SetReStocking(true);
+				}
+				else
+					this->SetReStocking(true);
 			}
+			return warrior->isWarriorCanReturnToFight();
 		}
 	}
 
@@ -196,31 +221,6 @@ bool Squire::deliverToWarrior(NPC* w)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 }
 
 

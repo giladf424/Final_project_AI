@@ -154,6 +154,16 @@ bool NPC::isStillInSamePos()
 	return false;
 }
 
+bool NPC::isAdjacentToMyPos(Position p)
+{
+	if ((p.row == GetPosition().row + 1 && p.col == GetPosition().col) ||
+		(p.row == GetPosition().row - 1 && p.col == GetPosition().col) ||
+		(p.row == GetPosition().row && p.col == GetPosition().col + 1) ||
+		(p.row == GetPosition().row && p.col == GetPosition().col - 1))
+		return true;
+	return false;
+}
+
 void NPC::move(Position nextPos)
 {
 	prevStep = (Team::isAnyBodyInMyPosition(GetPosition(), this->id.team, this->id.place) ? NPC_ : SPACE);

@@ -9,13 +9,18 @@ void RequestResourcesState::OnEnter(NPC* p)
     Warrior* w = (Warrior*)p;
     //w->SetIsMoving(false);
     //p->GetState()->Transition(p);
+	if (w->isWarriorCanReturnToFight())
+	{
+		std::cout << "Warrior can return to fight\n";
+		w->GetState()->Transition(p);
+		return;
+	}
     w->addWoundedWarriorToQueue();
 	w->SetIsMoving(true);
 	NPC* teammateSquire = Team::findNearestSquireEnemyOrTeammate(p, false);
 	Position teammateSquireposition = teammateSquire->GetPosition();
     if (w->isValidPos(teammateSquireposition))
         w->moveToSquire(teammateSquireposition);
-    w->isWarriorCanReturnToFight();
     std::cout << "Entering RequestResourcesState\n";
 }
 

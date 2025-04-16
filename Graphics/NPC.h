@@ -56,6 +56,7 @@ public:
 	bool isValidPos(Position nextStep);
 	bool isSamePosAsMyPos(Position p);
 	bool isStillInSamePos();
+	bool isAdjacentToMyPos(Position p);
 
 	void move(Position nextPos); // Add this line
 	Position BFSRadius(Position start, vector <Position> enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
