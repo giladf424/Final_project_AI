@@ -62,15 +62,15 @@ typedef struct
 
 typedef struct
 {
-    int startRow, endRow;
-    int startCol, endCol;
+	int startRow, endRow;
+	int startCol, endCol;
 }RoomScope;
 
 typedef struct
 {
-    int roomIndex;
-    int numEnemies;
-    int distance;
+	int roomIndex;
+	int numEnemies;
+	int distance;
 }RoomDetails;
 
 extern RoomScope roomScopes[NUM_ROOMS];
@@ -84,10 +84,10 @@ extern vector<Position> medicineStash;
 //    {"SOrange", {255 / (double)255, 153 / (double)255, 19 / (double)255}}
 //};
 const unordered_map<string, array<double, 3>> team_colors = {
-    {"FRed", {139 / (double)255, 0 / (double)255, 0 / (double)255}}, // Dark Red
-    {"SRed", {255 / (double)255, 99 / (double)255, 71 / (double)255}}, // Light Red
-    {"FYellow", {204 / (double)255, 204 / (double)255, 0 / (double)255}}, // Dark Yellow
-    {"SYellow", {255 / (double)255, 255 / (double)255, 102 / (double)255}} // Light Yellow
+	{"FRed", {139 / (double)255, 0 / (double)255, 0 / (double)255}}, // Dark Red
+	{"SRed", {255 / (double)255, 99 / (double)255, 71 / (double)255}}, // Light Red
+	{"FYellow", {204 / (double)255, 204 / (double)255, 0 / (double)255}}, // Dark Yellow
+	{"SYellow", {255 / (double)255, 255 / (double)255, 102 / (double)255}} // Light Yellow
 };
 
 void DuplicateMaze(int source[MSZ][MSZ], int target[MSZ][MSZ]);

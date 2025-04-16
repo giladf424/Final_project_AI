@@ -35,7 +35,7 @@ bool grenadeThrown = false;
 bool paused = true;
 bool showSecurityMap = false;
 bool setGridlines = false;
-Bullet* pb=nullptr;
+Bullet* pb = nullptr;
 Grenade* pg = nullptr;
 
 
@@ -62,9 +62,9 @@ void RestorePath(Cell* pc)
 // row, col are the indices of neighbor cell
 void AddNeighbor(int r, int c, Cell* pCurrent,
 	priority_queue<Cell*, vector<Cell*>, CompareCells>& pq,
-	vector <Cell>& grays,  vector <Cell> &black) // blacks shouldn't be changed
+	vector <Cell>& grays, vector <Cell>& black) // blacks shouldn't be changed
 {
-	double newg,cost;
+	double newg, cost;
 	vector<Cell>::iterator itGray;
 	vector<Cell>::iterator itBlack;
 
@@ -106,7 +106,7 @@ void AddNeighbor(int r, int c, Cell* pCurrent,
 
 				// and do the same with PQ
 				vector<Cell*> tmp;
-				while (!pq.empty() &&  !((*pq.top()) == (*pNeighbor)))
+				while (!pq.empty() && !((*pq.top()) == (*pNeighbor)))
 				{
 					tmp.push_back(pq.top()); // save the top element in tmp
 					pq.pop(); // remove top element from pq
@@ -155,7 +155,7 @@ void BuildPath(int index1, int index2)
 	pq.push(start);
 	grays.push_back(*start);
 	// pq shouldn't be empty because we are going to reach the target beforehand
-	while (!pq.empty()) 	
+	while (!pq.empty())
 	{
 		pCurrent = pq.top();
 		if (pCurrent->getH() <= 1) // this is a targt cell
@@ -184,11 +184,11 @@ void BuildPath(int index1, int index2)
 			if (r + 1 < MSZ)
 				AddNeighbor(r + 1, c, pCurrent, pq, grays, black);
 			// down
-			if (r - 1 >=0)
+			if (r - 1 >= 0)
 				AddNeighbor(r - 1, c, pCurrent, pq, grays, black);
 			// left
 			if (c - 1 >= 0)
-				AddNeighbor(r , c-1, pCurrent, pq, grays, black);
+				AddNeighbor(r, c - 1, pCurrent, pq, grays, black);
 			// right
 			if (c + 1 < MSZ)
 				AddNeighbor(r, c + 1, pCurrent, pq, grays, black);
@@ -202,8 +202,8 @@ void BuildPathBetweenTheRooms()
 {
 	int i, j;
 
-	for (i = 0;i < NUM_ROOMS;i++)
-		for (j = i + 1;j < NUM_ROOMS;j++)
+	for (i = 0; i < NUM_ROOMS; i++)
+		for (j = i + 1; j < NUM_ROOMS; j++)
 		{
 			BuildPath(i, j); // A*
 			cout << "The path from " << i << " to " << j << " has been paved\n";
@@ -267,7 +267,7 @@ void initTeams()
 		Team* t = new Team(colors.at(i));
 		int roomIndex = rand() % NUM_ROOMS;
 
-		if(i == 0)
+		if (i == 0)
 			r = roomIndex;
 
 		while (i > 0 && roomIndex == r)
@@ -318,7 +318,7 @@ void initCorridors()
 		{
 			for (int j = sCol; j <= eCol; j++)
 			{
-				if (maze[sRow - 1][j] == SPACE && GetRoomIndex({ sRow - 1, j }) == -1 && !isCorridor({sRow - 1, j}))
+				if (maze[sRow - 1][j] == SPACE && GetRoomIndex({ sRow - 1, j }) == -1 && !isCorridor({ sRow - 1, j }))
 				{
 					Position sRoom = { sRow, j };
 					Position sCorridor = { sRow - 1, j };
@@ -439,7 +439,7 @@ void PrintRoomScopes()
 	for (int i = 0; i < NUM_ROOMS; ++i)
 	{
 		RoomScope scope = roomScopes[i];
-		cout << "Room " << i  << " Scope:\n";
+		cout << "Room " << i << " Scope:\n";
 
 		// Print top edge
 		cout << "Top Edge: ";
@@ -479,11 +479,11 @@ void PrintRoomScopes()
 
 void SetupDungeon()
 {
-	int i,j;
+	int i, j;
 	int cx, cy, w, h;
 	bool hasOverlap;
 
-	for (i = 0;i < NUM_ROOMS;i++)
+	for (i = 0; i < NUM_ROOMS; i++)
 	{
 		do
 		{
@@ -492,15 +492,15 @@ void SetupDungeon()
 			h = 6 + rand() % (MSZ / 5);
 			cx = 2 + w / 2 + rand() % (MSZ - w - 4);
 			cy = 2 + h / 2 + rand() % (MSZ - h - 4);
-			for(j=0;j<i && !hasOverlap;j++)
+			for (j = 0; j < i && !hasOverlap; j++)
 				hasOverlap = rooms[j]->Overlap(cx, cy, w, h);
 		} while (hasOverlap); // check the validity of the room
-			
-		rooms[i] = new Room(cx, cy, w, h,maze);
+
+		rooms[i] = new Room(cx, cy, w, h, maze);
 		roomScopes[i] = { cy - h / 2, cy + h / 2, cx - w / 2, cx + w / 2 };
 	}
 
-	for (i = 0;i < 700;i++)
+	for (i = 0; i < 700; i++)
 		maze[rand() % MSZ][rand() % MSZ] = WALL;
 
 	initTeams();
@@ -527,8 +527,8 @@ void ShowDungeon()
 	int i, j;
 	double s;
 
-	for(i=0;i<MSZ;i++)
-		for (j = 0;j < MSZ;j++)
+	for (i = 0; i < MSZ; i++)
+		for (j = 0; j < MSZ; j++)
 		{
 			if (showSecurityMap) s = security_map[i][j];
 			else s = 0;
@@ -536,7 +536,7 @@ void ShowDungeon()
 			switch (maze[i][j])
 			{
 			case SPACE:
-				glColor3d(1-s, 1-s, 1-s); // gray
+				glColor3d(1 - s, 1 - s, 1 - s); // gray
 				break;
 			case WALL:
 				glColor3d(0.3, 0.3, 0.4); // dark gray
@@ -565,8 +565,8 @@ void ShowDungeon()
 			glBegin(GL_POLYGON);
 			glVertex2d(j, i);
 			glVertex2d(j, i + 1);
-			glVertex2d(j+1, i + 1);
-			glVertex2d(j + 1, i );
+			glVertex2d(j + 1, i + 1);
+			glVertex2d(j + 1, i);
 			glEnd();
 
 			// set grid lines
@@ -587,7 +587,7 @@ void GenerateSecurityMap()
 	int numSimulations = 3000;
 	int i;
 
-	for (i = 0;i < numSimulations;i++)
+	for (i = 0; i < numSimulations; i++)
 	{
 		Grenade* g = new Grenade(rand() % MSZ, rand() % MSZ);
 
@@ -708,7 +708,7 @@ void safe_delete(T*& ptr) {
 	}
 }
 
-void idle() 
+void idle()
 {
 	Sleep(150);
 	if (bulletFired)
@@ -848,7 +848,7 @@ LONG MyFilter(LONG excode) {
 		EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH;
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
 	__try
 	{
@@ -864,7 +864,7 @@ int main(int argc, char* argv[])
 		glutDisplayFunc(display);
 		// idle is a update function
 		glutIdleFunc(idle);
-	
+
 		//glutMouseFunc(mouse);
 		glutKeyboardFunc(keyboard);
 
@@ -879,7 +879,7 @@ int main(int argc, char* argv[])
 		init();
 
 		glutMainLoop();
-       
+
 	}
 	__except (MyFilter(GetExceptionCode())) {
 		std::cerr << "Access violation caught!" << std::endl;

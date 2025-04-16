@@ -6,17 +6,17 @@
 
 void IdleState::OnEnter(NPC* p)
 {
-    // Initialize idle behavior
-    std::cout << "Entering IdleState\n\n";
-    Squire* s = (Squire*)p;
-    int id = s->GetTeamID().team;
+	// Initialize idle behavior
+	std::cout << "Entering IdleState\n\n";
+	Squire* s = (Squire*)p;
+	int id = s->GetTeamID().team;
 	if (Team::GetEnemiesPositionsInRoom(s->getRoomIndex(), id, true).size() > 0 || !Team::Teams.at(id)->woundedWarriors.empty())
 	{
 		s->SetPrevPosition(s->GetPosition());
-        s->GetState()->Transition(p);
+		s->GetState()->Transition(p);
 		return;
 	}
-    s->SetIsMoving(true);
+	s->SetIsMoving(true);
 	Position teammatePos = Team::findNearestTeammate(p);
 	int roomIndex = GetRoomIndex(teammatePos);
 	if (roomIndex == -1)
@@ -29,28 +29,28 @@ void IdleState::OnEnter(NPC* p)
 		s->SetPrevPosition(s->GetPosition());
 		std::cout << "Error: no room center pos found from IdleState\n";
 	}
-    std::cout << "Exiting IdleState\n\n";
+	std::cout << "Exiting IdleState\n\n";
 }
 
 void IdleState::Transition(NPC* p)
 {
-    // Exiting from current state
-    OnExit(p);
+	// Exiting from current state
+	OnExit(p);
 
-    Squire* s = (Squire*)p;
+	Squire* s = (Squire*)p;
 	State* currentState = p->GetState();
-    p->SetState(new FleeState());
+	p->SetState(new FleeState());
 
 	delete currentState; // Clean up the old state
 	currentState = nullptr;
 
-    // entering new state
+	// entering new state
   //  p->GetState()->OnEnter(p);
 }
 
 void IdleState::OnExit(NPC* p)
 {
-    // Clean up idle behavior
-    p->SetIsMoving(true);
-    std::cout << "Exiting IdleState\n";
+	// Clean up idle behavior
+	p->SetIsMoving(true);
+	std::cout << "Exiting IdleState\n";
 }

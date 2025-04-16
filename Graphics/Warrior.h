@@ -42,7 +42,7 @@ public:
 	void fireBullet(Position enemyPos);
 	void throwGrenade();
 	bool updateTarget(vector<Position> enemiesPositions, vector<Position> enemiesInHitRange);
-	
+
 	// Squire interaction methods
 	void addWoundedWarriorToQueue();
 	void moveToSquire(Position squirePos);

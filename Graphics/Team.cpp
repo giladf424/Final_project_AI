@@ -68,7 +68,7 @@ Position Team::findNearestTeammate(NPC* n)
 			}
 		}
 	}
-	
+
 	return teammatePos;
 }
 
@@ -251,8 +251,8 @@ void Team::removeWoundedWarrior(NPC* dead)
 			continue;
 		else
 			tempQueue.push(n);
-		
-		count++;	
+
+		count++;
 	}
 	this->woundedWarriors.swap(tempQueue);
 }
@@ -308,7 +308,7 @@ void Team::blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ]
 		std::cout << "Blocking path from " << p1.row << ", " << p1.col << " to " << toBlock.row << ", " << toBlock.col << "\n";
 		maze[toBlock.row][toBlock.col] = BLACK;
 	}
-		
+
 }
 
 bool Team::isAnyBodyInMyPosition(Position p, int teamNum, int id)

@@ -8,7 +8,7 @@ NPC::NPC(Position startPos, TeamID teamID)
 	isMoving = false;
 	isAlive = true;
 	pos = startPos;
-	prevPos = {-1, -1};
+	prevPos = { -1, -1 };
 	corridorIndex = -1;
 	prevStep = SPACE;
 	prevRoomIndex = this->getRoomIndex();
@@ -29,14 +29,14 @@ Position NPC::RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ
 {
 	isAstar = true;
 	priority_queue<Cell*, vector<Cell*>, CompareCells> grays;
-	Cell* pc = new Cell(GetPosition().row,GetPosition().col, target.row, target.col, 0, nullptr, dupMap);
+	Cell* pc = new Cell(GetPosition().row, GetPosition().col, target.row, target.col, 0, nullptr, dupMap);
 	grays.push(pc);
 	Cell* nextStep = nullptr;
 
 	while (!nextStep)
 		nextStep = RunAStarIteration(target, grays, dupMaze, dupMap, numSteps);
-	
-	Position nextPos = Position { nextStep->getRow(), nextStep->getCol() };
+
+	Position nextPos = Position{ nextStep->getRow(), nextStep->getCol() };
 
 	while (!grays.empty())
 	{
@@ -63,12 +63,12 @@ Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*
 
 	if (row == target.row && col == target.col)
 	{
-		std::cout << "The target in the same position (" << row<< ", " << col << ")\n";
+		std::cout << "The target in the same position (" << row << ", " << col << ")\n";
 		return pCurrent;
 	}
 	// need to check if instead assign BLACK to dupMap, we need to assign it to maze
 	dupMaze[row][col] = BLACK;
-	
+
 	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
 		go_on = CheckNeighbor(row + 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps);
 	if (!go_on && dupMaze[row - 1][col] != WALL && dupMaze[row - 1][col] != BLACK)
@@ -85,7 +85,7 @@ Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority
 {
 	if (r == target.row && c == target.col)
 	{
-		if(pCurrent->getParent() == nullptr && (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_))
+		if (pCurrent->getParent() == nullptr && (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_))
 		{
 			std::cout << "The target in the next position (" << r << ", " << c << ")\n";
 			*numSteps = 1;
@@ -105,7 +105,7 @@ Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority
 
 Cell* NPC::RestorePath(Cell* pc, int* numSteps)
 {
-    *numSteps = 2;
+	*numSteps = 2;
 	while (pc->getParent() && pc->getParent()->getParent() != nullptr)
 	{
 		pc = pc->getParent();
@@ -231,11 +231,11 @@ Position NPC::BFSRadius(Position start, vector <Position> enemyPos, int radius, 
 		}
 		currentRadius++;
 	}
-	Position bestPos = {-1, -1};
+	Position bestPos = { -1, -1 };
 	bool isWarrior = (strcmp(getType(), "Warrior") == 0);
 	bool onlyWarriors = true;
 	Position target = { -1, -1 };
-	if(isWarrior)
+	if (isWarrior)
 	{
 		target = { enemyPos[0].row, enemyPos[0].col };
 		onlyWarriors = false;
@@ -336,7 +336,7 @@ Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSe
 	for (Position p : corridor->getEntrances())
 	{
 		Position p2 = { p.row, p.col };
-		if (GetRoomIndex({p.row + 1, p.col}) == roomIndex)
+		if (GetRoomIndex({ p.row + 1, p.col }) == roomIndex)
 		{
 			p2.row = p.row + 1;
 			return (forSecMap) ? p2 : p;
@@ -358,7 +358,7 @@ Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSe
 		}
 	}
 	std::cout << "Error: entrance not found\n";
-	return {-1, -1};
+	return { -1, -1 };
 }
 
 vector<Position> NPC::GetAllEntrancesToMyRoom(int roomIndex, bool forSecMap)
