@@ -10,6 +10,7 @@ class Squire : public NPC
 {
 private:
 	int bulletsPack, grenadesPack, healthPack;
+	bool reStocking;
 public:
 	Squire(Position startPos, TeamID teamID);
 	void SetBulletsPack(int b) { bulletsPack = b; }
@@ -18,6 +19,8 @@ public:
 	int GetHealthPack() { return healthPack; }
 	int GetBulletsPack() { return bulletsPack; }
 	int GetGrenadesPack() { return grenadesPack; }
+	void SetReStocking(bool r) { reStocking = r; }
+	bool GetReStocking() { return reStocking; }
 
 	const char* getType() override { return "Squire"; }
 	int getAmmo() override { return bulletsPack; }
