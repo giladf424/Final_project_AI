@@ -229,6 +229,10 @@ void Squire::refillResources()
 {
 	if (isMoving)
 	{
+		std::cout << "test";
 	}
+
+
+
 }
 
