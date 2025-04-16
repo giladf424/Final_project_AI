@@ -33,7 +33,7 @@ public:
 	int findSafestRoom(vector<RoomDetails> connectedRooms);
 
 	// Warrior interaction methods
-	void deliverToWarrior(NPC* w);
+	bool deliverToWarrior(NPC* w);
 
 	// Refill
 	void refillResources();

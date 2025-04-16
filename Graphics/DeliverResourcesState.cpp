@@ -10,7 +10,7 @@ void DeliverResourcesState::OnEnter(NPC* p)
     Squire* s = (Squire*)p;
 	// get the first warrior in the queue
 	// if the queue is empty, return
-	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty() || s->GetHealthPack())
+	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
 	{
 		
         std::cout << "No wounded warriors in the queue\n";
