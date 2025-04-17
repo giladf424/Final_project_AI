@@ -41,6 +41,17 @@ void Squire::MoveToTeamMate(Position sRoomCenter)
 		//DuplicateSecurityMap(security_map, dupSecurityMap);
 		int numSteps = 0;
 		Position nextPos = RunAStar(safestPos, dupMaze, dupSecurityMap, &numSteps);
+		if (isSamePositions(nextPos, this->GetPrevPosition()) && !this->GetStuck())
+			SetStuck(true);
+		else if (isSamePositions(nextPos, this->GetPrevPosition()) && this->GetStuck())
+		{
+			nextPos = FindFreeSpaceToMoveInLoop();
+		}
+		else
+		{
+			if (this->GetStuck())
+				SetStuck(false);
+		}
 		// Move to the next position
 		move(nextPos);
 
@@ -164,7 +175,7 @@ bool Squire::deliverToWarrior(NPC* w)
 	if (w->getType() == "Warrior")
 	{
 		Warrior* warrior = static_cast<Warrior*>(w);
-		if (this->isAdjacentToMyPos(warrior->GetPosition()))
+		if (this->isAdjacentToMyPos(warrior->GetPosition()) || this->isSamePosAsMyPos(warrior->GetPosition()))
 		{
 			if (warrior->GetHp() < MAX_HP)
 			{
@@ -227,12 +238,23 @@ bool Squire::moveToWarrior(Position warriorPos)
 {
 	if (isMoving)
 	{
+		if (this->isSamePosAsMyPos(warriorPos))
+		{
+			Position nextPos = { -1, -1 };
+			if (!this->isSamePosAsMyPos(this->GetPrevPosition()))
+				nextPos = this->GetPrevPosition();
+			else
+				nextPos = this->FindFreeSpaceToMove();
+
+			move(nextPos);
+			return true;
+		}
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		int numSteps = 0;
 		Position nextPos = RunAStar(warriorPos, dupMaze, dupSecurityMap, &numSteps);
 		move(nextPos);
-		return this->isAdjacentToMyPos(warriorPos);
+		return (this->isAdjacentToMyPos(warriorPos) || this->isSamePosAsMyPos(warriorPos));
 	}
 	return false;
 }
@@ -257,6 +279,17 @@ void Squire::refillResources()
 			DuplicateMaze(maze, dupMaze);
 			int numSteps = 0;
 			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
+			if (isSamePositions(nextPos, this->GetPrevPosition()) && !this->GetStuck())
+				SetStuck(true);
+			else if (isSamePositions(nextPos, this->GetPrevPosition()) && this->GetStuck())
+			{
+				nextPos = FindFreeSpaceToMoveInLoop();
+			}
+			else
+			{
+				if (this->GetStuck())
+					SetStuck(false);
+			}
 			move(nextPos);
 			if (this->isAdjacentToMyPos(stashPos))
 			{

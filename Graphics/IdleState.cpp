@@ -10,17 +10,18 @@ void IdleState::OnEnter(NPC* p)
 	std::cout << "Entering IdleState\n\n";
 	Squire* s = (Squire*)p;
 	int id = s->GetTeamID().team;
-	if (Team::GetEnemiesPositionsInRoom(s->getRoomIndex(), id, true).size() > 0 || !Team::Teams.at(id)->woundedWarriors.empty())
-	{
-		s->SetPrevPosition(s->GetPosition());
-		s->GetState()->Transition(p);
-		return;
-	}
 	s->SetIsMoving(true);
 	Position teammatePos = Team::findNearestTeammate(p);
 	int roomIndex = GetRoomIndex(teammatePos);
 	if (roomIndex == -1)
 		roomIndex = (Team::GetNPCByPosition(teammatePos, s->GetTeamID().team, s->GetTeamID().place))->getPrevRoomIndex();
+
+	if (Team::GetEnemiesPositionsInRoom(roomIndex, id, true).size() > 0 || !Team::Teams.at(id)->woundedWarriors.empty())
+	{
+		s->SetPrevPosition(s->GetPosition());
+		s->GetState()->Transition(p);
+		return;
+	}
 	Position roomCenter = Team::findRoomCenter(roomIndex);
 	if (s->isValidPos(roomCenter))
 		s->MoveToTeamMate(roomCenter);

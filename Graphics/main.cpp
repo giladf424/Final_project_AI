@@ -602,6 +602,8 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 {
 	DuplicateSecurityMap(security_map, dupSecurityMap);
 	int roomIndex = n->getRoomIndex();
+	if (roomIndex == -1)
+		roomIndex = n->getPrevRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
 
 	int numSimulations = 100;
@@ -619,9 +621,9 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 			}
 		}
 	}
-	else
+	/*else
 	{
-		vector<Position> entrances = n->GetAllEntrancesToMyRoom(n->getRoomIndex(), true);
+		vector<Position> entrances = n->GetAllEntrancesToMyRoom(roomIndex, true);
 		entrances.push_back(n->GetPosition());
 		for (Position p : entrances)
 		{
@@ -633,7 +635,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 				g = nullptr;
 			}
 		}
-	}
+	}*/
 }
 
 
@@ -642,7 +644,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(1);
+	srand(3);
 
 	SetupDungeon();
 	GenerateSecurityMap();

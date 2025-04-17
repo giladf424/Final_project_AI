@@ -17,6 +17,7 @@ protected:
 	TeamID id;
 	bool isAlive;
 	bool isMoving;
+	bool isStuck;
 	Position pos;
 	Position prevPos;
 	int prevStep;
@@ -44,6 +45,8 @@ public:
 	void SetPrevStep(int step) { prevStep = step; }
 	int getPrevRoomIndex() { return prevRoomIndex; }
 	void SetPrevRoomIndex(int index) { prevRoomIndex = index; }
+	void SetStuck(bool value) { isStuck = value; }
+	bool GetStuck() { return isStuck; }
 
 	int getRoomIndex();
 	Position RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
@@ -57,6 +60,9 @@ public:
 	bool isSamePosAsMyPos(Position p);
 	bool isStillInSamePos();
 	bool isAdjacentToMyPos(Position p);
+	bool isSamePositions(Position p1, Position p2);
+	Position FindFreeSpaceToMove();
+	Position FindFreeSpaceToMoveInLoop();
 
 	void move(Position nextPos); // Add this line
 	Position BFSRadius(Position start, vector <Position> enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);

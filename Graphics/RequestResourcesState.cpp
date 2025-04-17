@@ -19,6 +19,12 @@ void RequestResourcesState::OnEnter(NPC* p)
 	w->addWoundedWarriorToQueue();
 	w->SetIsMoving(true);
 	NPC* teammateSquire = Team::findNearestSquireEnemyOrTeammate(p, false);
+	if (teammateSquire == nullptr)
+	{
+		std::cout << "The squire is dead!!" << endl;
+		w->GetState()->Transition(p);
+		return;
+	}
 	Position teammateSquirePosition = teammateSquire->GetPosition();
 	if (w->isValidPos(teammateSquirePosition))
 		w->moveToSquire(teammateSquirePosition);

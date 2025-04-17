@@ -52,11 +52,12 @@ void Warrior::moveToEnemy()
 				{// find the best position to move to
 					// need to change the radius to be the number of steps from the target
 					Position temp = this->RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &radius);
+					if (radius <= 2) radius = 3;
 					DuplicateMaze(maze, dupMaze);
 					enemyPos.push_back(target->GetPosition());
 					Position bestPos = this->BFSRadius(GetPosition(), enemyPos, radius, dupMaze, dupSecurityMap);
 					DuplicateMaze(maze, dupMaze);
-					if (bestPos.row != -1 && bestPos.col != -1)
+					if (isValidPos(bestPos))
 						nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
 					else
 					{
@@ -101,11 +102,12 @@ void Warrior::moveToEnemy()
 					{
 						this->SetTarget(Team::GetNPCByPosition(enemiesPositions[0], this->GetTeamID().team, this->GetTeamID().place));
 						Position temp = this->RunAStar(target->GetPosition(), dupMaze, dupSecurityMap, &radius);
+						if (radius <= 2) radius = 3;
 						DuplicateMaze(maze, dupMaze);
 						enemyPos.push_back(target->GetPosition());
 						Position bestPos = this->BFSRadius(GetPosition(), enemyPos, radius, dupMaze, dupSecurityMap);
 						DuplicateMaze(maze, dupMaze);
-						if (bestPos.row != -1 && bestPos.col != -1)
+						if (isValidPos(bestPos))
 							nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
 						else
 						{
@@ -121,19 +123,21 @@ void Warrior::moveToEnemy()
 		Position myEntrance = this->getEntranceToCorridor(this->corridorIndex, this->prevRoomIndex, true);
 		Position targetEntrance = this->getEntranceToCorridor(this->target->GetCorridorIndex(), this->target->getPrevRoomIndex(), true);
 		bool isMyRoomCloser = (Team::findDistance(pos, myEntrance) <= Team::findDistance(this->target->GetPosition(), targetEntrance));
+		bool isSameDistance = (Team::findDistance(pos, myEntrance) == Team::findDistance(this->target->GetPosition(), targetEntrance));
 		// if the target is in connected corridor and coming
-		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()) && isComing)
+		if (this->IsEnemyInCorridorConnectedToMyRoom(target->GetCorridorIndex()) && (isComing || target->GetStuck()))
 		{ // find the best position to wait for the target
 			Position entrance = this->getEntranceToCorridor(target->GetCorridorIndex(), this->getRoomIndex(), true);
 			enemyPos.push_back(entrance);
 			vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &radius);
+			if (radius < 1) radius = 1;
 			std::cout << "Radius: ( " << radius << " ) patrol last\n";
 			DuplicateMaze(maze, dupMaze);
 			Position bestPos = this->BFSRadius(GetPosition(), enemyPos, radius, dupMaze, dupSecurityMap);
 			DuplicateMaze(maze, dupMaze);
-			if (bestPos.row != -1 && bestPos.col != -1)
+			if (isValidPos(bestPos))
 				nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
 			else
 			{
@@ -149,11 +153,13 @@ void Warrior::moveToEnemy()
 			UpdateSecurityMap(enemiesPositions, dupMaze, dupSecurityMap);
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
 			Position temp = target->RunAStar(myEntrance, dupMaze, dupSecurityMap, &radius);
+			radius += (isSameDistance ? 3 : 0);
+			if (radius < 2) radius = 2;
 			DuplicateMaze(maze, dupMaze);
-			Team::blockPathSearchDirection(myEntrance, target->GetPosition(), dupMaze);
+			//Team::blockPathSearchDirection(myEntrance, target->GetPosition(), dupMaze);
 			Position bestPos = this->BFSRadius(GetPosition(), enemyPos, radius, dupMaze, dupSecurityMap);
 			DuplicateMaze(maze, dupMaze);
-			if (bestPos.row != -1 && bestPos.col != -1)
+			if (isValidPos(bestPos))
 				nextStep = this->RunAStar(bestPos, dupMaze, dupSecurityMap, &radius);
 			else
 			{
@@ -213,7 +219,7 @@ void Warrior::attackEnemy()
 	if (!enemiesInHitRange.empty() && this->getRoomIndex() != -1)
 	{
 		// if the target is not in hit range
-		if (!isTargetInHitRange || isAnybodyInMyPos)
+		if (!isTargetInHitRange || isAnybodyInMyPos || this->isStillInSamePos())
 		{
 			// if the target is in the same room
 			if (isTargetInSameRoom)
@@ -297,17 +303,18 @@ void Warrior::attackEnemy()
 		this->GetState()->Transition(this);
 		return;
 	}
-	if (!aggressive && hp < HP_TH || aggressive && hp < HP_TH_AGGRESSIVE)
+	NPC* squire = Team::findNearestSquireEnemyOrTeammate(this, false);
+	if (squire != nullptr && squire->GetIsAlive() && (!aggressive && hp < HP_TH || aggressive && hp < HP_TH_AGGRESSIVE))
 	{
 		this->GetState()->Transition(this);
 		return;
 	}
-	if ((!aggressive && bullets < AMMO_TH) || (aggressive && bullets < AMMO_TH_AGGRESSIVE))
+	if (squire != nullptr && squire->GetIsAlive() && ((!aggressive && bullets < AMMO_TH) || (aggressive && bullets < AMMO_TH_AGGRESSIVE)))
 	{
 		this->GetState()->Transition(this);
 		return;
 	}
-	if (grenades < GRENADE_TH)
+	if (squire != nullptr && squire->GetIsAlive() && (grenades < GRENADE_TH))
 	{
 		this->GetState()->Transition(this);
 		return;
@@ -375,12 +382,12 @@ void Warrior::moveToSquire(Position squirePos)
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		int squireRoomIndex = GetRoomIndex(squirePos);
-		vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
+		/*vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
 		vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(this->getRoomIndex(), this->GetTeamID().team, true);
 		if (enemiesPos.size() > 0)
 			UpdateSecurityMap(enemiesPos, dupMaze, dupSecurityMap);
 		else
-			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
+			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);*/
 		int numSteps = 0;
 		Position nextPos = RunAStar(squirePos, dupMaze, dupSecurityMap, &numSteps);
 		if (nextPos.col == squirePos.col && nextPos.row == squirePos.row)

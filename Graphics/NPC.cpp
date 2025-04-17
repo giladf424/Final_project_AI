@@ -7,6 +7,7 @@ NPC::NPC(Position startPos, TeamID teamID)
 	id = teamID;
 	isMoving = false;
 	isAlive = true;
+	isStuck = false;
 	pos = startPos;
 	prevPos = { -1, -1 };
 	corridorIndex = -1;
@@ -64,7 +65,8 @@ Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*
 	if (row == target.row && col == target.col)
 	{
 		std::cout << "The target in the same position (" << row << ", " << col << ")\n";
-		return pCurrent;
+		target = this->FindFreeSpaceToMove();
+		//return pCurrent;
 	}
 	// need to check if instead assign BLACK to dupMap, we need to assign it to maze
 	dupMaze[row][col] = BLACK;
@@ -96,7 +98,7 @@ Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority
 
 	if (dupMaze[r][c] == SPACE || (dupMaze[r][c] == NPC_)) // && pCurrent->getParent() != nullptr
 	{
-		Cell* pc = new Cell(r, c, target.row, target.col, 0, pCurrent, dupMap);
+		Cell* pc = new Cell(r, c, target.row, target.col, pCurrent->getG() + 1, pCurrent, dupMap);
 		grays.push(pc);
 		dupMaze[r][c] = GRAY;
 	}
@@ -162,6 +164,49 @@ bool NPC::isAdjacentToMyPos(Position p)
 		(p.row == GetPosition().row && p.col == GetPosition().col - 1))
 		return true;
 	return false;
+}
+
+bool NPC::isSamePositions(Position p1, Position p2)
+{
+	if (p1.row == p2.row && p1.col == p2.col)
+		return true;
+	return false;
+}
+
+Position NPC::FindFreeSpaceToMove()
+{
+	Position nextPos = { -1, -1 };
+	Position myPos = GetPosition();
+	if (maze[myPos.row + 1][myPos.col] == SPACE || maze[myPos.row + 1][myPos.col] == NPC_)
+		return { myPos.row + 1, myPos.col };
+	else if (maze[myPos.row - 1][myPos.col] == SPACE || maze[myPos.row - 1][myPos.col] == NPC_)
+		return { myPos.row - 1, myPos.col };
+	else if (maze[myPos.row][myPos.col + 1] == SPACE || maze[myPos.row][myPos.col + 1] == NPC_)
+		return { myPos.row, myPos.col + 1 };
+	else if (maze[myPos.row][myPos.col - 1] == SPACE || maze[myPos.row][myPos.col - 1] == NPC_)
+		return { myPos.row, myPos.col - 1 };
+	else
+		return nextPos;
+}
+
+Position NPC::FindFreeSpaceToMoveInLoop()
+{
+	Position nextPos = { -1, -1 };
+	Position myPos = GetPosition();
+	Position prevPos = GetPrevPosition();
+	if ((maze[myPos.row + 1][myPos.col] == SPACE || maze[myPos.row + 1][myPos.col] == NPC_) && !isSamePositions({myPos.row + 1, myPos.col}, prevPos))
+		return { myPos.row + 1, myPos.col };
+	else if ((maze[myPos.row - 1][myPos.col] == SPACE || maze[myPos.row - 1][myPos.col] == NPC_) && !isSamePositions({ myPos.row - 1, myPos.col }, prevPos))
+		return { myPos.row - 1, myPos.col };
+	else if ((maze[myPos.row][myPos.col + 1] == SPACE || maze[myPos.row][myPos.col + 1] == NPC_) && !isSamePositions({ myPos.row, myPos.col + 1 }, prevPos))
+		return { myPos.row, myPos.col + 1 };
+	else if ((maze[myPos.row][myPos.col - 1] == SPACE || maze[myPos.row][myPos.col - 1] == NPC_) && !isSamePositions({ myPos.row, myPos.col - 1 }, prevPos))
+		return { myPos.row, myPos.col - 1 };
+	else
+	{
+		std::cout << "\nNo free space to move in loop" << endl;
+		return nextPos;
+	}
 }
 
 void NPC::move(Position nextPos)
@@ -241,9 +286,9 @@ Position NPC::BFSRadius(Position start, vector <Position> enemyPos, int radius, 
 		onlyWarriors = false;
 		enemyPos.pop_back();
 	}
-	int min_max_NumEnemiesinRange = (isWarrior ? 0 : INT_MAX); // min for warrior, max for squire 
-	int startRoomIndex = GetRoomIndex(start);
-	bool isSameRoom = false;
+	int min_max_NumEnemiesinRange = (isWarrior ? -1 : INT_MAX); // min for warrior, max for squire 
+	int startRoomIndex = (GetRoomIndex(start) == -1 ? this->getPrevRoomIndex() : GetRoomIndex(start));
+	//bool isSameRoom = false;
 	/*std::cout << "Size: " << q.size() << " ###############################\n\n";
 	std::cout << "Current radius: " << currentRadius << "\nSize: " << pq.size() << "###############################\n\n";*/
 	while (!pq.empty())
@@ -260,10 +305,7 @@ Position NPC::BFSRadius(Position start, vector <Position> enemyPos, int radius, 
 		enemyPos = Team::GetEnemiesPositionsInRoom(GetRoomIndex(temp), GetTeamID().team, onlyWarriors);
 		int numEnemiesinRange = GetEnemiesInHitRange(temp, enemyPos).size();
 		bool isTargetInRange = (isWarrior ? IsEnemyInHitRange(temp, target) : false);
-		if (startRoomIndex == -1)
-			isSameRoom = (GetRoomIndex(temp) != startRoomIndex);
-		else
-			isSameRoom = (GetRoomIndex(temp) == startRoomIndex);
+		bool isSameRoom = (GetRoomIndex(temp) == startRoomIndex);
 		//std::cout << "Enemy in hit range: " << inRange << "--------------- out -------------\n";
 		if ((isWarrior && isSameRoom && (numEnemiesinRange > min_max_NumEnemiesinRange || isTargetInRange)) || (!isWarrior && isSameRoom && numEnemiesinRange < min_max_NumEnemiesinRange)) // && (isBest->getRow() != enemyPos.row || isBest->getCol() != enemyPos.col)
 		{

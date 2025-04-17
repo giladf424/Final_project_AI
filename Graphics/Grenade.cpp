@@ -73,7 +73,8 @@ void Grenade::show()
 
 	for (i = 0;i < NUM_BULLETS;i++)
 	{
-		bullets[i]->show();
+		if (bullets[i]->getIsMoving())
+			bullets[i]->show();
 	}
 
 }
