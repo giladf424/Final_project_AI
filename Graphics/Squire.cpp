@@ -8,6 +8,7 @@ Squire::Squire(Position startPos, TeamID teamID) : NPC(startPos, teamID)
 	grenadesPack = MAX_GRENADES_SQUIRE;
 	healthPack = MAX_HP_PACKS;
 	reStocking = false;
+	safetyRoomIndex = -1;
 	pCurrentState = new IdleState();
 }
 
@@ -34,26 +35,16 @@ void Squire::MoveToTeamMate(Position sRoomCenter)
 		if (!isValidPos(safestPos)) // dont forget to verifay that the squire not get stuck in teammate position
 		{
 			this->SetPrevPosition(this->GetPosition());
-			std::cout << "No bestPos found from BFSRadius (Squire, move to teammate)\n";
+			std::cout << "No bestPos found from BFSRadius (Squire, move to teammate)" << endl;
 			return;
 		}
 		DuplicateMaze(maze, dupMaze);
 		//DuplicateSecurityMap(security_map, dupSecurityMap);
 		int numSteps = 0;
 		Position nextPos = RunAStar(safestPos, dupMaze, dupSecurityMap, &numSteps);
-		if (isSamePositions(nextPos, this->GetPrevPosition()) && !this->GetStuck())
-			SetStuck(true);
-		else if (isSamePositions(nextPos, this->GetPrevPosition()) && this->GetStuck())
-		{
-			nextPos = FindFreeSpaceToMoveInLoop();
-		}
-		else
-		{
-			if (this->GetStuck())
-				SetStuck(false);
-		}
+		Position nextPos2 = checkIfStuck(nextPos, safestPos);
 		// Move to the next position
-		move(nextPos);
+		(isValidPos(nextPos2)) ? move(nextPos2) : move(nextPos);
 
 	}
 }
@@ -68,7 +59,7 @@ void Squire::RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate)
 		Position nextStep = { -1, -1 };
 		vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
 		UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
-		NPC* target = Team::findNearestEnemy(Team::GetNPCByPosition(GetPosition(), this->GetTeamID().team, this->GetTeamID().place));
+		NPC* target = Team::findNearestEnemy(Team::GetNPCByPosition(GetPosition(), this->GetTeamID().team, this->GetTeamID().place, ENEMY));
 		Position bestEscapePos = BFSRadius(GetPosition(), entrances, BFS_RADIUS_SQUIRE, dupMaze, dupSecurityMap);
 		//Position nextStep = RunBFS(dupMaze, dupSecurityMap, nearestTeamate);
 		move(bestEscapePos);
@@ -80,7 +71,7 @@ Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 	priority_queue<Cell*, vector<Cell*>, CompareCells> grays;
 	int roomIndex = n->getRoomIndex();
 	vector<Position> enemiesPos = Team::GetEnemiesPositionsInRoom(roomIndex, n->GetTeamID().team, true);
-	Cell* pc = new Cell(pos.row, pos.col, nullptr, dupMap);
+	Cell* pc = new Cell(pos.row, pos.col, nullptr, dupMap, enemiesPos);
 	pc->CalcH(dupMap, enemiesPos);
 	pc->CalcF();
 	grays.push(pc);
@@ -101,7 +92,7 @@ Position Squire::RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n)
 	return nextPos;
 }
 
-Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, double dupMap[MSZ][MSZ], vector<Position> enemiesPos)
+Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, double dupMap[MSZ][MSZ], vector<Position>& enemiesPos)
 {
 	Cell* pCurrent;
 	int row, col;
@@ -127,11 +118,11 @@ Cell* Squire::RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vecto
 	}
 }
 
-void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position> enemiesPos)
+void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position>& enemiesPos)
 {
 	if (dupMaze[r][c] == SPACE)
 	{
-		Cell* pNeighbor = new Cell(r, c, pCurrent, dupMap);
+		Cell* pNeighbor = new Cell(r, c, pCurrent, dupMap, enemiesPos);
 		pNeighbor->CalcH(dupMap, enemiesPos);
 		pNeighbor->CalcF();
 		dupMaze[r][c] = GRAY;
@@ -139,11 +130,13 @@ void Squire::CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, v
 	}
 }
 
-int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
+int Squire::findSafestRoom(vector<RoomDetails>& connectedRooms)
 {
 	int minNumEnemies = INT_MAX;
 	int minDistance = INT_MAX;
 	int safestRoomIndex = -1;
+	bool found = false;
+	RoomDetails* safestRoom = nullptr;
 	for (auto it = connectedRooms.begin(); it != connectedRooms.end();)
 	{
 		if (it->distance > 30)
@@ -154,6 +147,11 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 		else if (it->numEnemies < minNumEnemies)
 		{
 			minNumEnemies = it->numEnemies;
+		}
+		if (it->roomIndex == this->safetyRoomIndex)
+		{
+			found = true;
+			safestRoom = &(*it);
 		}
 		++it; // Increment the iterator only if no element was erased
 	}
@@ -166,7 +164,11 @@ int Squire::findSafestRoom(vector<RoomDetails> connectedRooms)
 			safestRoomIndex = it->roomIndex;
 		}
 	}
-
+	if (found && safestRoom->numEnemies == minNumEnemies)
+	{
+		safestRoomIndex = this->safetyRoomIndex;
+	}
+	
 	return safestRoomIndex;
 }
 
@@ -253,7 +255,8 @@ bool Squire::moveToWarrior(Position warriorPos)
 		DuplicateSecurityMap(security_map, dupSecurityMap);
 		int numSteps = 0;
 		Position nextPos = RunAStar(warriorPos, dupMaze, dupSecurityMap, &numSteps);
-		move(nextPos);
+		Position nextPos2 = this->checkIfStuck(nextPos, warriorPos);
+		(isValidPos(nextPos2)) ? move(nextPos2) : move(nextPos);
 		return (this->isAdjacentToMyPos(warriorPos) || this->isSamePosAsMyPos(warriorPos));
 	}
 	return false;
@@ -279,18 +282,9 @@ void Squire::refillResources()
 			DuplicateMaze(maze, dupMaze);
 			int numSteps = 0;
 			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
-			if (isSamePositions(nextPos, this->GetPrevPosition()) && !this->GetStuck())
-				SetStuck(true);
-			else if (isSamePositions(nextPos, this->GetPrevPosition()) && this->GetStuck())
-			{
-				nextPos = FindFreeSpaceToMoveInLoop();
-			}
-			else
-			{
-				if (this->GetStuck())
-					SetStuck(false);
-			}
-			move(nextPos);
+			Position nextPos2 = this->checkIfStuck(nextPos, stashPos);
+			(isValidPos(nextPos2)) ? move(nextPos2) : move(nextPos);
+			//move(nextPos);
 			if (this->isAdjacentToMyPos(stashPos))
 			{
 				if (maze[stashPos.row][stashPos.col] == AMMUNITION_PACK)
@@ -342,5 +336,28 @@ Position Squire::findNearestStash(int stashType)
 	else
 		return nearestStashMed;
 
+}
+
+void Squire::runAwayFromEnemy()
+{
+	if (isMoving)
+	{
+		DuplicateMaze(maze, dupMaze);
+		Position bestEscapePos = this->RunAStarFlee(dupMaze);
+		if (!isValidPos(bestEscapePos))
+		{
+			this->SetPrevPosition(this->GetPosition());
+			std::cout << "No bestPos found from RunAstarFlee (Squire, runAwayFromEnemy)" << endl;
+			return;
+		}
+		vector<Position> warriorsEnemies = Team::findAllWarriorsEnemies(this->GetTeamID().team);
+		DuplicateMaze(maze, dupMaze);
+		DuplicateSecurityMap(security_map, dupSecurityMap);
+		UpdateSecurityMap(warriorsEnemies, dupMaze, dupSecurityMap);
+		int numSteps = 0;
+		Position nextPos = RunAStar(bestEscapePos, dupMaze, dupSecurityMap, &numSteps);
+		Position nextPos2 = checkIfStuck(nextPos, bestEscapePos);
+		(isValidPos(nextPos2)) ? move(nextPos2) : move(nextPos);
+	}
 }
 

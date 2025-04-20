@@ -10,6 +10,7 @@ class Squire : public NPC
 {
 private:
 	int bulletsPack, grenadesPack, healthPack;
+	int safetyRoomIndex;
 	bool reStocking;
 public:
 	Squire(Position startPos, TeamID teamID);
@@ -21,6 +22,8 @@ public:
 	int GetGrenadesPack() { return grenadesPack; }
 	void SetReStocking(bool r) { reStocking = r; }
 	bool GetReStocking() { return reStocking; }
+	int GetSafetyRoomIndex() { return safetyRoomIndex; }
+	void SetSafetyRoomIndex(int index) { safetyRoomIndex = index; }
 
 	const char* getType() override { return "Squire"; }
 	int getAmmo() override { return bulletsPack; }
@@ -31,9 +34,9 @@ public:
 	void RunFromEnemyWithHeuristicLogic(NPC* nearestTeamate);
 	//void move(int maze[MSZ][MSZ]) override;
 	Position RunBFS(int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], NPC* n);
-	Cell* RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, double dupMap[MSZ][MSZ], vector<Position> enemiesPos);
-	void CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position> enemiesPos);
-	int findSafestRoom(vector<RoomDetails> connectedRooms);
+	Cell* RunBFSIteration(int dupMaze[MSZ][MSZ], priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, double dupMap[MSZ][MSZ], vector<Position>& enemiesPos);
+	void CheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position>& enemiesPos);
+	int findSafestRoom(vector<RoomDetails>& connectedRooms);
 
 	// Warrior interaction methods
 	bool deliverToWarrior(NPC* w);
@@ -41,6 +44,7 @@ public:
 	// Refill
 	void refillResources();
 	Position findNearestStash(int stashType);
+	void runAwayFromEnemy();
 
 };
 

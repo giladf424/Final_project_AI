@@ -113,7 +113,7 @@ void AddNeighbor(int r, int c, Cell* pCurrent,
 				}
 				if (pq.empty()) // ERROR!
 				{
-					cout << "PQ is empty\n";
+					cout << "PQ is empty" << endl;
 					exit(2);
 				}
 				else // we have found the neighbor cell in PQ
@@ -171,7 +171,7 @@ void BuildPath(int index1, int index2)
 			itGray = find(grays.begin(), grays.end(), *pCurrent);
 			if (itGray == grays.end()) // pCurrent wasn't found
 			{
-				cout << "Error: pCurrent wasn't found in grays\n";
+				cout << "Error: pCurrent wasn't found in grays" << endl;
 				exit(1);
 			}
 			grays.erase(itGray);
@@ -195,7 +195,7 @@ void BuildPath(int index1, int index2)
 		}
 
 	}
-	cout << "Error pq is empty, target hasn't been found\n";
+	cout << "Error pq is empty, target hasn't been found" << endl;
 }
 
 void BuildPathBetweenTheRooms()
@@ -206,7 +206,7 @@ void BuildPathBetweenTheRooms()
 		for (j = i + 1; j < NUM_ROOMS; j++)
 		{
 			BuildPath(i, j); // A*
-			cout << "The path from " << i << " to " << j << " has been paved\n";
+			cout << "The path from " << i << " to " << j << " has been paved" << endl;
 		}
 }
 
@@ -323,7 +323,7 @@ void initCorridors()
 					Position sRoom = { sRow, j };
 					Position sCorridor = { sRow - 1, j };
 					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found\n";
+						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -340,7 +340,7 @@ void initCorridors()
 					Position sRoom = { eRow, j };
 					Position sCorridor = { eRow + 1, j };
 					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found\n";
+						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -357,7 +357,7 @@ void initCorridors()
 					Position sRoom = { j, sCol };
 					Position sCorridor = { j, sCol - 1 };
 					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found\n";
+						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -374,7 +374,7 @@ void initCorridors()
 					Position sRoom = { j, eCol };
 					Position sCorridor = { j, eCol + 1 };
 					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found\n";
+						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -389,7 +389,7 @@ void PrintCorridors()
 	for (size_t i = 0; i < Corridor::corridors.size(); ++i)
 	{
 		Corridor* corridor = Corridor::corridors[i];
-		cout << "Corridor " << i + 1 << ":\n";
+		cout << "Corridor " << i + 1 << ":" << endl;
 		cout << "Path: ";
 		for (const Position& pos : corridor->getPath())
 		{
@@ -429,7 +429,7 @@ void PrintCorridors()
 				cout << "(Error: Invalid room index)";
 			}
 		}
-		cout << "\n\n";
+		cout << "\n" << endl;
 	}
 }
 
@@ -439,7 +439,7 @@ void PrintRoomScopes()
 	for (int i = 0; i < NUM_ROOMS; ++i)
 	{
 		RoomScope scope = roomScopes[i];
-		cout << "Room " << i << " Scope:\n";
+		cout << "Room " << i << " Scope:" << endl;
 
 		// Print top edge
 		cout << "Top Edge: ";
@@ -447,7 +447,7 @@ void PrintRoomScopes()
 		{
 			cout << "(" << scope.startRow << ", " << col << ") ";
 		}
-		cout << "\n";
+		cout << endl;
 
 		// Print bottom edge
 		cout << "Bottom Edge: ";
@@ -455,7 +455,7 @@ void PrintRoomScopes()
 		{
 			cout << "(" << scope.endRow << ", " << col << ") ";
 		}
-		cout << "\n";
+		cout << endl;
 
 		// Print left edge
 		cout << "Left Edge: ";
@@ -463,7 +463,7 @@ void PrintRoomScopes()
 		{
 			cout << "(" << row << ", " << scope.startCol << ") ";
 		}
-		cout << "\n";
+		cout << endl;
 
 		// Print right edge
 		cout << "Right Edge: ";
@@ -471,7 +471,7 @@ void PrintRoomScopes()
 		{
 			cout << "(" << row << ", " << scope.endCol << ") ";
 		}
-		cout << "\n\n";
+		cout << "\n" << endl;
 	}
 }
 
@@ -644,7 +644,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(3);
+	srand(2);
 
 	SetupDungeon();
 	GenerateSecurityMap();
@@ -731,11 +731,11 @@ void idle()
 				if (dynamic_cast<Warrior*>(n))
 				{
 					Warrior* w = (Warrior*)n;
-					cout << "Target: " << (w->GetTarget() != nullptr ? w->GetTarget()->GetTeamID().place : -1) << "\n";
+					cout << "Target: " << (w->GetTarget() != nullptr ? w->GetTarget()->GetTeamID().place : -1) << endl;
 				}
 				else
-					cout << "\n";
-				n->GetState()->OnEnter(n);
+					cout << endl;
+ 				n->GetState()->OnEnter(n);
 				n->SetPrevStep((Team::isAnyBodyInMyPosition(n->GetPosition(), n->GetTeamID().team, n->GetTeamID().place) ? NPC_ : SPACE));
 			}
 		}
@@ -800,7 +800,7 @@ void idle()
 			if (t->GetTeammates().size() == 0)
 			{
 				paused = true;
-				cout << "Game Over! Team " << ((t->GetTeamID().team == 0) ? "Yellow" : "Red") << " is won!\n";
+				cout << "Game Over! Team " << ((t->GetTeamID().team == 0) ? "Yellow" : "Red") << " is won!" << endl;
 			}
 		}
 	}

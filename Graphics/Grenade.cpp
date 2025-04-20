@@ -92,17 +92,13 @@ void Grenade::SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ])
 
 }
 
-bool Grenade::IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos)
+double Grenade::IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos)
 {
 	int i;
-	bool isEnemyFound = false;
 	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		if (bullets[i]->IsEnemyFoundByExplosion(maze, enemyPos))
-		{
-			isEnemyFound = true;
-			break;
-		}
+			return bullets[i]->getAngle();
 	}
-	return isEnemyFound;
+	return -1;
 }

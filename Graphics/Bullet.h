@@ -21,6 +21,7 @@ public:
 	void show();
 	void setIsMoving(bool value) { isMoving = value; }
 	bool getIsMoving() { return isMoving; }
+	double getAngle() { return dir_angle; }
 	void SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ]);
 	bool IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos);
 	Position getPosition() { return { (int)x, (int)y }; }

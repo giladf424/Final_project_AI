@@ -10,14 +10,15 @@ private:
 	double f, g, h;
 public:
 	Cell();
-	Cell(int row, int col, Cell* parent, double sec_map[MSZ][MSZ]);
+	Cell(int row, int col, Cell* parent, double sec_map[MSZ][MSZ], vector<Position>& enemiesInRoom);
 	Cell(int r, int c, int tr, int tc, Cell* p);
 	Cell(int r, int c,int tr,int tc, double newg,Cell* p, double sec_map[MSZ][MSZ]);
+	Cell(int r, int c, double newg, Cell* p, vector<Position>& allEnemies);
 	int getRow() { return row; }
 	int getCol() { return col; }
 	Cell* getParent() { return parent; }
 	void ComputeH(double sec_map[MSZ][MSZ]);
-	void CalcH(double sec_map[MSZ][MSZ], vector<Position> positions);
+	void CalcH(double sec_map[MSZ][MSZ], vector<Position>& positions);
 	void CalcF() { f = g + h; }
 
 	double getF() { return f; }

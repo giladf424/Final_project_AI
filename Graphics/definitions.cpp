@@ -14,6 +14,13 @@ void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ])
 			target[i][j] = source[i][j];
 }
 
+void setSecurityMapToZero(double map[MSZ][MSZ])
+{
+	for (int i = 0; i < MSZ; i++)
+		for (int j = 0; j < MSZ; j++)
+			map[i][j] = 0;
+}
+
 //void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
 //{
 //	for (Position p : positions)

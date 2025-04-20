@@ -99,19 +99,22 @@ vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, boo
 	return enemiesPos;
 }
 
-NPC* Team::GetNPCByPosition(Position p, int teamNum, int id)
+NPC* Team::GetNPCByPosition(Position p, int teamNum, int id, int type)
 {
 	for (Team* t : Teams)
 	{
-		for (NPC* n : t->GetTeammates())
+		if (t->GetTeamID().team != teamNum && type == ENEMY || t->GetTeamID().team == teamNum && type == TEAMMATE || type == BOTH)
 		{
-			if (n->GetTeamID().team == teamNum && n->GetTeamID().place == id)
-				continue;
-			if (n->isSamePosAsMyPos(p))
-				return n;
+			for (NPC* n : t->GetTeammates())
+			{
+				if (n->GetTeamID().team == teamNum && n->GetTeamID().place == id)
+					continue;
+				if (n->isSamePosAsMyPos(p))
+					return n;
+			}
 		}
 	}
-	std::cout << "Error: NPC not found (GetNPCByPosition)\n";
+	std::cout << "Error: NPC not found (GetNPCByPosition)" << endl;
 	return nullptr;
 }
 
@@ -305,7 +308,7 @@ void Team::blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ]
 	}
 	if (toBlock.row != -1 && toBlock.col != -1)
 	{
-		std::cout << "Blocking path from " << p1.row << ", " << p1.col << " to " << toBlock.row << ", " << toBlock.col << "\n";
+		std::cout << "Blocking path from " << p1.row << ", " << p1.col << " to " << toBlock.row << ", " << toBlock.col << endl;
 		maze[toBlock.row][toBlock.col] = BLACK;
 	}
 
@@ -331,7 +334,7 @@ vector<RoomDetails> Team::getConnectedRooms(int roomIndex, int teamNum)
 {
 	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
 	{
-		std::cout << "Error: Invalid room index\n";
+		std::cout << "Error: Invalid room index" << endl;
 		return vector<RoomDetails>();
 	}
 	vector<RoomDetails> connectedRooms;
@@ -360,7 +363,7 @@ Position Team::findRoomCenter(int roomIndex)
 {
 	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
 	{
-		std::cout << "Error: Invalid room index (Team, findRoomCenter)\n";
+		std::cout << "Error: Invalid room index (Team, findRoomCenter)" << endl;
 		return Position();
 	}
 	RoomScope rs = roomScopes[roomIndex];
@@ -368,4 +371,49 @@ Position Team::findRoomCenter(int roomIndex)
 	int centerCol = (rs.startCol + rs.endCol) / 2;
 	Position center = { centerRow, centerCol };
 	return center;
+}
+
+bool Team::isTeamsSizesEqualTwo()
+{
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamSize() != 2)
+			return false;
+	}
+	return true;
+}
+
+vector<Position> Team::findAllWarriorsEnemies(int teamNum)
+{
+	vector<Position> enemiesPos;
+	for (Team* t : Teams)
+	{
+		if (t->GetTeamID().team != teamNum)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				if (strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive())
+				{
+					enemiesPos.push_back(n->GetPosition());
+				}
+			}
+		}
+	}
+	return enemiesPos;
+}
+
+vector<Position> Team::findAllPlayesPositions(int teamNum, int id)
+{
+	vector<Position> playersPos;
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (t->GetTeamID().team == teamNum && n->GetTeamID().place == id)
+				continue;
+			if (n->GetIsAlive())
+				playersPos.push_back(n->GetPosition());
+		}
+	}
+	return playersPos;
 }

@@ -19,7 +19,7 @@ bool Corridor::addConnectedRoom(int roomIndex)
 		connectedRooms[numOfRooms++] = roomIndex;
 		return true;
 	}
-	std::cout << "Error: maximum number of connected rooms reached\n";
+	std::cout << "Error: maximum number of connected rooms reached" << endl;
 	return false;
 }
 
@@ -160,7 +160,7 @@ Position Corridor::getEntranceToRoom(int roomIndex)
 		if (GetRoomIndex({ entrance.row, entrance.col - 1 }) == roomIndex)
 			return entrance;
 	}
-	std::cout << "Error: entrance not found (corridor, getEntranceToRoom )\n";
+	std::cout << "Error: entrance not found (corridor, getEntranceToRoom )" << endl;
 	return {-1, -1};
 }
 
@@ -170,7 +170,7 @@ int Corridor::getDistanceBetweenConnectedRooms(int roomIndex1, int roomIndex2)
 	Position p2 = getEntranceToRoom(roomIndex2);
 	if (p1.row == -1 || p2.row == -1)
 	{
-		std::cout << "Error: entrance not found (corridor, getDistanceBetweenConnectedRooms )\n";
+		std::cout << "Error: entrance not found (corridor, getDistanceBetweenConnectedRooms )" << endl;
 		return -1;
 	}
 	int distance = abs(p1.row - p2.row) + abs(p1.col - p2.col);

@@ -7,11 +7,11 @@
 void SeekResourcesState::OnEnter(NPC* p)
 {
 	// Initialize seek resources behavior
-	std::cout << "Entering SeekResourcesState\n";
+	std::cout << "Entering SeekResourcesState" << endl;
 	Squire* s = (Squire*)p;
 	s->SetIsMoving(true);
 	s->refillResources();
-	std::cout << "Exiting SeekResourcesState\n";
+	std::cout << "Exiting SeekResourcesState" << endl;
 }
 
 void SeekResourcesState::Transition(NPC* p)
@@ -39,5 +39,5 @@ void SeekResourcesState::OnExit(NPC* p)
 	Squire* s = (Squire*)p;
 	s->SetReStocking(false);
 	p->SetIsMoving(true);
-	std::cout << "Exiting SeekResourcesState\n";
+	std::cout << "Exiting SeekResourcesState" << endl;
 }

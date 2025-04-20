@@ -10,33 +10,39 @@ void FleeState::OnEnter(NPC* p)
 	// Initialize combat behavior
 	//Warrior* w = (Warrior*)p;
 	//w->SetIsMoving(true);
-	std::cout << "Entering FleeState\n";
+	std::cout << "Entering FleeState" << endl;
 	Squire* s = (Squire*)p;
-	if (!Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
-	{
-		s->SetPrevPosition(s->GetPosition());
-		s->GetState()->Transition(p);
-		return;
-	}
 	s->SetIsMoving(true);
 	Position target = Team::findNearestTeammate(p);
-	int roomIndex = GetRoomIndex(target);
-
-	if (roomIndex == -1)
-		roomIndex = (Team::GetNPCByPosition(target, s->GetTeamID().team, s->GetTeamID().place))->getPrevRoomIndex();
-
-	vector<RoomDetails> connectedRooms = Team::getConnectedRooms(roomIndex, s->GetTeamID().team);
-	int roomIndexToScan = s->findSafestRoom(connectedRooms);
-	Position roomCenter = Team::findRoomCenter(roomIndexToScan);
-	if (s->isValidPos(roomCenter))
-		s->MoveToTeamMate(roomCenter);
-	else
+	NPC* targetNPC = Team::GetNPCByPosition(target, s->GetTeamID().team, s->GetTeamID().place, TEAMMATE);
+	if(targetNPC != nullptr && targetNPC->GetIsAlive())
 	{
-		s->SetPrevPosition(s->GetPosition());
-		std::cout << "Error: no room center pos found from FleeState\n";
+		if (!Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
+		{
+			s->SetPrevPosition(s->GetPosition());
+			s->GetState()->Transition(p);
+			return;
+		}
+		int roomIndex = GetRoomIndex(target);
+
+		if (roomIndex == -1)
+			roomIndex = targetNPC->getPrevRoomIndex();
+
+		vector<RoomDetails> connectedRooms = Team::getConnectedRooms(roomIndex, s->GetTeamID().team);
+		int roomIndexToScan = s->findSafestRoom(connectedRooms);
+		s->SetSafetyRoomIndex(roomIndexToScan);
+		Position roomCenter = Team::findRoomCenter(roomIndexToScan);
+		if (s->isValidPos(roomCenter))
+			s->MoveToTeamMate(roomCenter);
+		else
+		{
+			s->SetPrevPosition(s->GetPosition());
+			std::cout << "Error: no room center pos found from FleeState" << endl;
+		}
 	}
-	//w->SetIsMoving(false);
-	std::cout << "Exiting FleeState\n";
+	else
+		s->runAwayFromEnemy();
+	std::cout << "Exiting FleeState" << endl;
 }
 
 void FleeState::Transition(NPC* p)

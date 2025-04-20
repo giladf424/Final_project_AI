@@ -54,6 +54,9 @@ public:
 	Cell* CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
 	Cell* RestorePath(Cell* pc, int* numSteps);
 
+	Position RunAStarFlee(int dupMaze[MSZ][MSZ]);
+	void AStarFleeCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& grays, int dupMaze[MSZ][MSZ], vector<Position>& warriorsEnemy);
+
 	bool IsEnemyInCorridorConnectedToMyRoom(int corridorIndex);
 	bool IsEnemyInSameRoom(int roomIndex);
 	bool isValidPos(Position nextStep);
@@ -63,15 +66,16 @@ public:
 	bool isSamePositions(Position p1, Position p2);
 	Position FindFreeSpaceToMove();
 	Position FindFreeSpaceToMoveInLoop();
+	Position checkIfStuck(Position nextPos, Position targetPos);
 
 	void move(Position nextPos); // Add this line
-	Position BFSRadius(Position start, vector <Position> enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	bool IsEnemyInHitRange(Position myPos, Position enemyPos);
+	Position BFSRadius(Position start, vector <Position>& enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position>& enemiesInRoom);
+	double IsEnemyInHitRange(Position myPos, Position enemyPos);
 	Position getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSecMap);
 	vector<Position> GetAllEntrancesToMyRoom(int roomIndex, bool forSecMap);
-	void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
-	vector<Position> GetEnemiesInHitRange(Position myPos, vector<Position> enemiesPos);
+	void UpdateSecurityMap(vector<Position>& positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
+	vector<HitDetails> GetEnemiesInHitRange(Position myPos, vector<Position>& enemiesPos);
 	void hitByBullet();
 
 	virtual const char* getType() = 0;

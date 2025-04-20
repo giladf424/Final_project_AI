@@ -7,14 +7,21 @@
 void IdleState::OnEnter(NPC* p)
 {
 	// Initialize idle behavior
-	std::cout << "Entering IdleState\n\n";
+	std::cout << "Entering IdleState\n" << endl;
 	Squire* s = (Squire*)p;
 	int id = s->GetTeamID().team;
 	s->SetIsMoving(true);
 	Position teammatePos = Team::findNearestTeammate(p);
+	NPC* teammateNPC = Team::GetNPCByPosition(teammatePos, s->GetTeamID().team, s->GetTeamID().place, TEAMMATE);
+	if (teammateNPC == nullptr || !teammateNPC->GetIsAlive())
+	{
+		s->SetPrevPosition(s->GetPosition());
+		s->GetState()->Transition(p);
+		return;
+	}
 	int roomIndex = GetRoomIndex(teammatePos);
 	if (roomIndex == -1)
-		roomIndex = (Team::GetNPCByPosition(teammatePos, s->GetTeamID().team, s->GetTeamID().place))->getPrevRoomIndex();
+		roomIndex = (teammateNPC)->getPrevRoomIndex();
 
 	if (Team::GetEnemiesPositionsInRoom(roomIndex, id, true).size() > 0 || !Team::Teams.at(id)->woundedWarriors.empty())
 	{
@@ -28,9 +35,9 @@ void IdleState::OnEnter(NPC* p)
 	else
 	{
 		s->SetPrevPosition(s->GetPosition());
-		std::cout << "Error: no room center pos found from IdleState\n";
+		std::cout << "Error: no room center pos found from IdleState" << endl;
 	}
-	std::cout << "Exiting IdleState\n\n";
+	std::cout << "Exiting IdleState\n" << endl;
 }
 
 void IdleState::Transition(NPC* p)
@@ -53,5 +60,5 @@ void IdleState::OnExit(NPC* p)
 {
 	// Clean up idle behavior
 	p->SetIsMoving(true);
-	std::cout << "Exiting IdleState\n";
+	std::cout << "Exiting IdleState" << endl;
 }

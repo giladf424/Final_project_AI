@@ -7,12 +7,12 @@
 void CombatState::OnEnter(NPC* p)
 {
 	// Initialize combat behavior
-	std::cout << "Entering CombatState\n\n";
+	std::cout << "Entering CombatState\n" << endl;
 	Warrior* w = (Warrior*)p;
 	w->SetIsMoving(true);
 	w->attackEnemy();
 	w->SetIsMoving(false);
-	std::cout << "Exiting CombatState\n\n";
+	std::cout << "Exiting CombatState\n" << endl;
 }
 
 void CombatState::Transition(NPC* p)
@@ -47,5 +47,5 @@ void CombatState::OnExit(NPC* p)
 {
 	// Clean up combat behavior
 	p->SetIsMoving(true);
-	std::cout << "Exiting CombatState\n";
+	std::cout << "Exiting CombatState" << endl;
 }

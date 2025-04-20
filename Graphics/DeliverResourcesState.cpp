@@ -8,11 +8,11 @@
 void DeliverResourcesState::OnEnter(NPC* p)
 {
 	// Initialize deliver resources behavior
-	std::cout << "Entering DeliverResourcesState\n";
+	std::cout << "Entering DeliverResourcesState" << endl;
 	Squire* s = (Squire*)p;
 	if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty())
 	{
-		std::cout << "No wounded warriors in the queue\n";
+		std::cout << "No wounded warriors in the queue" << endl;
 		s->SetPrevPosition(s->GetPosition());
 		s->GetState()->Transition(p);
 		return;
@@ -33,7 +33,7 @@ void DeliverResourcesState::OnEnter(NPC* p)
 		if (Team::Teams.at(s->GetTeamID().team)->woundedWarriors.empty() || s->GetReStocking())
 			s->GetState()->Transition(p);
 	}
-	std::cout << "Exiting DeliverResourcesState\n";
+	std::cout << "Exiting DeliverResourcesState" << endl;
 }
 
 void DeliverResourcesState::Transition(NPC* p)
@@ -58,5 +58,5 @@ void DeliverResourcesState::OnExit(NPC* p)
 {
 	// Clean up deliver resources behavior
 	p->SetIsMoving(true);
-	std::cout << "Exiting DeliverResourcesState\n";
+	std::cout << "Exiting DeliverResourcesState" << endl;
 }

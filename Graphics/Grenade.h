@@ -20,7 +20,7 @@ public:
 	void expand(int maze[MSZ][MSZ]);
 	void show();
 	void SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ]);
-	bool IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos);
+	double IsEnemyFoundByExplosion(int maze[MSZ][MSZ], Position enemyPos);
 	void setIsExpending(bool value) { isExpending = value; }
 	bool getIsExpending() { return isExpending; }
 };

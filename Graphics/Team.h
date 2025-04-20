@@ -31,7 +31,7 @@ public:
 	static Position findNearestEnemyInRoom(NPC* n, int roomIndex);
 	static Position findNearestTeammate(NPC* n);
 	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
-	static NPC* GetNPCByPosition(Position p, int teamNum, int id);
+	static NPC* GetNPCByPosition(Position p, int teamNum, int id, int type);
 	static NPC* findLowestHPEnemy(int teamNum);
 	static NPC* findNearestSquireEnemyOrTeammate(NPC* n, bool isEnemy);
 	static Position GetSquireEnemyPositionInRoom(int roomIndex, int teamNum);
@@ -43,5 +43,8 @@ public:
 	static bool isAnyBodyInMyPosition(Position p, int teamNum, int id);
 	static vector<RoomDetails> getConnectedRooms(int roomIndex, int teamNum);
 	static Position findRoomCenter(int roomIndex);
+	static bool isTeamsSizesEqualTwo();
+	static vector<Position> findAllWarriorsEnemies(int teamNum);
+	static vector<Position> findAllPlayesPositions(int teamNum, int id);
 };
 

@@ -11,7 +11,7 @@ void RequestResourcesState::OnEnter(NPC* p)
 	//p->GetState()->Transition(p);
 	if (w->isWarriorCanReturnToFight())
 	{
-		std::cout << "Warrior can return to fight\n";
+		std::cout << "Warrior can return to fight" << endl;
 		w->SetIsMoving(true);
 		w->GetState()->Transition(p);
 		return;
@@ -28,7 +28,7 @@ void RequestResourcesState::OnEnter(NPC* p)
 	Position teammateSquirePosition = teammateSquire->GetPosition();
 	if (w->isValidPos(teammateSquirePosition))
 		w->moveToSquire(teammateSquirePosition);
-	std::cout << "Entering RequestResourcesState\n";
+	std::cout << "Entering RequestResourcesState" << endl;
 }
 
 void RequestResourcesState::Transition(NPC* p)
@@ -47,5 +47,5 @@ void RequestResourcesState::OnExit(NPC* p)
 {
 	// Clean up request resources behavior
 	p->SetIsMoving(true);
-	std::cout << "Exiting RequestResourcesState\n";
+	std::cout << "Exiting RequestResourcesState" << endl;
 }

@@ -39,9 +39,9 @@ public:
 	// Enemy interaction methods 
 	void moveToEnemy();
 	void attackEnemy();
-	void fireBullet(Position enemyPos);
+	void fireBullet(double angle);
 	void throwGrenade();
-	bool updateTarget(vector<Position> enemiesPositions, vector<Position> enemiesInHitRange);
+	bool updateTarget(vector<Position>& enemiesPositions, vector<HitDetails>& enemiesInHitRange);
 
 	// Squire interaction methods
 	void addWoundedWarriorToQueue();

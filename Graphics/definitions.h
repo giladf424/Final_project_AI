@@ -20,9 +20,11 @@ const int BOTH_PACKS = 1;
 const int NPC_ = 4;
 const int BLACK = 5;
 const int GRAY = 6;
+
 const double PI = 3.14;
 const double SECURITY_FACTOR = 0.001;
 const double SECURITY_COEFFICIENT = 5;
+
 const int MAX_HP = 100;
 const int HP_TH = 35;
 const int HP_TH_AGGRESSIVE = 25;
@@ -34,14 +36,19 @@ const int MAX_GRENADES_WARRIOR = 10;
 const int MAX_BULLETS_SQUIRE = 30;
 const int MAX_GRENADES_SQUIRE = 20;
 const int MAX_HP_PACKS = 10;
+
 const int MEDICINE_PACK_AMOUNT = 2;
 const int AMMUNITION_PACK_AMOUNT = 2;
 const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
 const int MAX_CORRIDORS_ENTRANCES = 4;
-const int BFS_RADIUS_SQUIRE = 30;
+
+const int BFS_RADIUS_SQUIRE = 200;
 const int DAMAGE = 10;
 const int RELOAD_TIME = 10;
+const int BOTH = 0;
+const int ENEMY = 1;
+const int TEAMMATE = 2;
 
 
 extern int maze[MSZ][MSZ];
@@ -73,6 +80,12 @@ typedef struct
 	int distance;
 }RoomDetails;
 
+typedef struct
+{
+	Position hitPos;
+	double hitAngle;
+}HitDetails;
+
 extern RoomScope roomScopes[NUM_ROOMS];
 extern vector<Position> ammunitionStash;
 extern vector<Position> medicineStash;
@@ -92,6 +105,7 @@ const unordered_map<string, array<double, 3>> team_colors = {
 
 void DuplicateMaze(int source[MSZ][MSZ], int target[MSZ][MSZ]);
 void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ]);
+void setSecurityMapToZero(double map[MSZ][MSZ]);
 //void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 int GetRoomIndex(Position pos);
 void printMaze(int maze[MSZ][MSZ]);
