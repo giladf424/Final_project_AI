@@ -71,12 +71,8 @@ Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*
 	int col = pCurrent->getCol();
 
 	if (row == target.row && col == target.col)
-	{
-		std::cout << "The target in the same position (" << row << ", " << col << ")" << endl;
-		//target = this->FindFreeSpaceToMove();
 		return pCurrent;
-	}
-	// need to check if instead assign BLACK to dupMap, we need to assign it to maze
+	
 	dupMaze[row][col] = BLACK;
 
 	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
@@ -97,7 +93,6 @@ Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority
 	{
 		if (pCurrent->getParent() == nullptr && (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_))
 		{
-			std::cout << "The target in the next position (" << r << ", " << c << ")" << endl;
 			*numSteps = 1;
 			return new Cell(r, c, target.row, target.col, 0, pCurrent, dupMap);
 		}
@@ -122,7 +117,6 @@ Cell* NPC::RestorePath(Cell* pc, int* numSteps)
 		pc = pc->getParent();
 		*numSteps += 1;
 	}
-	std::cout << "Radius : " << *numSteps << " Restroe path A*" << endl;
 	return pc;
 }
 
@@ -133,6 +127,7 @@ Position NPC::RunAStarFlee(int dupMaze[MSZ][MSZ])
 	queue<Cell*> grays;
 	vector<Position> warriorsEnemy = Team::findAllWarriorsEnemies(this->GetTeamID().team);
 	Cell* first = nullptr;
+	Position nextPos = { -1, -1 };
 	Cell* pc = new Cell(GetPosition().row, GetPosition().col, 0, first, warriorsEnemy);
 	grays.push(pc);
 	pq.push(pc);
@@ -156,7 +151,7 @@ Position NPC::RunAStarFlee(int dupMaze[MSZ][MSZ])
 			AStarFleeCheckNeighbor(r, c - 1, pCurrent, pq, grays, dupMaze, warriorsEnemy);
 		i++;
 	}
-	Position nextPos = { -1, -1 };
+	
 	if (!pq.empty())
 	{
 		Cell* pCurrent = pq.top();
@@ -171,10 +166,6 @@ Position NPC::RunAStarFlee(int dupMaze[MSZ][MSZ])
 			delete c;
 			c = nullptr;
 		}
-	}
-	else
-	{
-		std::cout << "Error pq is empty, (RunAStarFlee)" << endl;
 	}
 	return nextPos;
 }
@@ -229,10 +220,8 @@ Cell* NPC::RunBFSIteration(Position target, int dupMaze[MSZ][MSZ], queue<Cell*>&
 	int row = pCurrent->getRow();
 	int col = pCurrent->getCol();
 	if (row == target.row && col == target.col)
-	{
-		std::cout << "The target in the same position (" << row << ", " << col << ") (RunBFSIteration)-----------" << endl;
 		return pCurrent;
-	}
+
 	dupMaze[row][col] = BLACK;
 	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
 		go_on = BFSCheckNeighbor(row + 1, col, pCurrent, target, dupMaze, q, toDelete, numSteps);
@@ -348,10 +337,7 @@ Position NPC::FindFreeSpaceToMoveInLoop()
 	else if ((maze[myPos.row][myPos.col - 1] == SPACE || maze[myPos.row][myPos.col - 1] == NPC_) && !isSamePositions({ myPos.row, myPos.col - 1 }, prevPos))
 		return { myPos.row, myPos.col - 1 };
 	else
-	{
-		std::cout << "\nNo free space to move in loop" << endl;
 		return nextPos;
-	}
 }
 
 Position NPC::checkIfStuck(Position nextPos, Position targetPos)
@@ -369,27 +355,22 @@ Position NPC::checkIfStuck(Position nextPos, Position targetPos)
 		//setSecurityMapToZero(dupSecurityMap);
 		DuplicateMaze(maze, dupMaze);
 		int numSteps = 0;
-		std::cout << "\n\n--------------------------- Stuck in a loop, trying to find a new path\n" << endl;
 		Position nextPos2 = RunBFS(targetPos, dupMaze, &numSteps);
 		return nextPos2;
-		//return (!isSamePositions(nextPos2, nextPos) ? nextPos2 : FindFreeSpaceToMoveInLoop());
 	}
 	else if (GetStuck() && GetStuckness() > 0)
 	{
 		SetStuckness(GetStuckness() - 1);
 		if (GetStuckness() == 0)
 		{
-			std::cout << "\n\n---------------------------  FINISH loop stuckness!!--------------------------\n" << endl;
 			SetStuck(false);
 			return defaultPos;
 		}
 		setSecurityMapToZero(dupSecurityMap);
 		DuplicateMaze(maze, dupMaze);
 		int numSteps = 0;
-		std::cout << "\n\n--------------------------- Stuck in a loop, trying to find a new path\n" << endl;
 		Position nextPos2 = RunBFS(targetPos, dupMaze, &numSteps);
 		return nextPos2;
-		//return (!isSamePositions(nextPos2, nextPos) ? nextPos2 : FindFreeSpaceToMoveInLoop());
 	}
 	else
 	{
@@ -479,9 +460,7 @@ Position NPC::BFSRadius(Position start, vector <Position>& enemyPos, int radius,
 	}
 	int min_max_NumEnemiesinRange = (isWarrior ? -1 : INT_MAX); // min for warrior, max for squire 
 	int startRoomIndex = (GetRoomIndex(start) == -1 ? this->getPrevRoomIndex() : GetRoomIndex(start));
-	//bool isSameRoom = false;
-	/*std::cout << "Size: " << q.size() << " ###############################\n\n";
-	std::cout << "Current radius: " << currentRadius << "\nSize: " << pq.size() << "###############################\n\n";*/
+	
 	while (!pq.empty())
 	{
 		Cell* isBest = pq.top();
@@ -497,10 +476,8 @@ Position NPC::BFSRadius(Position start, vector <Position>& enemyPos, int radius,
 		int numEnemiesinRange = GetEnemiesInHitRange(temp, enemyPos).size();
 		bool isTargetInRange = (isWarrior ? (IsEnemyInHitRange(temp, target) >= 0) : false);
 		bool isSameRoom = (GetRoomIndex(temp) == startRoomIndex);
-		//std::cout << "Enemy in hit range: " << inRange << "--------------- out -------------\n";
 		if ((isWarrior && isSameRoom && (numEnemiesinRange > min_max_NumEnemiesinRange || isTargetInRange)) || (!isWarrior && isSameRoom && numEnemiesinRange < min_max_NumEnemiesinRange)) // && (isBest->getRow() != enemyPos.row || isBest->getCol() != enemyPos.col)
 		{
-			//std::cout << "Enemy in hit range: " << inRange << "--------------------------------\n";
 			bestPos.row = isBest->getRow();
 			bestPos.col = isBest->getCol();
 			if (isWarrior && isTargetInRange)
@@ -566,10 +543,8 @@ Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSe
 {
 	Corridor* corridor = Corridor::getCorridorById(corridorIndex);
 	if (corridor == nullptr)
-	{
-		std::cout << "Error: corridor not found" << endl;
 		return { -1, -1 };
-	}
+
 	for (Position p : corridor->getEntrances())
 	{
 		Position p2 = { p.row, p.col };
@@ -594,7 +569,6 @@ Position NPC::getEntranceToCorridor(int corridorIndex, int roomIndex, bool forSe
 			return (forSecMap) ? p2 : p;
 		}
 	}
-	std::cout << "Error: entrance not found" << endl;
 	return { -1, -1 };
 }
 
@@ -622,7 +596,6 @@ void NPC::UpdateSecurityMap(vector<Position>& positions, int dupMaze[MSZ][MSZ], 
 			g = nullptr;
 		}
 	}
-	//printSecurityMap(dupMap);
 }
 
 vector<HitDetails> NPC::GetEnemiesInHitRange(Position myPos, vector<Position>& enemiesPos)

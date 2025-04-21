@@ -645,7 +645,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(2);
+	srand(98565);
 
 	SetupDungeon();
 	GenerateSecurityMap();
@@ -802,6 +802,12 @@ void idle()
 				cout << "Game Over! Team " << ((t->GetTeamID().team == 0) ? "Yellow" : "Red") << " is won!" << endl;
 			}
 		}
+		if (!paused && Team::HandleGameState())
+		{
+			paused = true;
+			cout << "Game Over: Both teams have no warriors left." << endl;
+		}
+
 	}
 	glutPostRedisplay(); // indirect call to display
 }

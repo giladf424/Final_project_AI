@@ -137,7 +137,6 @@ void Warrior::moveToEnemy()
 			printSecurityMap(dupSecurityMap);
 			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &radius);
 			if (radius < 1) radius = 1;
-			std::cout << "Radius: ( " << radius << " ) patrol last" << endl;
 			DuplicateMaze(maze, dupMaze);
 			bestPos = this->BFSRadius(GetPosition(), enemyPos, radius, dupMaze, dupSecurityMap);
 			DuplicateMaze(maze, dupMaze);
@@ -215,17 +214,7 @@ void Warrior::attackEnemy()
 		}
 		isTargetInHitRange = true;
 	}
-	/*NPC* enemySquire = Team::findNearestSquireEnemyOrTeammate(this, true);
-	if (Team::isTeamsSizesEqualTwo() && target->getType() == "Warrior" && enemySquire != nullptr)
-	{
-		this->SetTarget(enemySquire);
-		if (target->getRoomIndex() != this->getRoomIndex())
-		{
-			this->SetPrevPosition(this->GetPosition());
-			this->GetState()->Transition(this);
-			return;
-		}
-	}*/
+	
 	bool isSafeDistance = true;
 	vector<Position> allPlayers = Team::findAllPlayesPositions(GetTeamID().team, GetTeamID().place);
 	for (Position p : allPlayers)
@@ -310,7 +299,7 @@ void Warrior::attackEnemy()
 		
 		if (!isReloading && !enemiesInHitRange.empty())
 		{
-			if (enemiesInHitRange.size() > 1 && getGrenades() > 0)
+			if (getGrenades() > 0 && (enemiesInHitRange.size() > 1 || (enemiesInHitRange.size() > 0 && getAmmo() == 0)))
 				throwGrenade();
 			else if (isTargetInHitRange && getAmmo() > 0)
 				fireBullet(IsEnemyInHitRange(GetPosition(), target->GetPosition()));

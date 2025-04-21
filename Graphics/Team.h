@@ -47,5 +47,9 @@ public:
 	static vector<Position> findAllWarriorsEnemies(int teamNum);
 	static vector<Position> findAllPlayesPositions(int teamNum, int id);
 	static bool isSafePosition(Position p, int teamNum, int id);
+	static bool isOnlyWarriorsAndNoAmmo();
+	static bool isOnlySquires();
+	static void ContinuePlaying();
+	static bool HandleGameState();
 };
 

@@ -432,3 +432,106 @@ bool Team::isSafePosition(Position p, int teamNum, int id)
 	}
 	return true;
 }
+
+bool Team::isOnlyWarriorsAndNoAmmo()
+{
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (strcmp(n->getType(), "Squire") == 0 && n->GetIsAlive())
+				return false;
+			else if(strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive() && (n->getAmmo() > 0 || n->getGrenades() > 0))
+				return false;
+		}
+	}
+	return true;
+}
+
+bool Team::isOnlySquires()
+{
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive())
+				return false;
+		}
+	}
+	return true;
+}
+
+void Team::ContinuePlaying()
+{
+	if(isOnlyWarriorsAndNoAmmo())
+	{
+		for (Team* t : Teams)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				if (strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive())
+				{
+					Warrior* w = (Warrior*)n;
+					w->SetGrenades(MAX_GRENADES_WARRIOR);
+					w->SetBullets(MAX_BULLETS_WARRIOR);
+				}
+			}
+		}
+	}
+}
+
+bool Team::HandleGameState()
+{
+	int t1NumWarriors = 0, t2NumWarriors = 0;
+	int t1NumSquires = 0, t2NumSquires = 0;
+
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (n->GetIsAlive())
+			{
+				if (strcmp(n->getType(), "Warrior") == 0)
+				{
+					if (t->GetTeamID().team == 0)
+						t1NumWarriors++;
+					else
+						t2NumWarriors++;
+
+					if (n->getAmmo() > 0 || n->getGrenades() > 0)
+						return false;
+				}
+				else if (strcmp(n->getType(), "Squire") == 0)
+				{
+					if (t->GetTeamID().team == 0)
+						t1NumSquires++;
+					else
+						t2NumSquires++;
+				}
+			}
+		}
+	}
+
+	bool t1IsLost = (t1NumSquires == 1 && t1NumWarriors == 0 && t2NumSquires == 0 && t2NumWarriors > 0);
+	bool t2IsLost = (t2NumSquires == 1 && t2NumWarriors == 0 && t1NumSquires == 0 && t1NumWarriors > 0);
+
+	if (t1NumWarriors == 0 && t2NumWarriors == 0)
+		return true;
+
+	if ((t1NumSquires == 0 && t2NumSquires == 0) || t1IsLost || t2IsLost)
+	{
+		for (Team* t : Teams)
+		{
+			for (NPC* n : t->GetTeammates())
+			{
+				if (strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive())
+				{
+					Warrior* w = (Warrior*)n;
+					w->SetGrenades(MAX_GRENADES_WARRIOR);
+					w->SetBullets(MAX_BULLETS_WARRIOR);
+				}
+			}
+		}
+	}
+	return false;
+}
