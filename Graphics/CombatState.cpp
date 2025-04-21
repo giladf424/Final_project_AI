@@ -24,12 +24,13 @@ void CombatState::Transition(NPC* p)
 	State* currentState = p->GetState();
 	bool isAggressive = w->GetAggressive();
 	int numBullets = w->getAmmo();
-
-	if ((!isAggressive && w->GetHp() < HP_TH) || isAggressive && w->GetHp() < HP_TH_AGGRESSIVE)/* low health or low ammunition */
+	NPC* s = Team::findNearestSquireEnemyOrTeammate(p, false);
+	bool isAlive = (s != nullptr && s->GetIsAlive());
+	if (isAlive && ((!isAggressive && w->GetHp() < HP_TH) || isAggressive && w->GetHp() < HP_TH_AGGRESSIVE))/* low health or low ammunition */
 	{
 		p->SetState(new RequestResourcesState());
 	}
-	else if ((!isAggressive && numBullets < AMMO_TH) || (isAggressive && numBullets < AMMO_TH_AGGRESSIVE) || w->getGrenades() < GRENADE_TH)
+	else if (isAlive && ((!isAggressive && numBullets < AMMO_TH) || (isAggressive && numBullets < AMMO_TH_AGGRESSIVE) || w->getGrenades() < GRENADE_TH))
 	{
 		p->SetState(new RequestResourcesState());
 	}
@@ -46,6 +47,12 @@ void CombatState::Transition(NPC* p)
 void CombatState::OnExit(NPC* p)
 {
 	// Clean up combat behavior
+	Warrior* w = (Warrior*)p;
+	if (w->getIsReloading())
+	{
+		w->setIsReloading(false);
+		w->setReloadTime(0);
+	}
 	p->SetIsMoving(true);
 	std::cout << "Exiting CombatState" << endl;
 }

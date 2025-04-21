@@ -24,7 +24,7 @@ Bullet::Bullet(double xx, double yy, double angle, TeamID id)
 	dir_angle = angle;
 	dirX = cos(angle);
 	dirY = sin(angle);
-	speed = 0.9;
+	speed = 0.3;
 	teamID = id;
 	isMoving = false;
 	isVisualization = false;

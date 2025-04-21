@@ -21,8 +21,8 @@ public:
 	int getNumOfRooms() { return numOfRooms; }
 	bool addConnectedRoom(int roomIndex);
 	void CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MSZ][MSZ]);
-	void CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ]);
-	bool CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ]);
+	void CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ], vector<Cell*>& toDelete);
+	bool CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ], vector<Cell*>& toDelete);
 	void CorridorRestorePath(Cell* pc);
 	bool isEntrance(Position p);
 	bool isConnectedRoom(int roomIndex);

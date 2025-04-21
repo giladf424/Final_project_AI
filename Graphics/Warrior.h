@@ -31,6 +31,8 @@ public:
 	void setIsReloading(bool r) { isReloading = r; }
 	bool getIsWounded() { return isWounded; }
 	void setIsWounded(bool w) { isWounded = w; }
+	int getReloadTime() { return reloadTime; }
+	void setReloadTime(int r) { reloadTime = r; }
 
 	const char* getType() override { return "Warrior"; }
 	int getAmmo() override { return bullets; }

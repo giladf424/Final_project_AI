@@ -280,6 +280,7 @@ void Squire::refillResources()
 		{
 			stashPos = findNearestStash(stashType);
 			DuplicateMaze(maze, dupMaze);
+			DuplicateSecurityMap(security_map, dupSecurityMap);
 			int numSteps = 0;
 			Position nextPos = RunAStar(stashPos, dupMaze, dupSecurityMap, &numSteps);
 			Position nextPos2 = this->checkIfStuck(nextPos, stashPos);
@@ -342,6 +343,11 @@ void Squire::runAwayFromEnemy()
 {
 	if (isMoving)
 	{
+		if ((rand() % 100) < 20)
+		{
+			move(this->pos);
+			return;
+		}
 		DuplicateMaze(maze, dupMaze);
 		Position bestEscapePos = this->RunAStarFlee(dupMaze);
 		if (!isValidPos(bestEscapePos))
@@ -353,7 +359,7 @@ void Squire::runAwayFromEnemy()
 		vector<Position> warriorsEnemies = Team::findAllWarriorsEnemies(this->GetTeamID().team);
 		DuplicateMaze(maze, dupMaze);
 		DuplicateSecurityMap(security_map, dupSecurityMap);
-		UpdateSecurityMap(warriorsEnemies, dupMaze, dupSecurityMap);
+		//UpdateSecurityMap(warriorsEnemies, dupMaze, dupSecurityMap);
 		int numSteps = 0;
 		Position nextPos = RunAStar(bestEscapePos, dupMaze, dupSecurityMap, &numSteps);
 		Position nextPos2 = checkIfStuck(nextPos, bestEscapePos);

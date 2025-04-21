@@ -43,9 +43,10 @@ const int TEAM_RANK = 2;
 const int TEAM_SIZE = 2;
 const int MAX_CORRIDORS_ENTRANCES = 4;
 
-const int BFS_RADIUS_SQUIRE = 200;
+const int BFS_RADIUS_SQUIRE = 100;
 const int DAMAGE = 10;
 const int RELOAD_TIME = 10;
+const int STUCK_TIME = 4;
 const int BOTH = 0;
 const int ENEMY = 1;
 const int TEAMMATE = 2;
@@ -109,3 +110,4 @@ void setSecurityMapToZero(double map[MSZ][MSZ]);
 //void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 int GetRoomIndex(Position pos);
 void printMaze(int maze[MSZ][MSZ]);
+void printSecurityMap(double map[MSZ][MSZ]);

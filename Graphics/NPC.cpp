@@ -8,6 +8,7 @@ NPC::NPC(Position startPos, TeamID teamID)
 	isMoving = false;
 	isAlive = true;
 	isStuck = false;
+	stuckness = 0;
 	pos = startPos;
 	prevPos = { -1, -1 };
 	corridorIndex = -1;
@@ -30,12 +31,14 @@ Position NPC::RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ
 {
 	isAstar = true;
 	priority_queue<Cell*, vector<Cell*>, CompareCells> grays;
+	vector<Cell*> toDelete;
 	Cell* pc = new Cell(GetPosition().row, GetPosition().col, target.row, target.col, 0, nullptr, dupMap);
 	grays.push(pc);
+	toDelete.push_back(pc);
 	Cell* nextStep = nullptr;
 
 	while (!nextStep)
-		nextStep = RunAStarIteration(target, grays, dupMaze, dupMap, numSteps);
+		nextStep = RunAStarIteration(target, grays, dupMaze, dupMap, numSteps, toDelete);
 
 	Position nextPos = Position{ nextStep->getRow(), nextStep->getCol() };
 
@@ -43,6 +46,11 @@ Position NPC::RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ
 	{
 		Cell* c = grays.top();
 		grays.pop();
+	}
+	while (!toDelete.empty())
+	{
+		Cell* c = toDelete.back();
+		toDelete.pop_back();
 		delete c;
 		c = nullptr;
 	}
@@ -50,7 +58,7 @@ Position NPC::RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ
 	return nextPos;
 }
 
-Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps)
+Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps, vector<Cell*>& toDelete)
 {
 	if (grays.empty())
 		return nullptr;
@@ -65,25 +73,25 @@ Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*
 	if (row == target.row && col == target.col)
 	{
 		std::cout << "The target in the same position (" << row << ", " << col << ")" << endl;
-		target = this->FindFreeSpaceToMove();
-		//return pCurrent;
+		//target = this->FindFreeSpaceToMove();
+		return pCurrent;
 	}
 	// need to check if instead assign BLACK to dupMap, we need to assign it to maze
 	dupMaze[row][col] = BLACK;
 
 	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
-		go_on = CheckNeighbor(row + 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps);
+		go_on = CheckNeighbor(row + 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps, toDelete);
 	if (!go_on && dupMaze[row - 1][col] != WALL && dupMaze[row - 1][col] != BLACK)
-		go_on = CheckNeighbor(row - 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps);
+		go_on = CheckNeighbor(row - 1, col, pCurrent, target, grays, dupMaze, dupMap, numSteps, toDelete);
 	if (!go_on && dupMaze[row][col - 1] != WALL && dupMaze[row][col - 1] != BLACK)
-		go_on = CheckNeighbor(row, col - 1, pCurrent, target, grays, dupMaze, dupMap, numSteps);
+		go_on = CheckNeighbor(row, col - 1, pCurrent, target, grays, dupMaze, dupMap, numSteps, toDelete);
 	if (!go_on && dupMaze[row][col + 1] != WALL && dupMaze[row][col + 1] != BLACK)
-		go_on = CheckNeighbor(row, col + 1, pCurrent, target, grays, dupMaze, dupMap, numSteps);
+		go_on = CheckNeighbor(row, col + 1, pCurrent, target, grays, dupMaze, dupMap, numSteps, toDelete);
 
 	return go_on;
 }
 
-Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps)
+Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps, vector<Cell*>& toDelete)
 {
 	if (r == target.row && c == target.col)
 	{
@@ -98,8 +106,9 @@ Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority
 
 	if (dupMaze[r][c] == SPACE || (dupMaze[r][c] == NPC_)) // && pCurrent->getParent() != nullptr
 	{
-		Cell* pc = new Cell(r, c, target.row, target.col, pCurrent->getG() + 1, pCurrent, dupMap);
+		Cell* pc = new Cell(r, c, target.row, target.col, 0, pCurrent, dupMap); //pCurrent->getG() + 1
 		grays.push(pc);
+		toDelete.push_back(pc);
 		dupMaze[r][c] = GRAY;
 	}
 	return nullptr;
@@ -153,6 +162,8 @@ Position NPC::RunAStarFlee(int dupMaze[MSZ][MSZ])
 		Cell* pCurrent = pq.top();
 		pq.pop();
 		nextPos = Position{ pCurrent->getRow(), pCurrent->getCol() };
+		delete pCurrent;
+		pCurrent = nullptr;
 		while (!pq.empty())
 		{
 			Cell* c = pq.top();
@@ -172,11 +183,83 @@ void NPC::AStarFleeCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Ce
 {
 	if (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_)
 	{
-		Cell* pNeighbor = new Cell(r, c, pCurrent->getG() + 1, pCurrent, warriorsEnemy);
+		Cell* pNeighbor = new Cell(r, c, 0, pCurrent, warriorsEnemy);
 		dupMaze[r][c] = GRAY;
 		grays.push(pNeighbor);
 		pq.push(pNeighbor);
 	}
+}
+
+Position NPC::RunBFS(Position target, int dupMaze[MSZ][MSZ], int* numSteps)
+{
+	queue<Cell*> q;
+	vector<Cell*> toDelete;
+	Cell* pc = new Cell(GetPosition().row, GetPosition().col, target.row, target.col, nullptr);
+	q.push(pc);
+	toDelete.push_back(pc);
+	Cell* nextStep = nullptr;
+	while (!nextStep)
+		nextStep = RunBFSIteration(target, dupMaze, q, toDelete, numSteps);
+
+	Position nextPos = Position{ nextStep->getRow(), nextStep->getCol() };
+
+	while (!q.empty())
+	{
+		Cell* c = q.front();
+		q.pop();
+	}
+	while (!toDelete.empty())
+	{
+		Cell* c = toDelete.back();
+		toDelete.pop_back();
+		delete c;
+		c = nullptr;
+	}
+	return nextPos;
+}
+
+Cell* NPC::RunBFSIteration(Position target, int dupMaze[MSZ][MSZ], queue<Cell*>& q, vector<Cell*>& toDelete, int* numSteps)
+{
+	if (q.empty())
+		return nullptr;
+
+	Cell* go_on = nullptr;
+	Cell* pCurrent = q.front();
+	q.pop();
+	int row = pCurrent->getRow();
+	int col = pCurrent->getCol();
+	if (row == target.row && col == target.col)
+	{
+		std::cout << "The target in the same position (" << row << ", " << col << ") (RunBFSIteration)-----------" << endl;
+		return pCurrent;
+	}
+	dupMaze[row][col] = BLACK;
+	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
+		go_on = BFSCheckNeighbor(row + 1, col, pCurrent, target, dupMaze, q, toDelete, numSteps);
+	if (!go_on && dupMaze[row - 1][col] != WALL && dupMaze[row - 1][col] != BLACK)
+		go_on = BFSCheckNeighbor(row - 1, col, pCurrent, target, dupMaze, q, toDelete, numSteps);
+	if (!go_on && dupMaze[row][col - 1] != WALL && dupMaze[row][col - 1] != BLACK)
+		go_on = BFSCheckNeighbor(row, col - 1, pCurrent, target, dupMaze, q, toDelete, numSteps);
+	if (!go_on && dupMaze[row][col + 1] != WALL && dupMaze[row][col + 1] != BLACK)
+		go_on = BFSCheckNeighbor(row, col + 1, pCurrent, target, dupMaze, q, toDelete, numSteps);
+
+	return go_on;
+}
+
+Cell* NPC::BFSCheckNeighbor(int r, int c, Cell* pCurrent, Position target, int dupMaze[MSZ][MSZ], queue<Cell*>& q, vector<Cell*>& toDelete, int* numSteps)
+{
+	if (r == target.row && c == target.col)
+	{
+		return RestorePath(pCurrent, numSteps);
+	}
+	if (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_)
+	{
+		Cell* pc = new Cell(r, c, target.row, target.col, pCurrent);
+		q.push(pc);
+		toDelete.push_back(pc);
+		dupMaze[r][c] = GRAY;
+	}
+	return nullptr;
 }
 
 bool NPC::IsEnemyInCorridorConnectedToMyRoom(int corridorIndex)
@@ -274,15 +357,39 @@ Position NPC::FindFreeSpaceToMoveInLoop()
 Position NPC::checkIfStuck(Position nextPos, Position targetPos)
 {
 	Position defaultPos = { -1, -1 };
-	if (isSamePositions(nextPos, this->GetPrevPosition()) && !this->GetStuck())
+	NPC* n = Team::GetNPCByPosition(this->pos, this->id.team, this->id.place, BOTH);
+	if (n != nullptr && isSamePositions(n->GetPrevPosition(), this->prevPos) && !isSamePosAsMyPos(this->prevPos))
+		return pos;
+
+	if (isSamePositions(nextPos, this->prevPos) && !GetStuck())
 		SetStuck(true);
-	else if (isSamePositions(nextPos, this->GetPrevPosition()) && this->GetStuck())
+	else if (isSamePositions(nextPos, this->prevPos) && GetStuck() && GetStuckness() == 0)
 	{
+		SetStuckness(STUCK_TIME);
+		//setSecurityMapToZero(dupSecurityMap);
+		DuplicateMaze(maze, dupMaze);
+		int numSteps = 0;
+		std::cout << "\n\n--------------------------- Stuck in a loop, trying to find a new path\n" << endl;
+		Position nextPos2 = RunBFS(targetPos, dupMaze, &numSteps);
+		return nextPos2;
+		//return (!isSamePositions(nextPos2, nextPos) ? nextPos2 : FindFreeSpaceToMoveInLoop());
+	}
+	else if (GetStuck() && GetStuckness() > 0)
+	{
+		SetStuckness(GetStuckness() - 1);
+		if (GetStuckness() == 0)
+		{
+			std::cout << "\n\n---------------------------  FINISH loop stuckness!!--------------------------\n" << endl;
+			SetStuck(false);
+			return defaultPos;
+		}
 		setSecurityMapToZero(dupSecurityMap);
 		DuplicateMaze(maze, dupMaze);
 		int numSteps = 0;
 		std::cout << "\n\n--------------------------- Stuck in a loop, trying to find a new path\n" << endl;
-		return RunAStar(targetPos, dupMaze, dupSecurityMap, &numSteps);
+		Position nextPos2 = RunBFS(targetPos, dupMaze, &numSteps);
+		return nextPos2;
+		//return (!isSamePositions(nextPos2, nextPos) ? nextPos2 : FindFreeSpaceToMoveInLoop());
 	}
 	else
 	{
@@ -296,7 +403,7 @@ void NPC::move(Position nextPos)
 {
 	prevStep = (Team::isAnyBodyInMyPosition(GetPosition(), this->id.team, this->id.place) ? NPC_ : SPACE);
 	std::cout << "Moving from (" << GetPosition().row << ", " << GetPosition().col << ") to (" << nextPos.row << ", " << nextPos.col << ") OUT!!!!!!!!!!!!!!!!" << endl;
-	if ((nextPos.row != GetPosition().row || nextPos.col != GetPosition().col) && isValidPos(nextPos))
+	if (!isSamePosAsMyPos(nextPos) && isValidPos(nextPos))
 	{
 		std::cout << "Moving from (" << GetPosition().row << ", " << GetPosition().col << ") to (" << nextPos.row << ", " << nextPos.col << ")" << endl;
 		maze[GetPosition().row][GetPosition().col] = this->prevStep;
@@ -380,7 +487,7 @@ Position NPC::BFSRadius(Position start, vector <Position>& enemyPos, int radius,
 		Cell* isBest = pq.top();
 		pq.pop();
 		Position temp = { isBest->getRow(), isBest->getCol() };
-		if (this->isSamePosAsMyPos(temp) && Team::isAnyBodyInMyPosition(this->pos, this->id.team, this->id.place) && (Team::GetNPCByPosition(this->pos, this->id.team, this->id.place, BOTH))->isStillInSamePos())
+		if (Team::findDistance(GetPosition(), temp) < 2 && !Team::isSafePosition(temp, GetTeamID().team, GetTeamID().place))
 		{
 			delete isBest;
 			isBest = nullptr;
@@ -444,6 +551,8 @@ void NPC::BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Ce
 
 double NPC::IsEnemyInHitRange(Position myPos, Position enemyPos)
 {
+	if (Team::findDistance(myPos, enemyPos) > 5)
+		return -1;
 	Grenade* pg = new Grenade(myPos.row, myPos.col);
 
 	double hitRange = pg->IsEnemyFoundByExplosion(maze, enemyPos);
@@ -502,7 +611,7 @@ vector<Position> NPC::GetAllEntrancesToMyRoom(int roomIndex, bool forSecMap)
 
 void NPC::UpdateSecurityMap(vector<Position>& positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
 {
-	int numSimulations = 50;
+	int numSimulations = 10;
 	for (Position p : positions)
 	{
 		for (int i = 0; i < numSimulations; i++)
@@ -513,6 +622,7 @@ void NPC::UpdateSecurityMap(vector<Position>& positions, int dupMaze[MSZ][MSZ], 
 			g = nullptr;
 		}
 	}
+	//printSecurityMap(dupMap);
 }
 
 vector<HitDetails> NPC::GetEnemiesInHitRange(Position myPos, vector<Position>& enemiesPos)
@@ -521,6 +631,8 @@ vector<HitDetails> NPC::GetEnemiesInHitRange(Position myPos, vector<Position>& e
 	vector<HitDetails> enemiesPositions;
 	for (Position p : enemiesPos)
 	{
+		if (Team::findDistance(myPos, p) > 5)
+			continue;
 		double hitRange = IsEnemyInHitRange(myPos, p);
 		if (hitRange != -1)
 			enemiesPositions.push_back({p, hitRange});

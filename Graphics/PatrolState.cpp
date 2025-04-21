@@ -9,6 +9,9 @@ void PatrolState::OnEnter(NPC* p)
 	std::cout << "Entering PatrolState\n" << endl;
 	Warrior* w = (Warrior*)p;
 	w->SetIsMoving(true);
+	if ((rand() % 100) < 5 && w->GetTarget() != nullptr)
+		w->SetTarget(nullptr);
+
 	if (w->GetTarget() == nullptr)
 		w->SetTarget(Team::findTargetEnemy(w, w->GetAggressive()));
 	w->moveToEnemy();

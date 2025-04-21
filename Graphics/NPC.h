@@ -18,6 +18,7 @@ protected:
 	bool isAlive;
 	bool isMoving;
 	bool isStuck;
+	int stuckness;
 	Position pos;
 	Position prevPos;
 	int prevStep;
@@ -47,15 +48,21 @@ public:
 	void SetPrevRoomIndex(int index) { prevRoomIndex = index; }
 	void SetStuck(bool value) { isStuck = value; }
 	bool GetStuck() { return isStuck; }
+	int GetStuckness() { return stuckness; }
+	void SetStuckness(int value) { stuckness = value; }
 
 	int getRoomIndex();
 	Position RunAStar(Position target, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
-	Cell* RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
-	Cell* CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps);
+	Cell* RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps, vector<Cell*>& toDelete);
+	Cell* CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority_queue<Cell*, vector<Cell*>, CompareCells>& grays, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], int* numSteps, vector<Cell*>& toDelete);
 	Cell* RestorePath(Cell* pc, int* numSteps);
 
 	Position RunAStarFlee(int dupMaze[MSZ][MSZ]);
 	void AStarFleeCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& grays, int dupMaze[MSZ][MSZ], vector<Position>& warriorsEnemy);
+
+	Position RunBFS(Position target, int dupMaze[MSZ][MSZ], int* numSteps);
+	Cell* RunBFSIteration(Position target, int dupMaze[MSZ][MSZ], queue<Cell*>& q , vector<Cell*>& toDelete, int* numSteps);
+	Cell* BFSCheckNeighbor(int r, int c, Cell* pCurrent, Position target, int dupMaze[MSZ][MSZ], queue<Cell*>& q, vector<Cell*>& toDelete, int* numSteps);
 
 	bool IsEnemyInCorridorConnectedToMyRoom(int corridorIndex);
 	bool IsEnemyInSameRoom(int roomIndex);

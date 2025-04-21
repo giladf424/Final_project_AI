@@ -584,7 +584,7 @@ void ShowDungeon()
 
 void GenerateSecurityMap()
 {
-	int numSimulations = 3000;
+	int numSimulations = 3500;
 	int i;
 
 	for (i = 0; i < numSimulations; i++)
@@ -595,7 +595,7 @@ void GenerateSecurityMap()
 		delete g;
 		g = nullptr;
 	}
-
+	printSecurityMap(security_map);
 }
 
 void GenerateSecurityMapForSpecificNPC(NPC* n)
@@ -621,6 +621,7 @@ void GenerateSecurityMapForSpecificNPC(NPC* n)
 			}
 		}
 	}
+	//printSecurityMap(dupSecurityMap);
 	/*else
 	{
 		vector<Position> entrances = n->GetAllEntrancesToMyRoom(roomIndex, true);
@@ -712,7 +713,7 @@ void safe_delete(T*& ptr) {
 
 void idle()
 {
-	Sleep(150);
+	Sleep(50);
 	if (bulletFired)
 		pb->move(maze);
 	if (grenadeThrown)
@@ -743,23 +744,21 @@ void idle()
 		// move all bullets and grenades and check if a bullet or grenade attribute is moving == false remove it from the vector and delete him
 		for (Bullet* b : Bullet::bullets)
 		{
-			b->move(maze);
-			/*if (!b->getIsMoving())
+			int i = 0;
+			while (i < 3 && b->getIsMoving())
 			{
-				Bullet::bullets.erase(std::remove(Bullet::bullets.begin(), Bullet::bullets.end(), b), Bullet::bullets.end());
-				delete b;
-				b = nullptr;
-			}*/
+				b->move(maze);
+				i++;
+			}
 		}
 		for (Grenade* g : Grenade::grenades)
 		{
-			g->expand(maze);
-			/*if (!g->getIsExpending())
+			int i = 0;
+			while (i < 3 && g->getIsExpending())
 			{
-				Grenade::grenades.erase(std::remove(Grenade::grenades.begin(), Grenade::grenades.end(), g), Grenade::grenades.end());
-				delete g;
-				g = nullptr;
-			}*/
+				g->expand(maze);
+				i++;
+			}
 		}
 
 		Bullet::bullets.erase(

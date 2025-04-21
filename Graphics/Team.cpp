@@ -417,3 +417,18 @@ vector<Position> Team::findAllPlayesPositions(int teamNum, int id)
 	}
 	return playersPos;
 }
+
+bool Team::isSafePosition(Position p, int teamNum, int id)
+{
+	for (Team* t : Teams)
+	{
+		for (NPC* n : t->GetTeammates())
+		{
+			if (t->GetTeamID().team == teamNum && n->GetTeamID().place == id)
+				continue;
+			if (n->GetIsAlive() && findDistance(n->GetPosition(), p) < 2)
+				return false;
+		}
+	}
+	return true;
+}

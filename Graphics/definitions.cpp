@@ -64,3 +64,28 @@ void printMaze(int maze[MSZ][MSZ])
 		std::cout << "\n";
 	}
 }
+
+void printSecurityMap(double map[MSZ][MSZ])
+{
+	vector<HitDetails> hitDetails;
+	double maxVal = 0;
+	std::cout << "Security Map: ################################################################################################\n\n";
+	for (int i = 0; i < MSZ; i++)
+	{
+		for (int j = 0; j < MSZ; j++)
+		{
+			if (map[i][j] > maxVal)
+				maxVal = map[i][j];
+			if (map[i][j] >= 1)
+			{
+				hitDetails.push_back({{i, j}, map[i][j]});
+			}
+		}
+	}
+	std::cout << "Hit Details:\n";
+	for (const auto& hit : hitDetails)
+	{
+		std::cout << "Position: (" << hit.hitPos.row << ", " << hit.hitPos.col << "), Value: " << hit.hitAngle << "\n";
+	}
+	std::cout << "Max Value: " << maxVal << "\n\n";
+}

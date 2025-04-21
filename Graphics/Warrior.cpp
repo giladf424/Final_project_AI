@@ -134,6 +134,7 @@ void Warrior::moveToEnemy()
 			enemyPos.push_back(entrance);
 			vector<Position> entrances = this->GetAllEntrancesToMyRoom(this->getRoomIndex(), true);
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
+			printSecurityMap(dupSecurityMap);
 			Position temp = target->RunAStar(entrance, dupMaze, dupSecurityMap, &radius);
 			if (radius < 1) radius = 1;
 			std::cout << "Radius: ( " << radius << " ) patrol last" << endl;
@@ -155,6 +156,7 @@ void Warrior::moveToEnemy()
 			enemiesPositions = Team::GetEnemiesPositionsInRoom(this->prevRoomIndex, this->GetTeamID().team, false);
 			UpdateSecurityMap(enemiesPositions, dupMaze, dupSecurityMap);
 			UpdateSecurityMap(entrances, dupMaze, dupSecurityMap);
+			printSecurityMap(dupSecurityMap);
 			Position temp = target->RunAStar(myEntrance, dupMaze, dupSecurityMap, &radius);
 			radius += (isSameDistance ? 3 : 0);
 			if (radius < 2) radius = 2;
@@ -213,7 +215,7 @@ void Warrior::attackEnemy()
 		}
 		isTargetInHitRange = true;
 	}
-	NPC* enemySquire = Team::findNearestSquireEnemyOrTeammate(this, true);
+	/*NPC* enemySquire = Team::findNearestSquireEnemyOrTeammate(this, true);
 	if (Team::isTeamsSizesEqualTwo() && target->getType() == "Warrior" && enemySquire != nullptr)
 	{
 		this->SetTarget(enemySquire);
@@ -223,7 +225,7 @@ void Warrior::attackEnemy()
 			this->GetState()->Transition(this);
 			return;
 		}
-	}
+	}*/
 	bool isSafeDistance = true;
 	vector<Position> allPlayers = Team::findAllPlayesPositions(GetTeamID().team, GetTeamID().place);
 	for (Position p : allPlayers)
@@ -308,11 +310,11 @@ void Warrior::attackEnemy()
 		
 		if (!isReloading && !enemiesInHitRange.empty())
 		{
-			if (enemiesInHitRange.size() > 1)
+			if (enemiesInHitRange.size() > 1 && getGrenades() > 0)
 				throwGrenade();
-			else if (isTargetInHitRange)
+			else if (isTargetInHitRange && getAmmo() > 0)
 				fireBullet(IsEnemyInHitRange(GetPosition(), target->GetPosition()));
-			else
+			else if (getAmmo() > 0)
 				fireBullet(enemiesInHitRange[0].hitAngle);
 		}
 		// if the next step taking the warrior out of the room (into the corridor)

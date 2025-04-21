@@ -26,8 +26,10 @@ bool Corridor::addConnectedRoom(int roomIndex)
 void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MSZ][MSZ])
 {
 	priority_queue<Cell*, vector<Cell*>, CompareCells> pq;
+	vector<Cell*> toDelete;
 	Cell* pc = new Cell(sCorridor.row, sCorridor.col, sRoom.row, sRoom.col, nullptr);
 	pq.push(pc);
+	toDelete.push_back(pc);
 	
 	Corridor* corridor = this;
 	corridor->addConnectedRoom(GetRoomIndex(sRoom));
@@ -39,7 +41,7 @@ void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MS
 	do
 	{
 		while (runBFS)
-			corridor->CorridorRunBFSIteration(pq, dupMaze);
+			corridor->CorridorRunBFSIteration(pq, dupMaze, toDelete);
 
 		if (!pq.empty())
 		{
@@ -49,15 +51,28 @@ void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MS
 			corridor->path.push_back({ pc->getRow(), pc->getCol() });
 			Cell* newPc = new Cell(pc->getRow(), pc->getCol(), pc->getTargetRow(), pc->getTargetCol(), nullptr);
 			pq.push(newPc);
+			toDelete.push_back(newPc);
 			runBFS = true;
 		}
 
 	} while (runBFS);
 
+	while (!pq.empty())
+	{
+		Cell* p = pq.top();
+		pq.pop();
+	}
+	while (!toDelete.empty())
+	{
+		Cell* p = toDelete.back();
+		toDelete.pop_back();
+		delete p;
+		p = nullptr;
+	}
 
 }
 
-void Corridor::CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ])
+void Corridor::CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ], vector<Cell*>& toDelete)
 {
 	Cell* pCurrent;
 	int r, c;
@@ -78,17 +93,17 @@ void Corridor::CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, Comp
 	dupMaze[r][c] = BLACK;
 
 	if(dupMaze[r + 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({r + 1, c})))
-		go_on = corridor->CorridorCheckNeighbor(r + 1, c, pCurrent, pq, dupMaze);
+		go_on = corridor->CorridorCheckNeighbor(r + 1, c, pCurrent, pq, dupMaze, toDelete);
 	if (!go_on && dupMaze[r - 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r - 1, c })))
-		go_on = corridor->CorridorCheckNeighbor(r - 1, c, pCurrent, pq, dupMaze);
+		go_on = corridor->CorridorCheckNeighbor(r - 1, c, pCurrent, pq, dupMaze, toDelete);
 	if (!go_on && dupMaze[r][c + 1] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r, c + 1 })))
-		go_on = corridor->CorridorCheckNeighbor(r, c + 1, pCurrent, pq, dupMaze);
+		go_on = corridor->CorridorCheckNeighbor(r, c + 1, pCurrent, pq, dupMaze, toDelete);
 	if (!go_on && dupMaze[r][c - 1] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r, c - 1 })))
-		go_on = corridor->CorridorCheckNeighbor(r, c - 1, pCurrent, pq, dupMaze);
+		go_on = corridor->CorridorCheckNeighbor(r, c - 1, pCurrent, pq, dupMaze, toDelete);
 
 }
 
-bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ])
+bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, int dupMaze[MSZ][MSZ], vector<Cell*>& toDelete)
 {
 	int roomIndex = GetRoomIndex({ r, c });
 	if (roomIndex != -1)
@@ -104,6 +119,7 @@ bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queu
 
 	Cell* pc = new Cell(r, c, pCurrent->getTargetRow(), pCurrent->getTargetCol(), pCurrent);
 	pq.push(pc);
+	toDelete.push_back(pc);
 	dupMaze[r][c] = GRAY;
 	
 	return false;

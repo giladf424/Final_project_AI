@@ -72,7 +72,7 @@ Cell::Cell(int r, int c, double newg, Cell* p, vector<Position>& allEnemies)
 	{
 		h += sqrt(pow(row - p.row, 2) + pow(col - p.col, 2));
 	}
-	h += g;
+	//h += g;
 }
 
 // h is computed basing on Manhattan distance
@@ -87,9 +87,9 @@ void Cell::ComputeH(double sec_map[MSZ][MSZ])
 	}
 	else
 	{
-		double distance = sqrt(pow(row - target_row, 2) + pow(col - target_col, 2));
+		int distance = sqrt(pow(row - target_row, 2) + pow(col - target_col, 2));
 		double security = sec_map[row][col];
-		h = distance + security * SECURITY_COEFFICIENT;
+		h = distance + security; //*SECURITY_COEFFICIENT;
 	}
 }
 
