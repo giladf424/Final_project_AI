@@ -291,25 +291,6 @@ void initTeams()
 
 		t->addTeammate(pos, false);
 		Team::Teams.push_back(t);
-		// print the team details, team color, and teammates details (position, type, behavior for warrior, ammo and hp thresholds for both of them)
-		/*cout << "Team " << i + 1 << " color: " << (i == 0 ? "Red" : "Yellow") << endl;
-		int teammateIndex = 1;
-		for (NPC* teammate : t->GetTeammates())
-		{
-			cout << "Teammate #" << teammateIndex << ":		position: (" << teammate->GetPosition().row << ", " << teammate->GetPosition().col << ") " << endl;
-			if (teammate->getType() == "Warrior")
-			{
-				Warrior* w = dynamic_cast<Warrior*>(teammate);
-				bool a = w->GetAggressive();
-				cout << "Type: Warrior		Behavior: " << (a ? "Aggressive" : "Defensive") << endl;
-				cout << "HP: " << MAX_HP << "	Ammo: " << MAX_BULLETS_WARRIOR << "		Grenade: " << MAX_GRENADES_WARRIOR << endl;
-				cout << "HP_th: " << (a ? HP_TH_AGGRESSIVE : HP_TH) << "	Ammo_th: " << (a ? AMMO_TH_AGGRESSIVE : AMMO_TH) << "	Grenade_th: " << GRENADE_TH << "\n" << endl;
-			}
-			else
-				cout << "Type: Squire\n" << "HP: " << MAX_HP << "	HP_packs: " << MAX_HP_PACKS << "\nAmmo: " << MAX_BULLETS_SQUIRE << "	Grenade: " << MAX_GRENADES_SQUIRE << "\n" << endl;
-			teammateIndex++;
-		}*/
-
 	}
 }
 
@@ -678,7 +659,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(946);
+	srand(94116);
 
 	SetupDungeon();
 	GenerateSecurityMap();
@@ -813,8 +794,6 @@ void idle()
 				{
 					t->removeTeammate(n);
 					safe_delete(n);
-					/*delete n;
-					n = nullptr;*/
 				}
 			}
 			if (t->GetTeammates().size() == 0)
@@ -832,34 +811,6 @@ void idle()
 	}
 	glutPostRedisplay(); // indirect call to display
 }
-
-void menu(int choice)
-{
-	switch (choice)
-	{
-	case 1: // fire bullet
-		bulletFired = true;
-		pb->setIsMoving(true);
-		break;
-	case 2: // throw grenade
-		grenadeThrown = true;
-		pg->explode();
-		break;
-	case 3: // security map
-		GenerateSecurityMap();
-		break;
-	}
-}
-//void mouse(int button, int state, int x, int y)
-//{
-//	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-//	{
-////		pb = new Bullet(MSZ*x/(double)WIDTH,
-////			MSZ* (HEIGHT - y) / (double)HEIGHT, (rand() % 360)* PI / 180);
-//
-//		pg = new Grenade(MSZ * (HEIGHT - y) / (double)HEIGHT, MSZ * x / (double)WIDTH);
-//	}
-//}
 
 void keyboard(unsigned char key, int x, int y) {
 	if (key == 'g')
@@ -880,7 +831,6 @@ int main(int argc, char* argv[])
 {
 	__try
 	{
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 		glutInit(&argc, argv);
 		// definitions for visual memory (Frame buffer) and double buffer
 		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
@@ -893,16 +843,7 @@ int main(int argc, char* argv[])
 		// idle is a update function
 		glutIdleFunc(idle);
 
-		//glutMouseFunc(mouse);
 		glutKeyboardFunc(keyboard);
-
-		// menu
-		/*glutCreateMenu(menu);
-		glutAddMenuEntry("Fire bullet", 1);
-		glutAddMenuEntry("Throw Grenade", 2);
-		glutAddMenuEntry("Generate Security Map", 3);
-		glutAttachMenu(GLUT_RIGHT_BUTTON);*/
-
 
 		init();
 
