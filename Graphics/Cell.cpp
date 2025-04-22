@@ -24,10 +24,6 @@ Cell::Cell(int row, int col, Cell* p, double sec_map[MSZ][MSZ], vector<Position>
 	parent = p;
 	g = 0;
 	ComputeH(sec_map);
-	/*for (Position p : enemiesInRoom)
-	{
-		h -= sqrt(pow(row - p.row, 2) + pow(col - p.col, 2));
-	}*/
 	f = h + g;
 }
 
@@ -53,7 +49,6 @@ Cell::Cell(int r, int c, int tr, int tc, double newg, Cell* p, double sec_map[MS
 	target_row = tr;
 	target_col = tc;
 	g = newg;
-	//DuplicateSecurityMap(sec_map, security_map);
 	ComputeH(sec_map);
 	f = h + g;
 }
@@ -72,10 +67,8 @@ Cell::Cell(int r, int c, double newg, Cell* p, vector<Position>& allEnemies)
 	{
 		h += sqrt(pow(row - p.row, 2) + pow(col - p.col, 2));
 	}
-	//h += g;
 }
 
-// h is computed basing on Manhattan distance
 void Cell::ComputeH(double sec_map[MSZ][MSZ])
 {
 	if (sec_map == nullptr)
@@ -87,9 +80,9 @@ void Cell::ComputeH(double sec_map[MSZ][MSZ])
 	}
 	else
 	{
-		int distance = sqrt(pow(row - target_row, 2) + pow(col - target_col, 2));
+		int distance = (int)sqrt(pow(row - target_row, 2) + pow(col - target_col, 2));
 		double security = sec_map[row][col];
-		h = distance + security; //*SECURITY_COEFFICIENT;
+		h = distance + security;
 	}
 }
 

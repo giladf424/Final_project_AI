@@ -1,12 +1,7 @@
 #pragma once
 #include "definitions.h"
 #include "State.h"
-//#include "Cell.h"
-//#include "CompareCells.h"
 #include "Corridor.h"
-//#include "Grenade.h"
-
-//class Team; // Forward declaration
 
 class State;
 
@@ -72,10 +67,9 @@ public:
 	bool isAdjacentToMyPos(Position p);
 	bool isSamePositions(Position p1, Position p2);
 	Position FindFreeSpaceToMove();
-	Position FindFreeSpaceToMoveInLoop();
 	Position checkIfStuck(Position nextPos, Position targetPos);
 
-	void move(Position nextPos); // Add this line
+	void move(Position nextPos);
 	Position BFSRadius(Position start, vector <Position>& enemyPos, int radius, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 	void BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position>& enemiesInRoom);
 	double IsEnemyInHitRange(Position myPos, Position enemyPos);

@@ -6,8 +6,8 @@ Grenade::Grenade(double r, double c)
 	int i;
 	row = r;
 	col = c;
-	double alpha = 2*PI/NUM_BULLETS; // bullet separation angle
-	for (i = 0;i < NUM_BULLETS;i++)
+	double alpha = 2 * PI / NUM_BULLETS; // bullet separation angle
+	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		bullets.push_back(new Bullet(col, row, i * alpha));
 	}
@@ -39,14 +39,14 @@ Grenade::~Grenade()
 		delete b;
 		b = nullptr;
 	}
-	
+
 }
 
 void Grenade::explode()
 {
 	int i;
 
-	for (i = 0;i < NUM_BULLETS;i++)
+	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		bullets[i]->setIsMoving(true);
 	}
@@ -59,7 +59,7 @@ void Grenade::expand(int maze[MSZ][MSZ])
 	bool stillExpanding = false;
 	int i;
 
-	for (i = 0;i < NUM_BULLETS;i++)
+	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		bullets[i]->move(maze);
 		stillExpanding = bullets.at(i)->getIsMoving() || stillExpanding;
@@ -71,7 +71,7 @@ void Grenade::show()
 {
 	int i;
 
-	for (i = 0;i < NUM_BULLETS;i++)
+	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		if (bullets[i]->getIsMoving())
 			bullets[i]->show();
@@ -83,12 +83,8 @@ void Grenade::SimulateExplosion(int maze[MSZ][MSZ], double sm[MSZ][MSZ])
 {
 	int i;
 
-	for (i = 0;i < NUM_BULLETS;i++)
-	{
-		bullets[i]->SimulateExplosion(maze,sm);
-		//delete bullets[i];
-	}
-
+	for (i = 0; i < NUM_BULLETS; i++)
+		bullets[i]->SimulateExplosion(maze, sm);
 
 }
 

@@ -72,7 +72,7 @@ Cell* NPC::RunAStarIteration(Position target, priority_queue<Cell*, vector<Cell*
 
 	if (row == target.row && col == target.col)
 		return pCurrent;
-	
+
 	dupMaze[row][col] = BLACK;
 
 	if (dupMaze[row + 1][col] != WALL && dupMaze[row + 1][col] != BLACK)
@@ -99,9 +99,9 @@ Cell* NPC::CheckNeighbor(int r, int c, Cell* pCurrent, Position target, priority
 		return RestorePath(pCurrent, numSteps);
 	}
 
-	if (dupMaze[r][c] == SPACE || (dupMaze[r][c] == NPC_)) // && pCurrent->getParent() != nullptr
+	if (dupMaze[r][c] == SPACE || (dupMaze[r][c] == NPC_))
 	{
-		Cell* pc = new Cell(r, c, target.row, target.col, 0, pCurrent, dupMap); //pCurrent->getG() + 1
+		Cell* pc = new Cell(r, c, target.row, target.col, 0, pCurrent, dupMap);
 		grays.push(pc);
 		toDelete.push_back(pc);
 		dupMaze[r][c] = GRAY;
@@ -151,7 +151,7 @@ Position NPC::RunAStarFlee(int dupMaze[MSZ][MSZ])
 			AStarFleeCheckNeighbor(r, c - 1, pCurrent, pq, grays, dupMaze, warriorsEnemy);
 		i++;
 	}
-	
+
 	if (!pq.empty())
 	{
 		Cell* pCurrent = pq.top();
@@ -323,23 +323,6 @@ Position NPC::FindFreeSpaceToMove()
 		return nextPos;
 }
 
-Position NPC::FindFreeSpaceToMoveInLoop()
-{
-	Position nextPos = { -1, -1 };
-	Position myPos = GetPosition();
-	Position prevPos = GetPrevPosition();
-	if ((maze[myPos.row + 1][myPos.col] == SPACE || maze[myPos.row + 1][myPos.col] == NPC_) && !isSamePositions({myPos.row + 1, myPos.col}, prevPos))
-		return { myPos.row + 1, myPos.col };
-	else if ((maze[myPos.row - 1][myPos.col] == SPACE || maze[myPos.row - 1][myPos.col] == NPC_) && !isSamePositions({ myPos.row - 1, myPos.col }, prevPos))
-		return { myPos.row - 1, myPos.col };
-	else if ((maze[myPos.row][myPos.col + 1] == SPACE || maze[myPos.row][myPos.col + 1] == NPC_) && !isSamePositions({ myPos.row, myPos.col + 1 }, prevPos))
-		return { myPos.row, myPos.col + 1 };
-	else if ((maze[myPos.row][myPos.col - 1] == SPACE || maze[myPos.row][myPos.col - 1] == NPC_) && !isSamePositions({ myPos.row, myPos.col - 1 }, prevPos))
-		return { myPos.row, myPos.col - 1 };
-	else
-		return nextPos;
-}
-
 Position NPC::checkIfStuck(Position nextPos, Position targetPos)
 {
 	Position defaultPos = { -1, -1 };
@@ -352,11 +335,9 @@ Position NPC::checkIfStuck(Position nextPos, Position targetPos)
 	else if (isSamePositions(nextPos, this->prevPos) && GetStuck() && GetStuckness() == 0)
 	{
 		SetStuckness(STUCK_TIME);
-		//setSecurityMapToZero(dupSecurityMap);
 		DuplicateMaze(maze, dupMaze);
 		int numSteps = 0;
-		Position nextPos2 = RunBFS(targetPos, dupMaze, &numSteps);
-		return nextPos2;
+		return RunBFS(targetPos, dupMaze, &numSteps);
 	}
 	else if (GetStuck() && GetStuckness() > 0)
 	{
@@ -366,11 +347,9 @@ Position NPC::checkIfStuck(Position nextPos, Position targetPos)
 			SetStuck(false);
 			return defaultPos;
 		}
-		setSecurityMapToZero(dupSecurityMap);
 		DuplicateMaze(maze, dupMaze);
 		int numSteps = 0;
-		Position nextPos2 = RunBFS(targetPos, dupMaze, &numSteps);
-		return nextPos2;
+		return RunBFS(targetPos, dupMaze, &numSteps);
 	}
 	else
 	{
@@ -383,10 +362,8 @@ Position NPC::checkIfStuck(Position nextPos, Position targetPos)
 void NPC::move(Position nextPos)
 {
 	prevStep = (Team::isAnyBodyInMyPosition(GetPosition(), this->id.team, this->id.place) ? NPC_ : SPACE);
-	std::cout << "Moving from (" << GetPosition().row << ", " << GetPosition().col << ") to (" << nextPos.row << ", " << nextPos.col << ") OUT!!!!!!!!!!!!!!!!" << endl;
 	if (!isSamePosAsMyPos(nextPos) && isValidPos(nextPos))
 	{
-		std::cout << "Moving from (" << GetPosition().row << ", " << GetPosition().col << ") to (" << nextPos.row << ", " << nextPos.col << ")" << endl;
 		maze[GetPosition().row][GetPosition().col] = this->prevStep;
 		prevStep = maze[nextPos.row][nextPos.col];
 		maze[nextPos.row][nextPos.col] = NPC_;
@@ -460,7 +437,7 @@ Position NPC::BFSRadius(Position start, vector <Position>& enemyPos, int radius,
 	}
 	int min_max_NumEnemiesinRange = (isWarrior ? -1 : INT_MAX); // min for warrior, max for squire 
 	int startRoomIndex = (GetRoomIndex(start) == -1 ? this->getPrevRoomIndex() : GetRoomIndex(start));
-	
+
 	while (!pq.empty())
 	{
 		Cell* isBest = pq.top();
@@ -503,8 +480,6 @@ Position NPC::BFSRadius(Position start, vector <Position>& enemyPos, int radius,
 	{
 		Cell* p = q.front();
 		q.pop();
-		/*delete p;
-		p = nullptr;*/
 	}
 	isAstar = false;
 	return bestPos;
@@ -512,7 +487,7 @@ Position NPC::BFSRadius(Position start, vector <Position>& enemyPos, int radius,
 
 void NPC::BFSRadiusCheckNeighbor(int r, int c, Cell* pCurrent, priority_queue<Cell*, vector<Cell*>, CompareCells>& pq, queue<Cell*>& q, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ], vector<Position>& enemiesInRoom)
 {
-	if (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_) // && pCurrent->getParent() != nullptr
+	if (dupMaze[r][c] == SPACE || dupMaze[r][c] == NPC_)
 	{
 		Cell* pc = new Cell(r, c, pCurrent, dupMap, enemiesInRoom);
 		q.push(pc);
@@ -608,7 +583,7 @@ vector<HitDetails> NPC::GetEnemiesInHitRange(Position myPos, vector<Position>& e
 			continue;
 		double hitRange = IsEnemyInHitRange(myPos, p);
 		if (hitRange != -1)
-			enemiesPositions.push_back({p, hitRange});
+			enemiesPositions.push_back({ p, hitRange });
 	}
 	return enemiesPositions;
 }
@@ -621,7 +596,6 @@ void NPC::hitByBullet()
 		isAlive = false;
 		maze[pos.row][pos.col] = (Team::isAnyBodyInMyPosition(pos, this->id.team, this->id.place) ? NPC_ : SPACE);
 	}
-	std::cout << "\nHit by bullet, Team: " << ((id.team == 0) ? "Red " : "Yellow ") << "Place: " << id.place << " Pos: (" << pos.row << ", " << pos.col << ") HP: " << hp << endl;
 }
 
 

@@ -1,13 +1,8 @@
 #pragma once
-//#include "definitions.h"
 #include "PatrolState.h"
 #include "NPC.h"
-//#include "Cell.h"
-//#include "definitions.h"
 #include <queue>
 #include "CompareCells.h"
-//#include "Bullet.h"
-//#include "Grenade.h"
 
 class Warrior : public NPC
 {
@@ -21,9 +16,7 @@ private:
 public:
 	Warrior(Position startPos, TeamID teamID);
 	void SetBullets(int b) { bullets = b; }
-	//int GetBullets() { return bullets; }
 	void SetGrenades(int g) { grenades = g; }
-	//int GetGrenades() { return grenades; }
 	bool GetAggressive() { return aggressive; }
 	NPC* GetTarget() { return target; }
 	void SetTarget(NPC* t) { target = t; }
@@ -51,5 +44,3 @@ public:
 	bool isWarriorCanReturnToFight();
 
 };
-
-// test

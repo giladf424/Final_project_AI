@@ -1,7 +1,6 @@
 #pragma once
 #include "definitions.h"
 #include "Team.h"
-//#include "NPC.h"
 class Bullet
 {
 private: 

@@ -91,12 +91,6 @@ extern RoomScope roomScopes[NUM_ROOMS];
 extern vector<Position> ammunitionStash;
 extern vector<Position> medicineStash;
 
-//const unordered_map<string, array<double, 3>> team_colors = {
-//    {"FPurple", {217 / (double)255, 1 / (double)255, 122 / (double)255}},
-//    {"SPurple", {219 / (double)255, 62 / (double)255, 177 / (double)255}},
-//    {"FOrange", {252 / (double)255, 76 / (double)255, 2 / (double)255}},
-//    {"SOrange", {255 / (double)255, 153 / (double)255, 19 / (double)255}}
-//};
 const unordered_map<string, array<double, 3>> team_colors = {
 	{"FRed", {139 / (double)255, 0 / (double)255, 0 / (double)255}}, // Dark Red
 	{"SRed", {255 / (double)255, 99 / (double)255, 71 / (double)255}}, // Light Red
@@ -107,7 +101,6 @@ const unordered_map<string, array<double, 3>> team_colors = {
 void DuplicateMaze(int source[MSZ][MSZ], int target[MSZ][MSZ]);
 void DuplicateSecurityMap(double source[MSZ][MSZ], double target[MSZ][MSZ]);
 void setSecurityMapToZero(double map[MSZ][MSZ]);
-//void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ]);
 int GetRoomIndex(Position pos);
 void printMaze(int maze[MSZ][MSZ]);
 void printSecurityMap(double map[MSZ][MSZ]);

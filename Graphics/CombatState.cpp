@@ -1,18 +1,14 @@
 #include "CombatState.h"
-//#include "PatrolState.h"
 #include "RequestResourcesState.h"
 #include "Warrior.h"
 #include <iostream>
 
 void CombatState::OnEnter(NPC* p)
 {
-	// Initialize combat behavior
-	std::cout << "Entering CombatState\n" << endl;
 	Warrior* w = (Warrior*)p;
 	w->SetIsMoving(true);
 	w->attackEnemy();
 	w->SetIsMoving(false);
-	std::cout << "Exiting CombatState\n" << endl;
 }
 
 void CombatState::Transition(NPC* p)
@@ -34,19 +30,16 @@ void CombatState::Transition(NPC* p)
 	{
 		p->SetState(new RequestResourcesState());
 	}
-	else //if (/* enemy is no longer in range */) 
+	else
 	{
 		p->SetState(new PatrolState());
 	}
-	delete currentState; // Clean up the old state
+	delete currentState;
 	currentState = nullptr;
-	// entering new state
-	//p->GetState()->OnEnter(p);
 }
 
 void CombatState::OnExit(NPC* p)
 {
-	// Clean up combat behavior
 	Warrior* w = (Warrior*)p;
 	if (w->getIsReloading())
 	{
@@ -54,5 +47,4 @@ void CombatState::OnExit(NPC* p)
 		w->setReloadTime(0);
 	}
 	p->SetIsMoving(true);
-	std::cout << "Exiting CombatState" << endl;
 }

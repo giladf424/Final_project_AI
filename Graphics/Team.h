@@ -1,7 +1,5 @@
 #pragma once
-//#include "NPC.h"
 #include "definitions.h"
-//#include "Warrior.h"
 #include "Squire.h"
 #include <vector>
 
@@ -26,9 +24,7 @@ public:
 	array<double, 3> getWarriorColor() { return teamColor.at(0); };
 	array<double, 3> getSquireColor() { return teamColor.at(1); };
 
-	// Find nearest logic
 	static NPC* findNearestEnemy(NPC* n);
-	static Position findNearestEnemyInRoom(NPC* n, int roomIndex);
 	static Position findNearestTeammate(NPC* n);
 	static vector<Position> GetEnemiesPositionsInRoom(int roomIndex, int teamNum, bool onlyWarriors);
 	static NPC* GetNPCByPosition(Position p, int teamNum, int id, int type);
@@ -39,7 +35,6 @@ public:
 	void removeTeammate(NPC* dead);
 	void removeWoundedWarrior(NPC* dead);
 	static double findDistance(Position p1, Position p2);
-	static void blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ]);
 	static bool isAnyBodyInMyPosition(Position p, int teamNum, int id);
 	static vector<RoomDetails> getConnectedRooms(int roomIndex, int teamNum);
 	static Position findRoomCenter(int roomIndex);
@@ -47,9 +42,6 @@ public:
 	static vector<Position> findAllWarriorsEnemies(int teamNum);
 	static vector<Position> findAllPlayesPositions(int teamNum, int id);
 	static bool isSafePosition(Position p, int teamNum, int id);
-	static bool isOnlyWarriorsAndNoAmmo();
-	static bool isOnlySquires();
-	static void ContinuePlaying();
 	static bool HandleGameState();
 };
 

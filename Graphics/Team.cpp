@@ -1,6 +1,5 @@
 #include "Team.h"
 #include "Warrior.h"
-//#include "Squire.h"
 
 vector<Team*> Team::Teams;
 Team::Team(vector<array<double, 3>> tc)
@@ -34,7 +33,7 @@ void Team::addTeammate(Position start_pos, bool isWarrior)
 NPC* Team::findNearestEnemy(NPC* n)
 {
 	int minDistance = INT_MAX;
-	NPC* nearestEnemy = nullptr; // Default value if no enemy is found
+	NPC* nearestEnemy = nullptr;
 	for (Team* t : Teams) {
 		if (t->GetTeamID().team != n->GetTeamID().team) {
 			for (NPC* enemy : t->GetTeammates()) {
@@ -54,7 +53,7 @@ NPC* Team::findNearestEnemy(NPC* n)
 Position Team::findNearestTeammate(NPC* n)
 {
 	int minDistance = INT_MAX;
-	Position teammatePos = { -1, -1 }; // Default value if no teammate is found
+	Position teammatePos = { -1, -1 };
 	for (Team* t : Teams) {
 		if (t->GetTeamID().team == n->GetTeamID().team) {
 			for (NPC* teammate : t->GetTeammates()) {
@@ -76,10 +75,8 @@ vector<Position> Team::GetEnemiesPositionsInRoom(int roomIndex, int teamNum, boo
 {
 	vector<Position> enemiesPos;
 	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
-	{
-		//std::cout << "Error: Invalid room index\n";
 		return enemiesPos;
-	}
+
 	RoomScope rs = roomScopes[roomIndex];
 	for (Team* t : Teams)
 	{
@@ -114,14 +111,13 @@ NPC* Team::GetNPCByPosition(Position p, int teamNum, int id, int type)
 			}
 		}
 	}
-	std::cout << "Error: NPC not found (GetNPCByPosition)" << endl;
 	return nullptr;
 }
 
 NPC* Team::findLowestHPEnemy(int teamNum)
 {
 	int minHP = INT_MAX;
-	NPC* lowestHPEnemy = nullptr; // Default value if no enemy is found
+	NPC* lowestHPEnemy = nullptr;
 	for (Team* t : Teams)
 	{
 		if (t->GetTeamID().team != teamNum)
@@ -142,7 +138,7 @@ NPC* Team::findLowestHPEnemy(int teamNum)
 NPC* Team::findNearestSquireEnemyOrTeammate(NPC* n, bool isEnemy)
 {
 	int minDistance = INT_MAX;
-	NPC* nearestSquireEnemyOrTeammate = nullptr; // Default value if no enemy is found
+	NPC* nearestSquireEnemyOrTeammate = nullptr;
 	for (Team* t : Teams)
 	{
 		if ((t->GetTeamID().team != n->GetTeamID().team && isEnemy) || (t->GetTeamID().team == n->GetTeamID().team && !isEnemy))
@@ -166,7 +162,7 @@ NPC* Team::findNearestSquireEnemyOrTeammate(NPC* n, bool isEnemy)
 
 Position Team::GetSquireEnemyPositionInRoom(int roomIndex, int teamNum)
 {
-	Position squireEnemyPos = { -1, -1 }; // Default value if no enemy is found
+	Position squireEnemyPos = { -1, -1 };
 	for (Team* t : Teams)
 	{
 		if (t->GetTeamID().team != teamNum)
@@ -265,55 +261,6 @@ double Team::findDistance(Position p1, Position p2)
 	return sqrt(pow(p1.row - p2.row, 2) + pow(p1.col - p2.col, 2));
 }
 
-void Team::blockPathSearchDirection(Position p1, Position p2, int maze[MSZ][MSZ])
-{
-	int maxDistance = INT_MAX;
-	int distance = 0;
-	Position toBlock = { -1, -1 };
-	if (maze[p1.row + 1][p1.col] != WALL)
-	{
-		distance = (int)findDistance({ p1.row + 1, p1.col }, p2);
-		if (distance < maxDistance)
-		{
-			maxDistance = distance;
-			toBlock = { p1.row + 1, p1.col };
-		}
-	}
-	if (maze[p1.row - 1][p1.col] != WALL)
-	{
-		distance = (int)findDistance({ p1.row - 1, p1.col }, p2);
-		if (distance < maxDistance)
-		{
-			maxDistance = distance;
-			toBlock = { p1.row - 1, p1.col };
-		}
-	}
-	if (maze[p1.row][p1.col + 1] != WALL)
-	{
-		distance = (int)findDistance({ p1.row, p1.col + 1 }, p2);
-		if (distance < maxDistance)
-		{
-			maxDistance = distance;
-			toBlock = { p1.row, p1.col + 1 };
-		}
-	}
-	if (maze[p1.row][p1.col - 1] != WALL)
-	{
-		distance = (int)findDistance({ p1.row, p1.col - 1 }, p2);
-		if (distance < maxDistance)
-		{
-			maxDistance = distance;
-			toBlock = { p1.row, p1.col - 1 };
-		}
-	}
-	if (toBlock.row != -1 && toBlock.col != -1)
-	{
-		std::cout << "Blocking path from " << p1.row << ", " << p1.col << " to " << toBlock.row << ", " << toBlock.col << endl;
-		maze[toBlock.row][toBlock.col] = BLACK;
-	}
-
-}
-
 bool Team::isAnyBodyInMyPosition(Position p, int teamNum, int id)
 {
 	for (Team* t : Teams)
@@ -333,10 +280,8 @@ bool Team::isAnyBodyInMyPosition(Position p, int teamNum, int id)
 vector<RoomDetails> Team::getConnectedRooms(int roomIndex, int teamNum)
 {
 	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
-	{
-		std::cout << "Error: Invalid room index" << endl;
 		return vector<RoomDetails>();
-	}
+
 	vector<RoomDetails> connectedRooms;
 	int numEnemies = GetEnemiesPositionsInRoom(roomIndex, teamNum, true).size();
 	connectedRooms.push_back({ roomIndex, numEnemies, 0 });
@@ -362,10 +307,8 @@ vector<RoomDetails> Team::getConnectedRooms(int roomIndex, int teamNum)
 Position Team::findRoomCenter(int roomIndex)
 {
 	if (roomIndex < 0 || roomIndex >= NUM_ROOMS)
-	{
-		std::cout << "Error: Invalid room index (Team, findRoomCenter)" << endl;
-		return Position();
-	}
+		return { -1, -1 };
+
 	RoomScope rs = roomScopes[roomIndex];
 	int centerRow = (rs.startRow + rs.endRow) / 2;
 	int centerCol = (rs.startCol + rs.endCol) / 2;
@@ -431,53 +374,6 @@ bool Team::isSafePosition(Position p, int teamNum, int id)
 		}
 	}
 	return true;
-}
-
-bool Team::isOnlyWarriorsAndNoAmmo()
-{
-	for (Team* t : Teams)
-	{
-		for (NPC* n : t->GetTeammates())
-		{
-			if (strcmp(n->getType(), "Squire") == 0 && n->GetIsAlive())
-				return false;
-			else if(strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive() && (n->getAmmo() > 0 || n->getGrenades() > 0))
-				return false;
-		}
-	}
-	return true;
-}
-
-bool Team::isOnlySquires()
-{
-	for (Team* t : Teams)
-	{
-		for (NPC* n : t->GetTeammates())
-		{
-			if (strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive())
-				return false;
-		}
-	}
-	return true;
-}
-
-void Team::ContinuePlaying()
-{
-	if(isOnlyWarriorsAndNoAmmo())
-	{
-		for (Team* t : Teams)
-		{
-			for (NPC* n : t->GetTeammates())
-			{
-				if (strcmp(n->getType(), "Warrior") == 0 && n->GetIsAlive())
-				{
-					Warrior* w = (Warrior*)n;
-					w->SetGrenades(MAX_GRENADES_WARRIOR);
-					w->SetBullets(MAX_BULLETS_WARRIOR);
-				}
-			}
-		}
-	}
 }
 
 bool Team::HandleGameState()

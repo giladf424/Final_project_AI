@@ -1,13 +1,8 @@
 #include "IdleState.h"
 #include "FleeState.h"
-//#include "Squire.h"
-//#include "Team.h"
-//#include <iostream>
 
 void IdleState::OnEnter(NPC* p)
 {
-	// Initialize idle behavior
-	std::cout << "Entering IdleState\n" << endl;
 	Squire* s = (Squire*)p;
 	int id = s->GetTeamID().team;
 	s->SetIsMoving(true);
@@ -33,32 +28,22 @@ void IdleState::OnEnter(NPC* p)
 	if (s->isValidPos(roomCenter))
 		s->MoveToTeamMate(roomCenter);
 	else
-	{
 		s->SetPrevPosition(s->GetPosition());
-		std::cout << "Error: no room center pos found from IdleState" << endl;
-	}
-	std::cout << "Exiting IdleState\n" << endl;
 }
 
 void IdleState::Transition(NPC* p)
 {
-	// Exiting from current state
 	OnExit(p);
 
 	Squire* s = (Squire*)p;
 	State* currentState = p->GetState();
 	p->SetState(new FleeState());
 
-	delete currentState; // Clean up the old state
+	delete currentState;
 	currentState = nullptr;
-
-	// entering new state
-  //  p->GetState()->OnEnter(p);
 }
 
 void IdleState::OnExit(NPC* p)
 {
-	// Clean up idle behavior
 	p->SetIsMoving(true);
-	std::cout << "Exiting IdleState" << endl;
 }

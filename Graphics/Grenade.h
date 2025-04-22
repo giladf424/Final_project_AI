@@ -2,8 +2,6 @@
 #include "Bullet.h"
 
 const int NUM_BULLETS = 20;
-const int NUM_BULLETS_VISUALIZATION = 36;
-
 class Grenade
 {
 private:

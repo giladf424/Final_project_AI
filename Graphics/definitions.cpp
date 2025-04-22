@@ -21,17 +21,6 @@ void setSecurityMapToZero(double map[MSZ][MSZ])
 			map[i][j] = 0;
 }
 
-//void UpdateSecurityMap(vector<Position> positions, int dupMaze[MSZ][MSZ], double dupMap[MSZ][MSZ])
-//{
-//	for (Position p : positions)
-//	{
-//		Grenade* g = new Grenade(p.row, p.col);
-//		g->SimulateExplosion(dupMaze, dupMap);
-//		delete g;
-//		g = nullptr;
-//	}
-//}
-
 int GetRoomIndex(Position pos)
 {
 	for (int i = 0; i < NUM_ROOMS; i++)
@@ -40,29 +29,6 @@ int GetRoomIndex(Position pos)
 			return i;
 	}
 	return -1;
-}
-
-void printMaze(int maze[MSZ][MSZ])
-{
-	for (int i = 0; i < MSZ; i++)
-	{
-		for (int j = 0; j < MSZ; j++)
-		{
-			if (maze[i][j] == WALL)
-				std::cout << "#";
-			else if (maze[i][j] == SPACE)
-				std::cout << ".";
-			else if (maze[i][j] == NPC_)
-				std::cout << "N";
-			else if (maze[i][j] == GRAY)
-				std::cout << "G";
-			else if (maze[i][j] == BLACK)
-				std::cout << "B";
-			else
-				std::cout << " ";
-		}
-		std::cout << "\n";
-	}
 }
 
 void printSecurityMap(double map[MSZ][MSZ])
@@ -78,7 +44,7 @@ void printSecurityMap(double map[MSZ][MSZ])
 				maxVal = map[i][j];
 			if (map[i][j] >= 1)
 			{
-				hitDetails.push_back({{i, j}, map[i][j]});
+				hitDetails.push_back({ {i, j}, map[i][j] });
 			}
 		}
 	}

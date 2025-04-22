@@ -208,6 +208,7 @@ void BuildPathBetweenTheRooms()
 			BuildPath(i, j); // A*
 			cout << "The path from " << i << " to " << j << " has been paved" << endl;
 		}
+	cout << "\n" << endl;
 }
 
 Position randomPositionInRoom(Room* room)
@@ -290,6 +291,25 @@ void initTeams()
 
 		t->addTeammate(pos, false);
 		Team::Teams.push_back(t);
+		// print the team details, team color, and teammates details (position, type, behavior for warrior, ammo and hp thresholds for both of them)
+		/*cout << "Team " << i + 1 << " color: " << (i == 0 ? "Red" : "Yellow") << endl;
+		int teammateIndex = 1;
+		for (NPC* teammate : t->GetTeammates())
+		{
+			cout << "Teammate #" << teammateIndex << ":		position: (" << teammate->GetPosition().row << ", " << teammate->GetPosition().col << ") " << endl;
+			if (teammate->getType() == "Warrior")
+			{
+				Warrior* w = dynamic_cast<Warrior*>(teammate);
+				bool a = w->GetAggressive();
+				cout << "Type: Warrior		Behavior: " << (a ? "Aggressive" : "Defensive") << endl;
+				cout << "HP: " << MAX_HP << "	Ammo: " << MAX_BULLETS_WARRIOR << "		Grenade: " << MAX_GRENADES_WARRIOR << endl;
+				cout << "HP_th: " << (a ? HP_TH_AGGRESSIVE : HP_TH) << "	Ammo_th: " << (a ? AMMO_TH_AGGRESSIVE : AMMO_TH) << "	Grenade_th: " << GRENADE_TH << "\n" << endl;
+			}
+			else
+				cout << "Type: Squire\n" << "HP: " << MAX_HP << "	HP_packs: " << MAX_HP_PACKS << "\nAmmo: " << MAX_BULLETS_SQUIRE << "	Grenade: " << MAX_GRENADES_SQUIRE << "\n" << endl;
+			teammateIndex++;
+		}*/
+
 	}
 }
 
@@ -322,8 +342,6 @@ void initCorridors()
 				{
 					Position sRoom = { sRow, j };
 					Position sCorridor = { sRow - 1, j };
-					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -339,8 +357,6 @@ void initCorridors()
 				{
 					Position sRoom = { eRow, j };
 					Position sCorridor = { eRow + 1, j };
-					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -356,8 +372,6 @@ void initCorridors()
 				{
 					Position sRoom = { j, sCol };
 					Position sCorridor = { j, sCol - 1 };
-					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -373,8 +387,6 @@ void initCorridors()
 				{
 					Position sRoom = { j, eCol };
 					Position sCorridor = { j, eCol + 1 };
-					if (GetRoomIndex(sRoom) == -1)
-						std::cout << "Error: room not found" << endl;
 					Corridor* corridor = new Corridor();
 					corridor->CorridorRunBFS(sRoom, sCorridor, dupMaze);
 					Corridor::corridors.push_back(corridor);
@@ -475,7 +487,30 @@ void PrintRoomScopes()
 	}
 }
 
+void printInitialTeamsDetails()
+{
+	for (Team* t : Team::Teams)
+	{
+		cout << "Team " << t->GetTeamID().team + 1 << ":    color: " << (t->GetTeamID().place == 0 ? "Red" : "Yellow") << endl;
+		int teammateIndex = 1;
+		for (NPC* n : t->GetTeammates())
+		{
+			cout << "Teammate #" << teammateIndex << ":    position: (" << n->GetPosition().row << ", " << n->GetPosition().col << ") " << endl;
+			if (n->getType() == "Warrior")
+			{
+				Warrior* w = dynamic_cast<Warrior*>(n);
+				bool a = w->GetAggressive();
+				cout << "Type: Warrior	Behavior: " << (a ? "Aggressive" : "Defensive") << endl;
+				cout << "HP: " << MAX_HP << "      Ammo: " << MAX_BULLETS_WARRIOR << "      Grenade: " << MAX_GRENADES_WARRIOR << endl;
+				cout << "HP_th: " << (a ? HP_TH_AGGRESSIVE : HP_TH) << "    Ammo_th: " << (a ? AMMO_TH_AGGRESSIVE : AMMO_TH) << "    Grenade_th: " << GRENADE_TH << "\n" << endl;
+			}
+			else
+				cout << "Type: Squire\n" << "HP: " << MAX_HP << "     HP_packs: " << MAX_HP_PACKS << "\nAmmo: " << MAX_BULLETS_SQUIRE << "    Grenade: " << MAX_GRENADES_SQUIRE << "\n" << endl;
+			teammateIndex++;
+		}
+	}
 
+}
 
 void SetupDungeon()
 {
@@ -517,8 +552,7 @@ void SetupDungeon()
 	BuildPathBetweenTheRooms();
 	isAstar = false;
 	initCorridors();
-	/*PrintCorridors();
-	PrintRoomScopes();*/
+	printInitialTeamsDetails();
 }
 
 
@@ -595,7 +629,6 @@ void GenerateSecurityMap()
 		delete g;
 		g = nullptr;
 	}
-	printSecurityMap(security_map);
 }
 
 void GenerateSecurityMapForSpecificNPC(NPC* n)
@@ -645,7 +678,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(98565);
+	srand(946);
 
 	SetupDungeon();
 	GenerateSecurityMap();
@@ -660,7 +693,6 @@ void renderBitmapString(float x, float y, void* font, const string& str) {
 
 void drawHUD()
 {
-	// a HUD for our convinenece
 	float y_offset = MSZ - 2;
 	float x_offset = 1;
 
@@ -675,8 +707,8 @@ void drawHUD()
 				<< " Team: " << ((t->GetTeamID().team == 0) ? "Red" : "Yellow");
 			renderBitmapString(x_offset, y_offset, GLUT_BITMAP_HELVETICA_12, ss.str());
 
-			y_offset -= 2; // Move down for next soldier
-			if (y_offset < MSZ - 10) break; // Prevent overlapping
+			y_offset -= 2;
+			if (y_offset < MSZ - 10) break;
 		}
 		x_offset += MSZ / 2;
 		y_offset = MSZ - 2;
@@ -726,22 +758,11 @@ void idle()
 			for (NPC* n : t->GetTeammates())
 			{
 				GenerateSecurityMapForSpecificNPC(n);
-				cout << " [" << (dynamic_cast<Warrior*>(n) ? "Warrior" : "Squire") << "] "
-					<< "HP: " << n->GetHp() << " Ammo: " << n->getAmmo() << " Grenades: " << n->getGrenades() << " State: " << n->GetState()->toString()
-					<< " Team: " << ((t->GetTeamID().team == 0) ? "Red " : "Yellow ");
-				if (dynamic_cast<Warrior*>(n))
-				{
-					Warrior* w = (Warrior*)n;
-					cout << "Target: " << (w->GetTarget() != nullptr ? w->GetTarget()->GetTeamID().place : -1) << endl;
-				}
-				else
-					cout << endl;
- 				n->GetState()->OnEnter(n);
+				n->GetState()->OnEnter(n);
 				n->SetPrevStep((Team::isAnyBodyInMyPosition(n->GetPosition(), n->GetTeamID().team, n->GetTeamID().place) ? NPC_ : SPACE));
 			}
 		}
 
-		// move all bullets and grenades and check if a bullet or grenade attribute is moving == false remove it from the vector and delete him
 		for (Bullet* b : Bullet::bullets)
 		{
 			int i = 0;
@@ -799,7 +820,7 @@ void idle()
 			if (t->GetTeammates().size() == 0)
 			{
 				paused = true;
-				cout << "Game Over! Team " << ((t->GetTeamID().team == 0) ? "Yellow" : "Red") << " is won!" << endl;
+				cout << "Game Over! Team " << ((t->GetTeamID().team == 0) ? "Yellow" : "Red") << " has won!" << endl;
 			}
 		}
 		if (!paused && Team::HandleGameState())

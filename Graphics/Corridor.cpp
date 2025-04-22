@@ -8,7 +8,7 @@ Corridor::Corridor() : id(nextId++)
 	numOfRooms = 0;
 	for (int i = 0; i < MAX_CORRIDORS_ENTRANCES; i++)
 	{
-		connectedRooms[i] = -1; // Initialize connectedRooms with a default value
+		connectedRooms[i] = -1;
 	}
 }
 
@@ -19,7 +19,6 @@ bool Corridor::addConnectedRoom(int roomIndex)
 		connectedRooms[numOfRooms++] = roomIndex;
 		return true;
 	}
-	std::cout << "Error: maximum number of connected rooms reached" << endl;
 	return false;
 }
 
@@ -30,12 +29,11 @@ void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MS
 	Cell* pc = new Cell(sCorridor.row, sCorridor.col, sRoom.row, sRoom.col, nullptr);
 	pq.push(pc);
 	toDelete.push_back(pc);
-	
+
 	Corridor* corridor = this;
 	corridor->addConnectedRoom(GetRoomIndex(sRoom));
 	corridor->entrances.push_back(sCorridor);
 	corridor->path.push_back(sCorridor);
-	//corridors.push_back(corridor);
 
 	runBFS = true;
 	do
@@ -47,7 +45,6 @@ void Corridor::CorridorRunBFS(Position sRoom, Position sCorridor, int dupMaze[MS
 		{
 			pc = pq.top();
 			pq.pop();
-			//corridors.back()->getPath().push_back({ pc->getRow(), pc->getCol() });
 			corridor->path.push_back({ pc->getRow(), pc->getCol() });
 			Cell* newPc = new Cell(pc->getRow(), pc->getCol(), pc->getTargetRow(), pc->getTargetCol(), nullptr);
 			pq.push(newPc);
@@ -92,7 +89,7 @@ void Corridor::CorridorRunBFSIteration(priority_queue<Cell*, vector<Cell*>, Comp
 
 	dupMaze[r][c] = BLACK;
 
-	if(dupMaze[r + 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({r + 1, c})))
+	if (dupMaze[r + 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r + 1, c })))
 		go_on = corridor->CorridorCheckNeighbor(r + 1, c, pCurrent, pq, dupMaze, toDelete);
 	if (!go_on && dupMaze[r - 1][c] == SPACE && !corridor->isConnectedRoom(GetRoomIndex({ r - 1, c })))
 		go_on = corridor->CorridorCheckNeighbor(r - 1, c, pCurrent, pq, dupMaze, toDelete);
@@ -108,11 +105,9 @@ bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queu
 	int roomIndex = GetRoomIndex({ r, c });
 	if (roomIndex != -1)
 	{
-		//corridors.back()->addConnectedRoom(roomIndex);
 		Corridor* corridor = this;
 		corridor->addConnectedRoom(roomIndex);
 		corridor->CorridorRestorePath(pCurrent);
-		//CorridorRestorePath(pCurrent);
 		runBFS = false;
 		return true;
 	}
@@ -121,15 +116,13 @@ bool Corridor::CorridorCheckNeighbor(int r, int c, Cell* pCurrent, priority_queu
 	pq.push(pc);
 	toDelete.push_back(pc);
 	dupMaze[r][c] = GRAY;
-	
+
 	return false;
 }
 
 void Corridor::CorridorRestorePath(Cell* pc)
 {
-	Position p = {pc->getRow(), pc->getCol()};
-	/*corridors.back()->path.push_back(p);
-	corridors.back()->entrances.push_back(p);*/
+	Position p = { pc->getRow(), pc->getCol() };
 	Corridor* corridor = this;
 	corridor->path.push_back(p);
 	corridor->entrances.push_back(p);
@@ -137,7 +130,6 @@ void Corridor::CorridorRestorePath(Cell* pc)
 	while (pc->getParent() != nullptr)
 	{
 		p = { pc->getRow(), pc->getCol() };
-		//corridors.back()->path.push_back(p);
 		corridor->path.push_back(p);
 		pc = pc->getParent();
 	}
@@ -176,8 +168,7 @@ Position Corridor::getEntranceToRoom(int roomIndex)
 		if (GetRoomIndex({ entrance.row, entrance.col - 1 }) == roomIndex)
 			return entrance;
 	}
-	std::cout << "Error: entrance not found (corridor, getEntranceToRoom )" << endl;
-	return {-1, -1};
+	return { -1, -1 };
 }
 
 int Corridor::getDistanceBetweenConnectedRooms(int roomIndex1, int roomIndex2)
@@ -185,10 +176,8 @@ int Corridor::getDistanceBetweenConnectedRooms(int roomIndex1, int roomIndex2)
 	Position p1 = getEntranceToRoom(roomIndex1);
 	Position p2 = getEntranceToRoom(roomIndex2);
 	if (p1.row == -1 || p2.row == -1)
-	{
-		std::cout << "Error: entrance not found (corridor, getDistanceBetweenConnectedRooms )" << endl;
 		return -1;
-	}
+
 	int distance = abs(p1.row - p2.row) + abs(p1.col - p2.col);
 	if (p1.row == p2.row || p1.col == p2.col)
 		return distance;

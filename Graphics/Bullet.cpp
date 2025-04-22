@@ -59,9 +59,9 @@ void Bullet::show()
 	glColor3d(1, 0, 0);
 	glBegin(GL_POLYGON);
 	glVertex2d(x - 0.5, y);
-	glVertex2d(x , y+ 0.5);
+	glVertex2d(x, y + 0.5);
 	glVertex2d(x + 0.5, y);
-	glVertex2d(x , y- 0.5);
+	glVertex2d(x, y - 0.5);
 	glEnd();
 }
 

@@ -1,6 +1,5 @@
 #pragma once
 #include "definitions.h"
-//#include "Cell.h"
 #include "CompareCells.h"
 
 class Corridor
