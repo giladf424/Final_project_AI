@@ -659,7 +659,7 @@ void init()
 	glClearColor(0.5, 0.5, 0.5, 0);// color of window background
 	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
-	srand(94116);
+	srand(time(0));
 
 	SetupDungeon();
 	GenerateSecurityMap();
